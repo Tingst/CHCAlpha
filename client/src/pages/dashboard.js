@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter, Redirect, Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import Home from './home';
 import Ipo from './ipo';
 import {
@@ -31,10 +31,12 @@ export default class DashBoard extends React.Component {
                 path={`${match.url}/`}
                 component={() => <Redirect to={`${match.url}/home`} />}
               />
+
               <Route
                 path={`${match.url}/home`}
                 component={Home}
               />
+
               <Route
                 path={`${match.url}/ipo`}
                 component={Ipo}
