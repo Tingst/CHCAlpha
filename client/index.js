@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './src/styles/index.less';
+import Main from './src/pages/main';
 
-ReactDOM.render(<h1 className="tree">Hellooooo Bear!</h1>, document.getElementById('content'));
+ReactDOM.render(<Main />, document.getElementById('content'));
