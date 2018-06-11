@@ -1,0 +1,38 @@
+DROP TABLE IsTraded;
+DROP TABLE Company;
+DROP TABLE Exchange;
+
+CREATE TABLE Company (
+	c_id INT AUTO_INCREMENT, 
+	c_name CHAR(255), 
+	username CHAR(20) NOT NULL,
+	PRIMARY KEY(c_id)
+);
+
+CREATE TABLE Exchange (
+	abbreviation CHAR(10) PRIMARY KEY,
+	ex_name CHAR(80)
+);
+
+CREATE TABLE IsTraded (
+	c_id INT,
+	abbre CHAR(10),
+	price FLOAT, 
+	ticker CHAR(20), 
+	FOREIGN KEY(c_id) REFERENCES Company(c_id),
+	FOREIGN KEY(abbre) REFERENCES Exchange(abbreviation)
+);
+
+INSERT INTO Company (c_name, username)
+VALUES ('Microsoft', 'billg');
+
+INSERT INTO Company (c_name, username)
+VALUES ('Google', 'gHumpkins');
+
+INSERT INTO Exchange (abbreviation, ex_name)
+VALUES ('NASDAQ', 'National Association of Securities Dealers Automated Quotations');
+
+INSERT INTO IsTraded (c_id, abbre, price, ticker)
+VALUES (1, 'NASDAQ', 98.84, 'MSFT');
+INSERT INTO IsTraded (c_id, abbre, price, ticker)
+VALUES (2, 'NASDAQ', 1000, 'GOOGL');
