@@ -10,7 +10,7 @@ public class PriceGenerator {
     private Random rand;
     private static final int SEED = 1234;
     private static final String CMD = "UPDATE";
-    private static final String TABLE_NAME = "IsTraded";
+    private static String tableName;
     private static final String ACTION = "SET price=";
 
     private static final Float miu = 0.1f;
@@ -18,8 +18,9 @@ public class PriceGenerator {
     private static final Float dt = 0.05f;
 
 
-    public PriceGenerator () {
+    public PriceGenerator (String tableName) {
         rand = new Random(SEED);
+        this.tableName = tableName;
     }
 
     public void updateStockPrices (Connection con) throws Exception{
@@ -31,7 +32,7 @@ public class PriceGenerator {
                 int curr_cid = resultsSet.getInt("c_id");
                 double curr_price = resultsSet.getFloat("price");
                 Statement update = con.createStatement();
-                int res = update.executeUpdate(CMD + " " + TABLE_NAME + " " + ACTION + curr_price * Math.exp((miu - Math.pow(sigma, 2) / 2) * dt + sigma * rand.nextGaussian() * Math.sqrt(dt)) + " WHERE c_id=" + curr_cid + ";");
+                int res = update.executeUpdate(CMD + " " + tableName + " " + ACTION + curr_price * Math.exp((miu - Math.pow(sigma, 2) / 2) * dt + sigma * rand.nextGaussian() * Math.sqrt(dt)) + " WHERE c_id=" + curr_cid + ";");
                 Thread.sleep(5 * 1000);
             }
         }
