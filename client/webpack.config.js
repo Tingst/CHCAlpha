@@ -6,11 +6,13 @@ const base = {
   entry: ['babel-polyfill', './src/index.js'],
   output: {
     path: `${__dirname}/public`,
-    filename: 'bundle.js'
+    filename: 'bundle.js',
+    publicPath: '/'
   },
   devServer: {
     port: '8080',
-    inline: true
+    inline: true,
+    historyApiFallback: true
   },
   devtool: 'inline-source-map',
   module: {
