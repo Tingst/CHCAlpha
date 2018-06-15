@@ -12,10 +12,10 @@ const styles = {
     width: '100%'
   },
   leftPanel: {
-    flex: '0.6'
+    flex: '0.55'
   },
   rightPanel: {
-    flex: '0.4'
+    flex: '0.45'
   }
 };
 

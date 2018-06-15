@@ -1,5 +1,6 @@
 import history from '../utils/history';
 import fetch from 'isomorphic-fetch';
+import moment from 'moment';
 import {
   // Login Page Actions
   HANDLE_LOGIN_SUCCESS,
@@ -9,6 +10,9 @@ import {
   // Portfolio Page Actions
   HANDLE_CREATE_PORTFOLIO_SUCCESS,
   HANDLE_DELETE_PORTFOLIO_SUCCESS,
+  HANDLE_ORDER_SUCCESS,
+  HANDLE_CANCEL_ORDER_SUCCESS,
+
   TEST_BEAR
 } from './constants';
 
@@ -68,7 +72,6 @@ export const handleDeletePortfolio = (payload) => {
   // TODO: add http request here
   console.log('deleting portfolio with id: ', id);
 
-  console.log(payload);
   return dispatch => {
     dispatch({ type: HANDLE_DELETE_PORTFOLIO_SUCCESS, payload });
   }
@@ -78,11 +81,23 @@ export const handlePlaceOrder = (payload) => {
   const { portfolio, type, ticker, number, price } = payload;
 
   // TODO: add http request here
-  console.log('deleting portfolio with id: ', id);
+  payload.id = number + price; // TODO: get ID number from request
+  payload.date = moment().format('DD/MM/YY');
+  console.log('placing order: ', portfolio, ticker);
 
-  console.log(payload);
   return dispatch => {
-    dispatch({ type: HANDLE_DELETE_PORTFOLIO_SUCCESS, payload });
+    dispatch({ type: HANDLE_ORDER_SUCCESS, payload });
+  }
+};
+
+export const handleCancelOrder = (payload) => {
+  const { id } = payload;
+
+  // TODO: add http request here
+  console.log('cancelling order with id: ', id);
+
+  return dispatch => {
+    dispatch({ type: HANDLE_CANCEL_ORDER_SUCCESS, payload });
   }
 };
 

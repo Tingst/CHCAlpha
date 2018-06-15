@@ -22,22 +22,52 @@ const styles = {
 class HistoryPanelWrapper extends React.Component {
   constructor(props) {
     super(props);
+    this.handleFilterChange = this.handleFilterChange.bind(this);
+    this.handleCancelOrder = this.handleCancelOrder.bind(this);
+  }
+
+  handleFilterChange(e) {
+    console.log(e.target.value);
+  }
+
+  handleCancelOrder(id) {
+    this.props.handleCancelOrder({ id });
   }
 
   render() {
+    const FILTERS = [
+      'None',
+      'Buy',
+      'Sell',
+      '0-999',
+      '1000-4900',
+      '5000-9999',
+      '>10k'
+    ];
 
     return (
       <ViewCol style={styles.container}>
-        <h1>Orders</h1>
+        <ViewRow style={{ justifyContent: 'space-between' }}>
+          <h1>Pending Orders</h1>
+          <ViewRow style={{ alignItems: 'center' }}>
+            <label style={{marginRight: '1rem'}}>Filter By:</label>
+            <select style={{ width: 100 }} onChange={this.handleFilterChange}>
+              {FILTERS.map((key, id) => (
+                <option key={id} value={key}>{key}</option>
+              ))}
+            </select>
+          </ViewRow>
+        </ViewRow>
         <Table striped>
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell>Type</Table.HeaderCell>
               <Table.HeaderCell>Ticker</Table.HeaderCell>
-              <Table.HeaderCell>Exch.</Table.HeaderCell>
-              <Table.HeaderCell># Shares</Table.HeaderCell>
-              <Table.HeaderCell>Price/Share</Table.HeaderCell>
+              <Table.HeaderCell>Date</Table.HeaderCell>
+              <Table.HeaderCell>#</Table.HeaderCell>
+              <Table.HeaderCell>Price</Table.HeaderCell>
               <Table.HeaderCell>Total</Table.HeaderCell>
+              <Table.HeaderCell> </Table.HeaderCell>
             </Table.Row>
           </Table.Header>
 
@@ -46,10 +76,15 @@ class HistoryPanelWrapper extends React.Component {
               <Table.Row key={id}>
                 <Table.Cell>{order.type ? 'SELL' : 'BUY'}</Table.Cell>
                 <Table.Cell>{order.ticker}</Table.Cell>
-                <Table.Cell>{order.exchange}</Table.Cell>
-                <Table.Cell>{order.numShares}</Table.Cell>
+                <Table.Cell>{order.date}</Table.Cell>
+                <Table.Cell>{order.number}</Table.Cell>
                 <Table.Cell>{order.price}</Table.Cell>
-                <Table.Cell>{order.numShares * order.price}</Table.Cell>
+                <Table.Cell>{order.number * order.price}</Table.Cell>
+                <Table.Cell>
+                  <button onClick={() => this.handleCancelOrder(order.id)}>
+                    X
+                  </button>
+                </Table.Cell>
               </Table.Row>
             ))}
           </Table.Body>
@@ -61,11 +96,7 @@ class HistoryPanelWrapper extends React.Component {
 
 const mapStateToProps = ({ Portfolio }) => {
   return {
-    orders: [
-      { type: 0, ticker: 'APPL', exchange: 'NYSE', numShares: 5, price: 100 },
-      { type: 1, ticker: 'GOOGL', exchange: 'NASDAQ', numShares: 10, price: 1340 },
-      { type: 1, ticker: 'AMZN', exchange: 'NASDAQ', numShares: 42, price: 1010 }
-    ]
+    orders: Portfolio.orders
   }
 };
 
