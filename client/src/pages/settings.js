@@ -65,37 +65,37 @@ export default class Settings extends React.Component {
 
   render() {
     return (
-        <ViewCol style={styles.container}>
-          <ViewCol style={styles.innerContainer}>
+      <ViewCol style={styles.container}>
+        <ViewCol style={styles.innerContainer}>
 
-            <h1 style={styles.title}>Change your password</h1><br/>
+          <h1 style={styles.title}>Change your password</h1><br/>
 
-            <input
-              style={styles.inputStyle}
-              placeholder="Enter old password"
-              onBlur={e => this.handleInputBlur('oldpass', e)}
-            />
-            <input
-              style={styles.inputStyle}
-              placeholder="Enter new password"
-              onBlur={e => this.handleInputBlur('newpass', e)}
-            />
-            <input
-              style={styles.inputStyle}
-              placeholder={"Confirm new password"}
-              onBlur={e => this.handleInputBlur('duppass', e)}
-            />
+          <input
+            style={styles.inputStyle}
+            placeholder="Enter old password"
+            onBlur={e => this.handleInputBlur('oldpass', e)}
+          />
+          <input
+            style={styles.inputStyle}
+            placeholder="Enter new password"
+            onBlur={e => this.handleInputBlur('newpass', e)}
+          />
+          <input
+            style={styles.inputStyle}
+            placeholder={"Confirm new password"}
+            onBlur={e => this.handleInputBlur('duppass', e)}
+          />
 
-            <ViewRow style={styles.buttonsRow}>
-              <button
-                style={styles.okBtn}
-                onClick={() => this.handleConfirmPassword(this.state)}>
-                Ok
-              </button>
-            </ViewRow>
+          <ViewRow style={styles.buttonsRow}>
+            <button
+              style={styles.okBtn}
+              onClick={() => this.handleConfirmPassword(this.state)}>
+              Ok
+            </button>
+          </ViewRow>
 
-          </ViewCol>
         </ViewCol>
+      </ViewCol>
     )
   }
 }
