@@ -11,7 +11,7 @@ class IpoWrapper extends React.Component {
 
   render() {
     return (
-      <div style={{ border: '2px solid cyan', height: '100%' }}>
+      <div style={{height: '100%' }}>
         <h1>Hello world! IPO</h1>
         <p style={{ color: 'white'}}>{this.props.testState}</p>
         <button onClick={() => this.props.testAction('funny bear')}>Click Me!</button>

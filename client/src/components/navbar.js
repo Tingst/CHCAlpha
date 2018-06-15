@@ -6,10 +6,11 @@ const styles = {
   container: {
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: '2rem',
-    border: '1px solid blue'
+    height: '3rem',
+    borderBottom: '1px solid rgba(34, 36, 38, 0.1)'
   },
   header: {
+    fontWeight: 700,
     marginLeft: '1rem'
   },
   logout: {
@@ -20,7 +21,7 @@ const styles = {
 
 const NavBar = () => (
   <ViewRow style={styles.container}>
-    <h3 style={styles.header}>CPSC 310 Project</h3>
+    <h3 style={styles.header}>CHC Alpha</h3>
     <Link style={styles.logout} to="/login">Logout</Link>
   </ViewRow>
 );

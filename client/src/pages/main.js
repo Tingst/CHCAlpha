@@ -21,7 +21,7 @@ export default class Main extends React.Component {
   render() {
     return (
       <Provider store={store}>
-        <ViewCol style={{border: '1px solid yellow', height: '100%', width: '100%' }}>
+        <ViewCol style={{ height: '100%', width: '100%' }}>
           <Router history={history}>
             <Switch>
               <Route
@@ -34,7 +34,6 @@ export default class Main extends React.Component {
                 component={Login}
               />
               <Route
-                style={{ border: '1px solid red' }}
                 path="/dashboard"
                 component={DashBoard}
               />

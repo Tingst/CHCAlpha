@@ -20,13 +20,13 @@ export default class DashBoard extends React.Component {
     const match = this.props.match;
 
     return (
-      <ViewCol style={{ height: '100%', width: '100%', flex: 'none', border: '2px solid grey' }}>
+      <ViewCol style={{ height: '100%', width: '100%', flex: 'none' }}>
         <NavBar />
 
-        <ViewRow style={{ height: '100%', border: '1px solid pink' }}>
-          <SideBar />
+        <ViewRow style={{ height: '100%' }}>
+          <SideBar match={this.props.match} />
 
-          <ViewCol style={{ height: '100%', width: '100%', border: '3px solid purple' }}>
+          <ViewCol style={{ height: '100%', width: '100%' }}>
             <Switch>
               <Route
                 exact

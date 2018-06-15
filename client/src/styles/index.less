@@ -55,7 +55,7 @@ body {
 // ------------------------------------------
 h1, h2, h3, h4, h5, h6 {
   color: @text-primary;
-  font-family: @serif;
+  font-family: @sans-serif;
 }
 
 h1 {
@@ -89,5 +89,30 @@ p {
   line-height: @body-leading-spacing;
 }
 
+// Base Styles
+// ------------------------------------------
+.sidebar-button {
+  width: 100%;
+  height: 3rem;
 
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: @grey-3;
+  transition: 0.25s;
+
+  &:hover {
+    color: @red-l;
+    background-color: @white-2;
+  }
+
+  &.active {
+    background-color: @white-3;
+  }
+
+  &.inactive {
+
+  }
+
+}
 
