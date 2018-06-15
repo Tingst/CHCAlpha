@@ -74,5 +74,17 @@ export const handleDeletePortfolio = (payload) => {
   }
 };
 
+export const handlePlaceOrder = (payload) => {
+  const { portfolio, type, ticker, number, price } = payload;
+
+  // TODO: add http request here
+  console.log('deleting portfolio with id: ', id);
+
+  console.log(payload);
+  return dispatch => {
+    dispatch({ type: HANDLE_DELETE_PORTFOLIO_SUCCESS, payload });
+  }
+};
+
 
 
