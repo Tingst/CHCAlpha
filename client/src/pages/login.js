@@ -10,10 +10,22 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center'
   },
+  innerContainer: {
+    alignItems: 'center',
+    width: 350
+  },
+  buttonsRow: {
+    justifyContent: 'center',
+    width: '100%'
+  },
   title: {
     textAlign: 'center'
   },
   loginPanel: {
+    alignItems: 'center',
+    width: '100%'
+  },
+  createPanel: {
     alignItems: 'center',
     width: 350
   },
@@ -23,18 +35,50 @@ const styles = {
   buttonStyle: {
     marginTop: '1rem',
     width: 100
+  },
+  loginBtn: {
+    width: 200,
+    height: '2rem',
+    textAlign: 'center',
+    marginTop: '1rem'
+  },
+  createBtn: {
+    width: 200,
+    height: '2rem',
+    textAlign: 'center',
+    marginTop: '1rem'
   }
 };
 
-const LoginPanel = ({ onPasswordBlur, onUsernameBlur, onLogin, onSwitchPanel }) => (
-  <ViewCol style={styles.loginPanel}>
-    <h1 style={styles.title}>CPSC 304 Project</h1>
+const LoginPanel = ({ onPasswordBlur, onUsernameBlur }) => (
+  <ViewCol>
     <input style={styles.inputStyle} placeholder="username" onBlur={onUsernameBlur} />
     <input style={styles.inputStyle} placeholder="password" onBlur={onPasswordBlur} />
-    <ViewRow>
-      <button style={styles.buttonStyle} onClick={onLogin}>Login</button>
-      <button style={styles.buttonStyle} onClick={onSwitchPanel}>Create</button>
-    </ViewRow>
+  </ViewCol>
+);
+
+const CreateAccountPanel = ({ onCreateInputBlur }) => (
+  <ViewCol>
+    <input
+      style={styles.inputStyle}
+      placeholder="first name"
+      onBlur={e => onCreateInputBlur('newFname', e)}
+    />
+    <input
+      style={styles.inputStyle}
+      placeholder="last name"
+      onBlur={e => onCreateInputBlur('newLname', e)}
+    />
+    <input
+      style={styles.inputStyle}
+      placeholder="username"
+      onBlur={e => onCreateInputBlur('newUsername', e)}
+    />
+    <input
+      style={styles.inputStyle}
+      placeholder="password"
+      onBlur={e => onCreateInputBlur('newPassword', e)}
+    />
   </ViewCol>
 );
 
@@ -42,13 +86,22 @@ class LoginWrapper extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      // login state
       username: '',
       password: '',
-      isCreate: false
+      isCreate: true,
+
+      // create account state
+      newFname: '',
+      newLname: '',
+      newUsername: '',
+      newPassword: ''
     };
     this.handleLogin = this.handleLogin.bind(this);
     this.handleUsernameBlur = this.handleUsernameBlur.bind(this);
     this.handlePasswordBlur = this.handlePasswordBlur.bind(this);
+    this.handleCreateClick = this.handleCreateClick.bind(this);
+    this.handleCreateInputBlur = this.handleCreateInputBlur.bind(this);
   }
 
   handleLogin() {
@@ -66,8 +119,19 @@ class LoginWrapper extends React.Component {
     this.setState({ password: e.target.value });
   }
 
-  handleCreate() {
+  handleCreateClick() {
+    this.props.handleCreateNewAccount({
+      fname: this.state.newFname,
+      lname: this.state.newLname,
+      username: this.state.newUsername,
+      password: this.state.newPassword,
+    });
+  }
 
+  handleCreateInputBlur(key, e) {
+    this.setState({
+      [key]: e.target.value
+    });
   }
 
   handleSwitchPanel(isCreate) {
@@ -77,14 +141,51 @@ class LoginWrapper extends React.Component {
   render() {
     return (
       <ViewCol style={styles.container}>
+        <ViewCol style={styles.innerContainer}>
 
-        <LoginPanel
-          onUsernameBlur={this.handleUsernameBlur}
-          onPasswordBlur={this.handlePasswordBlur}
-          onLogin={this.handleLogin}
-          onSwitchPanel={this.handleSwitchPanel}
-        />
+          <h1 style={styles.title}>CPSC 304 Project</h1>
 
+          <ViewRow style={styles.buttonsRow}>
+            <button
+              disabled={!this.state.isCreate}
+              style={styles.buttonStyle}
+              onClick={() => this.handleSwitchPanel(this.state.isCreate)}>
+              Login
+            </button>
+            <button
+              disabled={this.state.isCreate}
+              style={styles.buttonStyle}
+              onClick={() => this.handleSwitchPanel(this.state.isCreate)}>
+              Create
+            </button>
+          </ViewRow>
+
+          {!this.state.isCreate && <LoginPanel
+            onUsernameBlur={this.handleUsernameBlur}
+            onPasswordBlur={this.handlePasswordBlur}
+            onLogin={this.handleLogin}
+            onSwitchPanel={this.handleSwitchPanel}
+          />}
+
+          {this.state.isCreate && <CreateAccountPanel
+            onCreateClick={this.handleCreateClick}
+            onCreateInputBlur={this.handleCreateInputBlur}
+            onSwitchPanel={this.handleSwitchPanel}
+          />}
+
+          {!this.state.isCreate && <button
+            style={styles.loginBtn}
+            onClick={this.handleLogin}>
+            Login
+          </button>}
+
+          {this.state.isCreate && <button
+            style={styles.createBtn}
+            onClick={this.handleCreateClick}>
+            Create Account & Login
+          </button>}
+
+        </ViewCol>
       </ViewCol>
     )
   }

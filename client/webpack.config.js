@@ -12,6 +12,7 @@ const base = {
   devServer: {
     port: '8080',
     inline: true,
+    // https://tylermcginnis.com/react-router-cannot-get-url-refresh/
     historyApiFallback: true
   },
   devtool: 'inline-source-map',
