@@ -3,11 +3,13 @@ import thunk from 'redux-thunk';
 import Portfolio from './portfolio';
 import Ipo from './ipo';
 import Login from './login';
+import Stocks from './stocks';
 
 const rootReducer = combineReducers({
   Portfolio,
   Ipo,
-  Login
+  Login,
+  Stocks
 });
 
 const store = createStore(

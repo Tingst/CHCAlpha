@@ -1,8 +1,9 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import Home from './home';
+import Portfolio from './portfolio';
 import Ipo from './ipo';
 import Settings from './settings';
+import Stocks from './stocks'
 import {
   NavBar,
   SideBar,
@@ -34,8 +35,13 @@ export default class DashBoard extends React.Component {
               />
 
               <Route
-                path={`${match.url}/home`}
-                component={Home}
+                path={`${match.url}/portfolio`}
+                component={Portfolio}
+              />
+
+              <Route
+                path={`${match.url}/stocks`}
+                component={Stocks}
               />
 
               <Route
