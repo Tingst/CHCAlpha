@@ -11,6 +11,7 @@ export default class Home extends React.Component {
       <div style={{ border: '2px solid green', height: '100%' }}>
         <Link to="/dashboard/ipo">to ipo</Link>
         <Link to="/login">to login</Link>
+        <Link to="/dashboard/settings">to settings</Link>
         <h1>Hello world!</h1>
       </div>
     )

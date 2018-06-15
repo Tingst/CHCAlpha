@@ -2,6 +2,7 @@ import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import Home from './home';
 import Ipo from './ipo';
+import Settings from './settings';
 import {
   NavBar,
   SideBar,
@@ -41,6 +42,12 @@ export default class DashBoard extends React.Component {
                 path={`${match.url}/ipo`}
                 component={Ipo}
               />
+
+              <Route
+                path={`${match.url}/settings`}
+                component={Settings}
+              />
+
             </Switch>
           </ViewCol>
         </ViewRow>
