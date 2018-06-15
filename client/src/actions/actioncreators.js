@@ -12,7 +12,9 @@ import {
   HANDLE_DELETE_PORTFOLIO_SUCCESS,
   HANDLE_ORDER_SUCCESS,
   HANDLE_CANCEL_ORDER_SUCCESS,
-
+  // Stock Page Actions
+  HANDLE_TRENDS_REFRESH_SUCCESS,
+  // wtf?
   TEST_BEAR
 } from './constants';
 
@@ -100,6 +102,28 @@ export const handleCancelOrder = (payload) => {
     dispatch({ type: HANDLE_CANCEL_ORDER_SUCCESS, payload });
   }
 };
+
+// -----------------------------------------------------------
+// Stock Page Actions
+// -----------------------------------------------------------
+export const handleTrendsRefreshClick = () => {
+
+  // TODO: add http request here
+  console.log('refreshing stock trends...');
+
+  const payload = {
+    stockTrendHighest: { ticker: 'GOOGL',  exchange: 'NASDAQ',  price: 220, companyName: 'Alphabet' },
+    stockTrendLowest: { ticker: 'BAYN',   exchange: 'ETR',     price: 35,  companyName: 'Bayer' },
+    stockTrendMostFrequent: { ticker: 'PFE',    exchange: 'NYSE',    price: 483, companyName: 'Pfizer' },
+    stockTrendLeastFrequent: { ticker: 'AMZN',   exchange: 'NASDAQ',  price: 449, companyName: 'Amazon' }
+
+  };
+
+  return dispatch => {
+    dispatch({ type: HANDLE_TRENDS_REFRESH_SUCCESS, payload });
+  }
+};
+
 
 
 

@@ -1,32 +1,42 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import * as stocksActions from '../actions/actioncreators';
+import { ViewRow, ViewCol } from '../components';
+import {
+  StocksPanel,
+  StockTrendsPanel,
+  StockDetailsPanel
+} from '../containers';
 
-class StocksWrapper extends React.Component {
+const styles = {
+  container: {
+    height: '100%',
+    width: '100%'
+  },
+  leftPanel: {
+    flex: '0.65'
+  },
+  rightPanel: {
+    flex: '0.35'
+  }
+};
+
+class Stocks extends React.Component {
   constructor(props) {
     super(props);
   }
 
   render() {
     return (
-      <div style={{ border: '2px solid cyan', height: '100%' }}>
-        <h1>Welcome to stocks view</h1>
-      </div>
+      <ViewRow style={styles.container}>
+        <ViewCol style={styles.leftPanel}>
+          <StocksPanel />
+        </ViewCol>
+        <ViewCol style={styles.rightPanel}>
+          <StockTrendsPanel />
+          <StockDetailsPanel />
+        </ViewCol>
+      </ViewRow>
     )
   }
 }
-
-const mapStateToProps = ({ Stocks }) => {
-  return {
-    testState: Stocks.tree
-  }
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({...stocksActions}, dispatch);
-};
-
-const Stocks = connect(mapStateToProps, mapDispatchToProps)(StocksWrapper);
 
 export default Stocks;
