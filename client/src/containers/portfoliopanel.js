@@ -26,17 +26,18 @@ const styles = {
     height: '100%'
   },
   tableFooter: {
+    height: '3rem',
     alignItems: 'center',
     justifyContent: 'space-between',
     borderTop: '1px solid rgba(34,36,38,.1)'
   }
 };
 
-const SummaryTable = ({ portfolios }) => {
+const SummaryTable = ({ portfolios, onCreateNew, onNewPortfolioBlur }) => {
   let totalValue = 0;
 
   for (let portfolio of portfolios) {
-    totalValue += portfolio.stocks.reduce((acc, curr) => acc += curr.purchasePrice, 0)
+    totalValue += portfolio.stocks.reduce((acc, curr) => acc += curr.currentPrice, 0)
   }
 
   return (
@@ -51,11 +52,11 @@ const SummaryTable = ({ portfolios }) => {
         </Table.Header>
 
         <Table.Body>
-          {portfolios.map(portfolio => (
-            <Table.Row>
+          {portfolios.map((portfolio, id) => (
+            <Table.Row key={id}>
               <Table.Cell>{portfolio.name}</Table.Cell>
               <Table.Cell textAlign='right'>
-                {portfolio.stocks.reduce((acc, curr) => acc += curr.purchasePrice, 0)}
+                {portfolio.stocks.reduce((acc, curr) => acc += curr.currentPrice, 0)}
               </Table.Cell>
             </Table.Row>
           ))}
@@ -64,14 +65,18 @@ const SummaryTable = ({ portfolios }) => {
 
       {/* Footer */}
       <ViewRow style={styles.tableFooter}>
-        <Button>Delete</Button>
-        <p style={{paddingRight: '1rem'}}>Value: ${totalValue}</p>
+        <p style={{paddingLeft: '1rem'}}>{portfolios.length} Portfolios</p>
+        <span>
+          <input onBlur={onNewPortfolioBlur} placeholder="Create New Portfolio"/>
+          <button onClick={onCreateNew}>Submit</button>
+        </span>
+        <p style={{paddingRight: '1rem'}}>Total Value: ${totalValue}</p>
       </ViewRow>
     </ViewCol>
   )
 };
 
-const PortfolioTable = ({ stocks }) => (
+const PortfolioTable = ({ stocks, onDelete }) => (
   <ViewCol style={styles.tableContainer}>
     {/* Table */}
     <Table striped>
@@ -86,8 +91,8 @@ const PortfolioTable = ({ stocks }) => (
       </Table.Header>
 
       <Table.Body>
-        {stocks.map(stock => (
-          <Table.Row>
+        {stocks.map((stock, id) => (
+          <Table.Row key={id}>
             <Table.Cell>{stock.ticker}</Table.Cell>
             <Table.Cell>{stock.exchange}</Table.Cell>
             <Table.Cell>{stock.numShares}</Table.Cell>
@@ -100,8 +105,8 @@ const PortfolioTable = ({ stocks }) => (
 
     {/* Footer */}
     <ViewRow style={styles.tableFooter}>
-      <Button>Delete</Button>
-      <p style={{ paddingRight: '1rem' }}>Value: ${stocks.reduce((acc, curr) => acc += curr.purchasePrice, 0)}</p>
+      <button style={{ marginLeft: '1rem' }} onClick={onDelete}>Delete</button>
+      <p style={{ paddingRight: '1rem' }}>Value: ${stocks.reduce((acc, curr) => acc += curr.currentPrice, 0)}</p>
     </ViewRow>
   </ViewCol>
 );
@@ -110,9 +115,29 @@ class PortfolioPanelWrapper extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-
+      newPortfolioName: ''
     };
+    this.handleCreateNewPortfolio = this.handleCreateNewPortfolio.bind(this);
+    this.handleNewPortfolioBlur = this.handleNewPortfolioBlur.bind(this);
+    this.handleDeletePortfolio = this.handleDeletePortfolio.bind(this);
   }
+
+  handleCreateNewPortfolio() {
+    if (this.state.newPortfolioName.length < 4) {
+      // names must be at least 4 characters long
+      return;
+    }
+    this.props.handleCreateNewPortfolio({ name: this.state.newPortfolioName })
+  }
+
+  handleNewPortfolioBlur(e) {
+    this.setState({ newPortfolioName: e.target.value });
+  }
+
+  handleDeletePortfolio(id) {
+    this.props.handleDeletePortfolio({id});
+  }
+
   render() {
     const panes = this.props.portfolios.map((port, id) => ({
       menuItem: port.name,
@@ -120,6 +145,7 @@ class PortfolioPanelWrapper extends React.Component {
         <Tab.Pane id={id} style={styles.tabPane}>
           <PortfolioTable
             stocks={port.stocks}
+            onDelete={() => this.handleDeletePortfolio(port.name)}
           />
         </Tab.Pane>
       )
@@ -129,7 +155,11 @@ class PortfolioPanelWrapper extends React.Component {
       menuItem: 'Summary',
       render: () => (
         <Tab.Pane id='summary' style={styles.tabPane}>
-          <SummaryTable portfolios={this.props.portfolios} />
+          <SummaryTable
+            portfolios={this.props.portfolios}
+            onNewPortfolioBlur={this.handleNewPortfolioBlur}
+            onCreateNew={this.handleCreateNewPortfolio}
+          />
         </Tab.Pane>
       )
     });
@@ -144,27 +174,7 @@ class PortfolioPanelWrapper extends React.Component {
 
 const mapStateToProps = ({ Portfolio }) => {
   return {
-    portfolios: [
-      {
-        name: 'port1',
-        stocks: [
-          { ticker: 'APPL', exchange: 'NASDAQ', numShares: 10, purchasePrice: 1000, currentPrice: 1800 },
-          { ticker: 'GOOGL', exchange: 'NASDAQ', numShares: 15, purchasePrice: 20000, currentPrice: 24342 },
-          { ticker: 'TSLA', exchange: 'NASDAQ', numShares: 100, purchasePrice: 4000, currentPrice: 5646 },
-          { ticker: 'PFE', exchange: 'NYSE', numShares: 131, purchasePrice: 4893, currentPrice: 3870 },
-          { ticker: 'GLAXO', exchange: 'NSE', numShares: 40, purchasePrice: 2330, currentPrice: 1970 },
-          { ticker: 'BAYN', exchange: 'ETR', numShares: 5, purchasePrice: 365, currentPrice: 605 }
-        ]
-      },
-      {
-        name: 'port2',
-        stocks: [
-          { ticker: 'BABA', exchange: 'NYSE', numShares: 40, purchasePrice: 6556, currentPrice: 8394 },
-          { ticker: 'BA', exchange: 'NYSE', numShares: 43, purchasePrice: 24141, currentPrice: 43332 },
-          { ticker: 'AMZN', exchange: 'NASDAQ', numShares: 13, purchasePrice: 44949, currentPrice: 90029 }
-        ]
-      }
-    ]
+    portfolios: Portfolio.portfolios
   }
 };
 

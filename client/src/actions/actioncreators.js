@@ -1,10 +1,14 @@
 import history from '../utils/history';
 import fetch from 'isomorphic-fetch';
 import {
+  // Login Page Actions
   HANDLE_LOGIN_SUCCESS,
   HANDLE_LOGIN_FAILURE,
   HANDLE_CREATE_ACCOUNT_SUCCESS,
   HANDLE_CREATE_ACCOUNT_FAILURE,
+  // Portfolio Page Actions
+  HANDLE_CREATE_PORTFOLIO_SUCCESS,
+  HANDLE_DELETE_PORTFOLIO_SUCCESS,
   TEST_BEAR
 } from './constants';
 
@@ -43,3 +47,32 @@ export const handleCreateNewAccount = (payload) => {
     dispatch({ type: HANDLE_CREATE_ACCOUNT_SUCCESS, payload });
   }
 };
+
+// -----------------------------------------------------------
+// Portfolio Page Actions
+// -----------------------------------------------------------
+export const handleCreateNewPortfolio = (payload) => {
+  const { name } = payload;
+
+  // TODO: add http request here
+  console.log('creating new portfolio with name: ', name);
+
+  return dispatch => {
+    dispatch({ type: HANDLE_CREATE_PORTFOLIO_SUCCESS, payload });
+  }
+};
+
+export const handleDeletePortfolio = (payload) => {
+  const { id } = payload;
+
+  // TODO: add http request here
+  console.log('deleting portfolio with id: ', id);
+
+  console.log(payload);
+  return dispatch => {
+    dispatch({ type: HANDLE_DELETE_PORTFOLIO_SUCCESS, payload });
+  }
+};
+
+
+
