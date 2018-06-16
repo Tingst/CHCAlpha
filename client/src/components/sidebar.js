@@ -89,12 +89,12 @@ export default class SideBar extends React.Component {
         />
         <SideBtn
           to="/dashboard/stocks"
-          type="ipo"
+          type="stocks"
           isActive={path.includes('stocks')}
         />
         <SideBtn
           to="/dashboard/ipo"
-          type="stocks"
+          type="ipo"
           isActive={path.includes('ipo')}
         />
         <SideBtn

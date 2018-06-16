@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Tab, Table } from 'semantic-ui-react';
+import { Table } from 'semantic-ui-react';
 import * as portfolioActions from '../actions/actioncreators';
 import { ViewRow, ViewCol } from '../components';
 
@@ -81,9 +81,9 @@ class HistoryPanelWrapper extends React.Component {
                 <Table.Cell>{order.price}</Table.Cell>
                 <Table.Cell>{order.number * order.price}</Table.Cell>
                 <Table.Cell>
-                  <button onClick={() => this.handleCancelOrder(order.id)}>
-                    X
-                  </button>
+                    <i
+                      className="times circle icon delete-button"
+                      onClick={() => this.handleCancelOrder(order.id)}/>
                 </Table.Cell>
               </Table.Row>
             ))}

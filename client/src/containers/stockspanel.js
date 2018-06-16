@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Tab, Table } from 'semantic-ui-react';
+import { Dropdown, Table } from 'semantic-ui-react';
 import * as stockActions from '../actions/actioncreators';
 import { ViewRow, ViewCol } from '../components';
 
@@ -14,25 +14,58 @@ const styles = {
     padding: '1rem',
     boxShadow: '0px 0px 5px #C1C1C1'
   },
+  header: {
+    width: '100%',
+    minHeight: '2rem',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
   table: {
 
   }
 };
 
+const ExchangeSearch = ({ selectedExchange, exchanges, onExchangeSearch }) => (
+  <Dropdown
+    button
+    className='icon'
+    floating
+    labeled
+    icon='world'
+    options={exchanges}
+    search
+    text={selectedExchange ? selectedExchange : 'Exchange'}
+    onChange={onExchangeSearch}
+  />
+);
+
+
 class StocksPanelWrapper extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      search: ''
+      search: '',
+      selectedExchange: '',
+
     };
 
     this.handleSearchKeyDown = this.handleSearchKeyDown.bind(this);
+    this.handleExchangeSearch = this.handleExchangeSearch.bind(this);
+    this.handleTableRowClick = this.handleTableRowClick.bind(this);
   }
 
   handleSearchKeyDown(e) {
     if (e.keyCode === 13) {
       this.setState({ search: e.target.value });
     }
+  }
+
+  handleExchangeSearch(e, val) {
+    this.setState({ selectedExchange: val.value });
+  }
+
+  handleTableRowClick(ticker) {
+    this.props.handleTableRowClick({ ticker });
   }
 
   render() {
@@ -45,18 +78,31 @@ class StocksPanelWrapper extends React.Component {
           || stock.companyName.toLowerCase().includes(this.state.search.toLowerCase());
       });
     }
+    if (this.state.selectedExchange !== '' && this.state.selectedExchange !== 'ALL') {
+      // filter stocks that match the selected exchange
+      stocks = stocks.filter(stock => {
+        return stock.exchange === this.state.selectedExchange;
+      });
+    }
 
     return (
       <ViewCol style={styles.container}>
 
-        <ViewRow style={{ width: '100%', justifyContent: 'flex-end' }}>
-          <ViewRow>
+        {/* Header */}
+        <ViewRow style={styles.header}>
+            <ViewRow style={{ width: '100%', alignItems: 'center' }}>
+              <h1 style={{ marginRight: '1rem' }}>Market Overview</h1>
+              <ExchangeSearch
+                selectedExchange={this.state.selectedExchange}
+                exchanges={this.props.exchanges}
+                onExchangeSearch={this.handleExchangeSearch}
+              />
+            </ViewRow>
             <input placeholder="search ticker/company" onKeyDown={this.handleSearchKeyDown} />
-          </ViewRow>
         </ViewRow>
 
-
-        <Table striped>
+        {/* Body */}
+        <Table striped selectable>
           <Table.Header>
             <Table.Row>
               <Table.HeaderCell>Symbol</Table.HeaderCell>
@@ -68,7 +114,10 @@ class StocksPanelWrapper extends React.Component {
 
           <Table.Body>
             {stocks.map((stock, id) => (
-              <Table.Row key={id}>
+              <Table.Row
+                key={id}
+                onClick={() => this.handleTableRowClick(stock.ticker)}
+              >
                 <Table.Cell>{stock.ticker}</Table.Cell>
                 <Table.Cell>{stock.companyName}</Table.Cell>
                 <Table.Cell>{stock.exchange}</Table.Cell>
@@ -84,7 +133,8 @@ class StocksPanelWrapper extends React.Component {
 
 const mapStateToProps = ({ Stocks }) => {
   return {
-    stocks: Stocks.stocks
+    stocks: Stocks.stocks,
+    exchanges: Stocks.exchanges
   }
 };
 

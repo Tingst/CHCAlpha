@@ -82,7 +82,7 @@ const PortfolioTable = ({ stocks, onDelete }) => (
     <Table striped>
       <Table.Header>
         <Table.Row>
-          <Table.HeaderCell>Ticker</Table.HeaderCell>
+          <Table.HeaderCell>Symbol</Table.HeaderCell>
           <Table.HeaderCell>Exchange</Table.HeaderCell>
           <Table.HeaderCell>No. Shares</Table.HeaderCell>
           <Table.HeaderCell>Purchase Price</Table.HeaderCell>

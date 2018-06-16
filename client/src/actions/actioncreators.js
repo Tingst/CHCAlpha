@@ -14,6 +14,7 @@ import {
   HANDLE_CANCEL_ORDER_SUCCESS,
   // Stock Page Actions
   HANDLE_TRENDS_REFRESH_SUCCESS,
+  HANDLE_GET_DETAILS_SUCCESS,
   // wtf?
   TEST_BEAR
 } from './constants';
@@ -121,6 +122,17 @@ export const handleTrendsRefreshClick = () => {
 
   return dispatch => {
     dispatch({ type: HANDLE_TRENDS_REFRESH_SUCCESS, payload });
+  }
+};
+
+export const handleTableRowClick = (payload) => {
+  const { ticker } = payload;
+
+  // TODO: add http request here to get company-specific details
+  console.log('retrieving details for ticker: ', ticker);
+
+  return dispatch => {
+    dispatch({ type: HANDLE_GET_DETAILS_SUCCESS, payload });
   }
 };
 

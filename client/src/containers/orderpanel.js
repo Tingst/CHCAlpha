@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Form } from 'semantic-ui-react';
+import { Dropdown, Form } from 'semantic-ui-react';
 import * as portfolioActions from '../actions/actioncreators';
 import { ViewRow, ViewCol } from '../components';
 
@@ -29,7 +29,7 @@ class OrderPanelWrapper extends React.Component {
 
     this.handlePortChange = this.handlePortChange.bind(this);
     this.handleRadioChange = this.handleRadioChange.bind(this);
-    this.handleTickerBlur = this.handleTickerBlur.bind(this);
+    this.handleTickerSearch = this.handleTickerSearch.bind(this);
     this.handleNumberBlur = this.handleNumberBlur.bind(this);
     this.handlePriceBlur = this.handlePriceBlur.bind(this);
     this.handlePlaceOrder = this.handlePlaceOrder.bind(this);
@@ -45,9 +45,9 @@ class OrderPanelWrapper extends React.Component {
     this.setState({ type: Number(e.target.value) });
   }
 
-  handleTickerBlur(e) {
+  handleTickerSearch(e, val) {
     // Todo: checks
-    this.setState({ ticker: e.target.value });
+    this.setState({ ticker: val.value });
   }
 
   handleNumberBlur(e) {
@@ -76,7 +76,7 @@ class OrderPanelWrapper extends React.Component {
       <ViewCol style={styles.container}>
         <h1>Buy & Sell</h1>
         <Form>
-          <ViewRow style={{marginTop: '1rem', marginBottom: '1rem'}}>
+          <ViewRow style={{alignItems: 'center', marginTop: '1rem', marginBottom: '1rem'}}>
             <Form.Field style={{ display: 'flex', width: 200 }}>
               <label style={{marginRight: '1rem'}}>Portfolio:</label>
               <select style={{ width: 100 }} onChange={this.handlePortChange}>
@@ -121,7 +121,17 @@ class OrderPanelWrapper extends React.Component {
           <ViewRow>
             <Form.Field>
               <label>Ticker Symbol</label>
-              <input placeholder="e.g. APPL" onBlur={this.handleTickerBlur} />
+              <Dropdown
+                button
+                className='icon'
+                floating
+                labeled
+                icon='world'
+                options={this.props.symbols}
+                search
+                text={this.state.ticker ? this.state.ticker : 'Symbol'}
+                onChange={this.handleTickerSearch}
+              />
             </Form.Field>
 
             <Form.Field style={{ marginLeft: '1rem' }}>
@@ -145,9 +155,10 @@ class OrderPanelWrapper extends React.Component {
   }
 }
 
-const mapStateToProps = ({ Portfolio }) => {
+const mapStateToProps = ({ Portfolio, Stocks }) => {
   return {
-    portfolios: Portfolio.portfolios
+    portfolios: Portfolio.portfolios,
+    symbols: Stocks.symbols
   }
 };
 

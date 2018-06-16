@@ -1,25 +1,55 @@
 import {
-  TEST_BEAR,
-  HANDLE_TRENDS_REFRESH_SUCCESS
+  HANDLE_TRENDS_REFRESH_SUCCESS,
+  HANDLE_GET_DETAILS_SUCCESS
 } from '../actions/constants';
 
 const initialState = {
+  // Main Stock Panel
   stocks: [
-    { ticker: 'APPL',   exchange: 'NASDAQ',  price: 100, companyName: 'Apple' },
-    { ticker: 'GOOGL',  exchange: 'NASDAQ',  price: 220, companyName: 'Alphabet' },
-    { ticker: 'TSLA',   exchange: 'NASDAQ',  price: 430, companyName: 'Tesla' },
-    { ticker: 'PFE',    exchange: 'NYSE',    price: 483, companyName: 'Pfizer' },
-    { ticker: 'GLAXO',  exchange: 'NSE',     price: 100, companyName: 'GlaxoSmithKline' },
-    { ticker: 'BAYN',   exchange: 'ETR',     price: 35,  companyName: 'Bayer' },
-    { ticker: 'BABA',   exchange: 'NYSE',    price: 56,  companyName: 'Alibaba' },
-    { ticker: 'BA',     exchange: 'NYSE',    price: 241, companyName: 'Boeing' },
-    { ticker: 'AMZN',   exchange: 'NASDAQ',  price: 449, companyName: 'Amazon' }
+    { ticker: 'APPL',   exchange: 'NASDAQ',  price: 100, industry: 'technology', companyName: 'Apple' },
+    { ticker: 'GOOGL',  exchange: 'NASDAQ',  price: 220, industry: 'technology', companyName: 'Alphabet' },
+    { ticker: 'TSLA',   exchange: 'NASDAQ',  price: 430, industry: 'automotive', companyName: 'Tesla' },
+    { ticker: 'PFE',    exchange: 'NYSE',    price: 483, industry: 'pharmaceutical', companyName: 'Pfizer' },
+    { ticker: 'GLAXO',  exchange: 'NSE',     price: 100, industry: 'pharmaceutical', companyName: 'GlaxoSmithKline' },
+    { ticker: 'BAYN',   exchange: 'ETR',     price: 35,  industry: 'pharmaceutical', companyName: 'Bayer' },
+    { ticker: 'BABA',   exchange: 'NYSE',    price: 56,  industry: 'ecommerce', companyName: 'Alibaba' },
+    { ticker: 'BA',     exchange: 'NYSE',    price: 241, industry: 'aviation', companyName: 'Boeing' },
+    { ticker: 'AMZN',   exchange: 'NASDAQ',  price: 449, industry: 'ecommerce', companyName: 'Amazon' }
   ],
-  stockTrendHighest: { ticker: 'APPL',   exchange: 'NASDAQ',  price: 100, companyName: 'Apple' },
-  stockTrendLowest: { ticker: 'GLAXO',  exchange: 'NSE',     price: 100, companyName: 'GlaxoSmithKline' },
-  stockTrendMostFrequent: { ticker: 'PFE',    exchange: 'NYSE',    price: 483, companyName: 'Pfizer' },
-  stockTrendLeastFrequent: { ticker: 'BABA',   exchange: 'NYSE',    price: 56,  companyName: 'Alibaba' },
+  exchanges: [
+    { key: 0, text: 'ALL', value: 'ALL' },
+    { key: 1, text: 'NASDAQ', value: 'NASDAQ' },
+    { key: 2, text: 'NYSE', value: 'NYSE' },
+    { key: 3, text: 'TSX', value: 'TSX' },
+    { key: 4, text: 'NIKKEI', value: 'NIKKEI' },
+    { key: 5, text: 'INDEXDJX', value: 'INDEXDJX' }
+  ],
+  symbols: [
+    { key: 1, text: 'APPL', value: 'APPL' },
+    { key: 2, text: 'GOOGL', value: 'GOOGL' },
+    { key: 3, text: 'TSLA', value: 'TSLA' },
+    { key: 4, text: 'PFE', value: 'PFE' },
+    { key: 5, text: 'GLAXO', value: 'GLAXO' },
+    { key: 6, text: 'BAYN', value: 'BAYN' },
+    { key: 7, text: 'BABA', value: 'BABA' },
+    { key: 8, text: 'BA', value: 'BA' },
+    { key: 9, text: 'AMZN', value: 'AMZN' }
+  ],
 
+  // Stock Trends
+  stockTrendHighest: { ticker: 'APPL',   exchange: 'NASDAQ',  price: 100, industry: 'technology', companyName: 'Apple' },
+  stockTrendLowest: { ticker: 'GLAXO',  exchange: 'NSE',     price: 100, industry: 'pharmaceutical', companyName: 'GlaxoSmithKline' },
+  stockTrendMostFrequent: { ticker: 'PFE',    exchange: 'NYSE',    price: 483, industry: 'pharmaceutical', companyName: 'Pfizer' },
+  stockTrendLeastFrequent: { ticker: 'BABA',   exchange: 'NYSE',    price: 56,  industry: 'technology', companyName: 'Alibaba' },
+
+  // Stock Details
+  selected: {
+    ticker: 'APPL',
+    exchange: 'NASDAQ',
+    price: 100,
+    industry: 'technology',
+    companyName: 'Apple'
+  }
 };
 
 const Stocks = (state = initialState, action) => {
@@ -32,6 +62,7 @@ const Stocks = (state = initialState, action) => {
         stockTrendMostFrequent,
         stockTrendLeastFrequent
       } = action.payload;
+
       return {
         ...state,
         stockTrendHighest,
@@ -40,6 +71,12 @@ const Stocks = (state = initialState, action) => {
         stockTrendLeastFrequent
       };
     }
+
+    case HANDLE_GET_DETAILS_SUCCESS:
+      const selected = state.stocks.find(stock => stock.ticker === action.payload.ticker);
+
+      return { ...state, selected };
+
     default: {
       return state;
     }

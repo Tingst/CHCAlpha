@@ -109,10 +109,25 @@ p {
   &.active {
     background-color: @white-3;
   }
-
-  &.inactive {
-
-  }
-
 }
 
+
+.delete-button {
+  color: @white-2;
+  transition: 0.1s;
+
+  &:hover {
+    color: @red-l;
+    transform: scale(1.25);
+  }
+}
+
+.details-subtitle {
+  color: @white-4;
+}
+
+.table-row-hoverable {
+  &:hover {
+    background-color: @white-3;
+  }
+}

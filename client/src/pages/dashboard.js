@@ -31,7 +31,7 @@ export default class DashBoard extends React.Component {
               <Route
                 exact
                 path={`${match.url}/`}
-                component={() => <Redirect to={`${match.url}/home`} />}
+                component={() => <Redirect to={`${match.url}/portfolio`} />}
               />
 
               <Route

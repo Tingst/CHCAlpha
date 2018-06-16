@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Tab, Table } from 'semantic-ui-react';
+import { Table } from 'semantic-ui-react';
 import * as portfolioActions from '../actions/actioncreators';
 import { ViewRow, ViewCol } from '../components';
 
@@ -14,8 +14,8 @@ const styles = {
     padding: '1rem',
     boxShadow: '0px 0px 5px #C1C1C1'
   },
-  table: {
-
+  tableContainer: {
+    marginTop: '1rem'
   }
 };
 
@@ -35,67 +35,65 @@ class HistoryPanelWrapper extends React.Component {
   }
 
   render() {
-    const FILTERS = [
-      'None',
-      'Buy',
-      'Sell',
-      '0-999',
-      '1000-4900',
-      '5000-9999',
-      '>10k'
-    ];
+    const {
+      ticker,
+      exchange,
+      companyName,
+      price,
+      industry
+    } = this.props.selected;
 
     return (
       <ViewCol style={styles.container}>
         <ViewRow style={{ justifyContent: 'space-between' }}>
-          <h1>Pending Orders</h1>
-          <ViewRow style={{ alignItems: 'center' }}>
-            <label style={{marginRight: '1rem'}}>Filter By:</label>
-            <select style={{ width: 100 }} onChange={this.handleFilterChange}>
-              {FILTERS.map((key, id) => (
-                <option key={id} value={key}>{key}</option>
-              ))}
-            </select>
-          </ViewRow>
+          <h1>{companyName}</h1>
+          <h1>${price}</h1>
         </ViewRow>
-        <Table striped>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>Type</Table.HeaderCell>
-              <Table.HeaderCell>Ticker</Table.HeaderCell>
-              <Table.HeaderCell>Date</Table.HeaderCell>
-              <Table.HeaderCell>#</Table.HeaderCell>
-              <Table.HeaderCell>Price</Table.HeaderCell>
-              <Table.HeaderCell>Total</Table.HeaderCell>
-              <Table.HeaderCell> </Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
 
-          <Table.Body>
-            {this.props.orders.map((order, id) => (
-              <Table.Row key={id}>
-                <Table.Cell>{order.type ? 'SELL' : 'BUY'}</Table.Cell>
-                <Table.Cell>{order.ticker}</Table.Cell>
-                <Table.Cell>{order.date}</Table.Cell>
-                <Table.Cell>{order.number}</Table.Cell>
-                <Table.Cell>{order.price}</Table.Cell>
-                <Table.Cell>{order.number * order.price}</Table.Cell>
-                <Table.Cell>
-                  <button onClick={() => this.handleCancelOrder(order.id)}>
-                    X
-                  </button>
-                </Table.Cell>
+        <ViewRow style={{ justifyContent: 'space-between' }}>
+          <p className="details-subtitle">{exchange}: {ticker}</p>
+          <p className="details-subtitle">{industry.charAt(0).toUpperCase() + industry.substr(1)}</p>
+        </ViewRow>
+
+        <ViewCol style={styles.tableContainer}>
+          <Table striped>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Type</Table.HeaderCell>
+                <Table.HeaderCell>Ticker</Table.HeaderCell>
+                <Table.HeaderCell>Date</Table.HeaderCell>
+                <Table.HeaderCell>#</Table.HeaderCell>
+                <Table.HeaderCell>Price</Table.HeaderCell>
+                <Table.HeaderCell>Total</Table.HeaderCell>
               </Table.Row>
-            ))}
-          </Table.Body>
-        </Table>
+            </Table.Header>
+
+            <Table.Body>
+              {this.props.orders
+                .filter(order => order.ticker === ticker)
+                .map((order, id) => (
+                  <Table.Row key={id}>
+                    <Table.Cell>{order.type ? 'SELL' : 'BUY'}</Table.Cell>
+                    <Table.Cell>{order.ticker}</Table.Cell>
+                    <Table.Cell>{order.date}</Table.Cell>
+                    <Table.Cell>{order.number}</Table.Cell>
+                    <Table.Cell>{order.price}</Table.Cell>
+                    <Table.Cell>{order.number * order.price}</Table.Cell>
+                  </Table.Row>
+                ))
+              }
+            </Table.Body>
+          </Table>
+        </ViewCol>
+
       </ViewCol>
     )
   }
 }
 
-const mapStateToProps = ({ Portfolio }) => {
+const mapStateToProps = ({ Stocks, Portfolio }) => {
   return {
+    selected: Stocks.selected,
     orders: Portfolio.orders
   }
 };
