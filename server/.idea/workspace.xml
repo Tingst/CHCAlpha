@@ -12,11 +12,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/cs/ubc/ca/Main.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="600">
-              <caret line="24" column="51" selection-start-line="24" selection-start-column="51" selection-end-line="24" selection-end-column="51" />
+              <caret line="24" column="18" selection-start-line="24" selection-start-column="18" selection-end-line="24" selection-end-column="18" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -24,7 +24,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RequestManager.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="RequestManager.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/cs/ubc/ca/RequestManager.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="682">
@@ -146,8 +146,8 @@
         <option value="$PROJECT_DIR$/src/cs/ubc/ca/DBCmd.java" />
         <option value="$PROJECT_DIR$/src/cs/ubc/ca/Records.java" />
         <option value="$PROJECT_DIR$/src/cs/ubc/ca/TestClass.java" />
-        <option value="$PROJECT_DIR$/src/cs/ubc/ca/Main.java" />
         <option value="$PROJECT_DIR$/src/cs/ubc/ca/RequestManager.java" />
+        <option value="$PROJECT_DIR$/src/cs/ubc/ca/Main.java" />
       </list>
     </option>
   </component>
@@ -453,6 +453,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/cs/ubc/ca/RequestManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="682">
+          <caret line="31" column="33" selection-start-line="31" selection-start-column="33" selection-end-line="31" selection-end-column="33" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/cs/ubc/ca/TestClass.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1003">
@@ -466,17 +476,7 @@
     <entry file="file://$PROJECT_DIR$/src/cs/ubc/ca/Main.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="600">
-          <caret line="24" column="51" selection-start-line="24" selection-start-column="51" selection-end-line="24" selection-end-column="51" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/cs/ubc/ca/RequestManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="682">
-          <caret line="31" column="33" selection-start-line="31" selection-start-column="33" selection-end-line="31" selection-end-column="33" />
+          <caret line="24" column="18" selection-start-line="24" selection-start-column="18" selection-end-line="24" selection-end-column="18" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

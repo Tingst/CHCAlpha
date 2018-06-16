@@ -21,8 +21,8 @@ public class Main {
                 Statement myStatement = myConnection.createStatement();
 
 
-                PriceGenerator pg = new PriceGenerator("Company");
-                pg.updateStockPrices(myConnection);
+                //PriceGenerator pg = new PriceGenerator("Company");
+                //pg.updateStockPrices(myConnection);
         }
         catch(Exception e)
         {
