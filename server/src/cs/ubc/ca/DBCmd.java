@@ -58,6 +58,23 @@ public class DBCmd {
         return true;
     }
 
+    public static Records getTradesByPortfolio(String username, String portName, Connection con) throws Exception {
+        String query = "SELECT C.ticker, abbre, num_shares, buy_price, price FROM Company C, ClosedOrder CO WHERE C.ticker=CO.ticker AND " +
+                "CO.username='" + username + "' AND p_name='" + portName + "'";
+        Statement getTradesByPort = con.createStatement();
+        ResultSet tradesByPort = getTradesByPort.executeQuery(query);
+
+        Records records = new Records();
+        while(tradesByPort.next()) {
+            records.addRecord("ticker", tradesByPort.getString("ticker"));
+            records.addRecord("abbre", tradesByPort.getString("abbre"));
+            records.addRecord("num_shares", tradesByPort.getString("num_shares"));
+            records.addRecord("buy_price", tradesByPort.getString("buy_price"));
+            records.addRecord("price", tradesByPort.getString("price"));
+        }
+        return records;
+    }
+
     public static boolean buyShares(String username, String ticker, String exchange, int numShares, String portName, Connection con) throws Exception {
 
         // Check if company is traded on the particular exchange in the company table if so pick out the record.
@@ -86,7 +103,10 @@ public class DBCmd {
         if(!insertID.next())
             return false;
 
-        buyOrder.addOrderID(insertID.getInt("last_insert_id()"));
+        int test = insertID.getInt("last_insert_id()");
+        buyOrder.addOrderID(test);
+
+        closeOrder(buyOrder, con);
 
         return true;
     }
@@ -97,9 +117,15 @@ public class DBCmd {
         return false;
     }
 
-    private static boolean closeOrder(Order order) {
+    private static boolean closeOrder(Order order, Connection con) throws Exception{
 
-        // Select all orders except for the one that we are trying to close and group by ascending order by order_time
+        // Select all opposite orders (i.e if order is buy, then we select all sell orders) and group by ascending order by order_time
+        OrderTypes oppositeType = order.getType() == OrderTypes.BUY ? OrderTypes.SELL : OrderTypes.BUY;
+        String query = "SELECT * FROM " + TRADED_ORDER_TABLE + " WHERE type=" + oppositeType + " AND to_id<>" + order.getOrderID() +
+                " AND ticker='" + order.getTicker() + "' ORDER BY order_time ASC";
+
+        Statement selectClosingCandidates = con.createStatement();
+        ResultSet closingCandidates = selectClosingCandidates.executeQuery(query);
 
         return false;
     }

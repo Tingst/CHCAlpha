@@ -43,6 +43,14 @@ public class Order {
         return -1;
     }
 
+    public OrderTypes getType() {
+        return type;
+    }
+
+    public String getTicker() {
+        return ticker;
+    }
+
     public String getTradedOrder() {
         String tradedOrder = "(" + type + ",'" + ticker + "'," + numShares + "," + price + ",'" + exchange + "'," +
                 "NOW()" + ",'" + portName + "','" + username + "')";

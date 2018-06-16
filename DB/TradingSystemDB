@@ -44,13 +44,11 @@ CREATE TABLE TradeOrder (
 	ticker CHAR(20) NOT NULL,
 	num_shares INT NOT NULL,
 	price FLOAT NOT NULL,
-	abbre CHAR(10) NOT NULL,
 	order_time DATETIME NOT NULL,
 	p_name CHAR(30),
 	username CHAR(20),
 	PRIMARY KEY(to_id),
 	FOREIGN KEY(ticker) REFERENCES Company(ticker) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY(abbre) REFERENCES Exchange(abbreviation) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY(username, p_name) REFERENCES Portfolio(username, p_name) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -59,13 +57,11 @@ CREATE TABLE ClosedOrder (
 	ticker CHAR(20) NOT NULL,
 	num_shares INT NOT NULL,
 	buy_price FLOAT NOT NULL,
-	abbre CHAR(10) NOT NULL,
 	closed_time DATETIME NOT NULL,
 	p_name CHAR(30),
 	username CHAR(20),
 	PRIMARY KEY(o_id),
 	FOREIGN KEY(ticker) REFERENCES Company(ticker) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY(abbre) REFERENCES Exchange(abbreviation) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY(username, p_name) REFERENCES Portfolio(username, p_name) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -87,11 +83,14 @@ VALUES ('Microsoft', 'Technology', 'MSFT', 98.84, 'bggoodman', 'NASDAQ');
 INSERT INTO Company (c_name, industry, ticker, price, username, abbre)
 VALUES ('Google', 'Technology', 'GOOGL', 1000, 'gHumpkins', 'NASDAQ');
 
-INSERT INTO TradeOrder (type, ticker, num_shares, price, abbre, order_time, p_name, username)
-VALUES (1, 'GOOGL', 1200, 1000, 'NASDAQ', NOW(), 'super performance equity', 'bggoodman');
+INSERT INTO TradeOrder (type, ticker, num_shares, price, order_time, p_name, username)
+VALUES (1, 'GOOGL', 1200, 1000, NOW(), 'super performance equity', 'bggoodman');
 
-INSERT INTO ClosedOrder (ticker, num_shares, buy_price, abbre, closed_time, p_name, username)
-VALUES ('GOOGL', 1200, 1001, 'NASDAQ', NOW(), 'super performance equity', 'bggoodman');
+INSERT INTO TradeOrder (type, ticker, num_shares, price, order_time, p_name, username)
+VALUES (1, 'MSFT', 100, 98.84, NOW(), 'super performance equity', 'bggoodman');
+
+INSERT INTO ClosedOrder (ticker, num_shares, buy_price, closed_time, p_name, username)
+VALUES ('GOOGL', 1200, 1001, NOW(), 'super performance equity', 'bggoodman');
 
 
 
