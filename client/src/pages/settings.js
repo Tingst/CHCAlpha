@@ -1,36 +1,34 @@
 import React from 'react';
 import {ViewCol, ViewRow } from '../components';
-import { Link } from 'react-router-dom';
+import { Button, Form } from 'semantic-ui-react';
+import * as settingsActions from '../actions/actioncreators';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 
 const styles = {
   container: {
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center'
+    height: '100%'
   },
   innerContainer: {
-    alignItems: 'center',
-    width: 350
+    padding: '1rem',
+    width: '40%'
   },
   buttonsRow: {
-    justifyContent: 'center',
     width: '100%'
   },
   title: {
-    textAlign: 'center'
   },
   inputStyle: {
+    marginTop: '1rem',
     width: 200,
   },
   okBtn: {
     width: 200,
-    height: '2rem',
-    textAlign: 'center',
     marginTop: '1rem'
   }
 };
 
-export default class Settings extends React.Component {
+class SettingsWrapper extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -50,17 +48,18 @@ export default class Settings extends React.Component {
     });
   }
 
-  handleChangePassword(newPass) {
-    this.setState({password: newPass})
-  }
-
   handleConfirmPassword(user) {
     if (user.oldpass === user.newpass) {
       window.alert("Please choose a different password!");
     } else if (user.newpass !== user.duppass) {
       window.alert("New passwords do not match!");
     }
-    this.handleChangePassword(user.newpass);
+
+    this.props.handleChangePasswordClick({
+      username: this.props.username,
+      oldPassword: user.oldpass,
+      newPassword: user.newpass
+    });
   }
 
   render() {
@@ -68,7 +67,7 @@ export default class Settings extends React.Component {
       <ViewCol style={styles.container}>
         <ViewCol style={styles.innerContainer}>
 
-          <h1 style={styles.title}>Change your password</h1><br/>
+          <h1 style={styles.title}>Change your password</h1>
 
           <input
             style={styles.inputStyle}
@@ -87,11 +86,11 @@ export default class Settings extends React.Component {
           />
 
           <ViewRow style={styles.buttonsRow}>
-            <button
+            <Button
               style={styles.okBtn}
               onClick={() => this.handleConfirmPassword(this.state)}>
-              Ok
-            </button>
+              Submit
+            </Button>
           </ViewRow>
 
         </ViewCol>
@@ -99,3 +98,17 @@ export default class Settings extends React.Component {
     )
   }
 }
+
+const mapStateToProps = ({ Login }) => {
+  return {
+    username: Login.username
+  }
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({...settingsActions}, dispatch);
+};
+
+const Settings = connect(mapStateToProps, mapDispatchToProps)(SettingsWrapper);
+
+export default Settings;

@@ -17,6 +17,8 @@ import {
   HANDLE_GET_DETAILS_SUCCESS,
   // IPO Page Actions
   HANDLE_NEW_IPO_SUCCESS,
+  // SettingsPage Actions
+  HANDLE_CHANGE_PASSWORD_SUCCESS,
   // wtf?
   TEST_BEAR
 } from './constants';
@@ -36,6 +38,8 @@ export const handleLogin = (payload) => {
 
   // TODO: add http request here
   console.log('logging in with username: ', username, ' and password: ', password);
+  payload.fname = 'tree';
+  payload.lname = 'bear';
 
   history.push('/dashboard');
 
@@ -48,7 +52,7 @@ export const handleCreateNewAccount = (payload) => {
   const { fname, lname, username, password } = payload;
 
   // TODO: add http request here
-  console.log('im clicked! ', payload);
+  console.log('creating new account! ', payload);
 
   history.push('/dashboard');
 
@@ -163,4 +167,17 @@ export const handleIpoClick = (payload) => {
   }
 };
 
+// -----------------------------------------------------------
+// IPO Page Actions
+// -----------------------------------------------------------
+export const handleChangePasswordClick = (payload) => {
+  const { username, oldPassword, newPassword } = payload;
+
+  // TODO: add http request here to change password
+  console.log('changing password for user: ', username);
+
+  return dispatch => {
+    dispatch({ type: HANDLE_CHANGE_PASSWORD_SUCCESS, payload });
+  }
+};
 
