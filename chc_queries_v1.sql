@@ -34,22 +34,24 @@ WHERE   industry = 'Technology';
 
 /*
  *  QUERY:  Division
- *  DESC:   Get the id and name of companies being traded on all exchanges
- *  RA:     AllCombos <-- π_(c_id),(c_name) (Company) X (Exchange)
- *          NotPossible <-- π_(c_id),(c_name) (AllCombos - (Company))
- *          π_(c_id),(c_name) (Company) - NotPossible
+ *  DESC:   Find portfolio titles containing successful transactions with every
+ *          company of a specified industry.
+ *  RA:     AllCompany <-- π_(c_id) [σ_(industry='Energy') (Company)]
+ *          CompanyOrder <-- π_(c_id),(p_id) [AllCompany ⋈ ClosedOrder]
+ *          AllOrderCombos <-- π_(title),(c_id),(p_id) [CompanyOrder X Portfolio]
+ *          MissingOrders <-- π_(title),(c_id),(p_id) [AllOrderCombos - CompanyOrder]
+ *          π_(title) [CompanyOrder - MissingOrders]
  */
 
-SELECT  c_id, c_name
-FROM    Company
-WHERE   NOT EXISTS
-  ((SELECT   *
-   FROM     Exchange E)
-   EXCEPT
-     (SELECT *
-     FROM   Company C
-     WHERE  C.abbreviation = E.abbreviation
-   ));
+SELECT  P.title
+FROM    Portfolio P, ClosedOrder CO
+WHERE   P.p_id = CO.p_id AND
+        NOT EXISTS (SElECT   *
+                    FROM     ClosedOrder CO)
+                    EXCEPT   (SELECT  *
+                              FROM    Company C, ClosedOrder CO
+                              WHERE   C.c_id = CO.c_id AND
+                                      C.industry = 'Energy');
 
 /*
  *  QUERY:  Aggregation I
@@ -74,33 +76,52 @@ GROUP BY  C.industry;
 
 /*
  *  QUERY:  Nested Aggregation with Group By I
- *  DESC:
+ *  DESC:   Find the industries for which their average closed transaction
+ *          price is the minimum/maximum across all industries
  */
 
-
+SELECT    C.industry, MIN(CO.buy_price)
+FROM      Company C, ClosedOrder CO
+WHERE     C.c_id = CO.c_id
+GROUP BY  C.industry
+HAVING    AVG(CO.buy_price) < (SELECT   AVG(buy_price)
+                               FROM     ClosedOrder);
 
 /*
  *  QUERY:  Nested Aggregation with Group By II
- *  DESC:
+ *  DESC:   Find the total value of all portfolios which have at least
+ *          5 closed orders
  */
 
+SELECT    SUM(purchase_value) AS Total
+FROM      Portfolio P, ClosedOrder C
+WHERE     P.p_id = C.p_id
+HAVING    5 < (SELECT   COUNT(c_id)
+               FROM     ClosedOrder);
 
 /*
  *  QUERY:  Delete operation with Cascading
- *  DESC:
+ *  DESC:   Remove a specified company from an exchange, and all associated
+ *          recorded orders
  */
+
+DELETE FROM   Company
+WHERE         c_name='Enron' AND industry='Energy';
 
 /*
  *  QUERY:  Delete operation without Cascading
- *  DESC:
+ *  DESC:   Remove all buy orders issued with a price higher than
+ *          $1000
  */
+
+DELETE FROM   TradeOrder
+WHERE         type=0 AND price > 1000;
 
 /*
  *  QUERY:  Update operation
- *  DESC:
+ *  DESC:   Change the password of an user account via the Settings interface
  */
 
-/*
- *  QUERY:
- *  DESC:
- */
+ALTER TABLE Account
+ADD CONSTRAINT ck_alphanumeric
+  CHECK (password NOT LIKE '%[^A-Z0-9]%');
