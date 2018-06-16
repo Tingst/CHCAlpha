@@ -15,6 +15,8 @@ import {
   // Stock Page Actions
   HANDLE_TRENDS_REFRESH_SUCCESS,
   HANDLE_GET_DETAILS_SUCCESS,
+  // IPO Page Actions
+  HANDLE_NEW_IPO_SUCCESS,
   // wtf?
   TEST_BEAR
 } from './constants';
@@ -136,6 +138,29 @@ export const handleTableRowClick = (payload) => {
   }
 };
 
+// -----------------------------------------------------------
+// IPO Page Actions
+// -----------------------------------------------------------
+export const handleIpoClick = (payload) => {
+  const {
+    name,
+    industry,
+    ticker,
+    price,
+    numShares,
+    portfolio,
+    exchange,
+  } = payload;
 
+  console.table(payload);
+
+  // TODO: add http request here
+  console.log(`issuing ${numShares} new shares at $${price}/share for company: `, name, ticker);
+  payload.currentPrice = price + 20;
+
+  return dispatch => {
+    dispatch({ type: HANDLE_NEW_IPO_SUCCESS, payload });
+  }
+};
 
 

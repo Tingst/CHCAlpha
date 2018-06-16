@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import { Button, Tab, Table } from 'semantic-ui-react';
+import { Tab, Table } from 'semantic-ui-react';
 import { ViewRow, ViewCol } from '../components';
 import * as portfolioActions from '../actions/actioncreators';
 
@@ -56,7 +56,7 @@ const SummaryTable = ({ portfolios, onCreateNew, onNewPortfolioBlur }) => {
             <Table.Row key={id}>
               <Table.Cell>{portfolio.name}</Table.Cell>
               <Table.Cell textAlign='right'>
-                {portfolio.stocks.reduce((acc, curr) => acc += curr.currentPrice, 0)}
+                {portfolio.stocks.reduce((acc, curr) => acc += curr.currentPrice, 0).toFixed(2)}
               </Table.Cell>
             </Table.Row>
           ))}
@@ -70,7 +70,7 @@ const SummaryTable = ({ portfolios, onCreateNew, onNewPortfolioBlur }) => {
           <input onBlur={onNewPortfolioBlur} placeholder="Create New Portfolio"/>
           <button onClick={onCreateNew}>Submit</button>
         </span>
-        <p style={{paddingRight: '1rem'}}>Total Value: ${totalValue}</p>
+        <p style={{paddingRight: '1rem'}}>Total Value: ${totalValue.toFixed(2)}</p>
       </ViewRow>
     </ViewCol>
   )
@@ -84,9 +84,10 @@ const PortfolioTable = ({ stocks, onDelete }) => (
         <Table.Row>
           <Table.HeaderCell>Symbol</Table.HeaderCell>
           <Table.HeaderCell>Exchange</Table.HeaderCell>
-          <Table.HeaderCell>No. Shares</Table.HeaderCell>
-          <Table.HeaderCell>Purchase Price</Table.HeaderCell>
-          <Table.HeaderCell>Current Value</Table.HeaderCell>
+          <Table.HeaderCell textAlign='right'>No. Shares</Table.HeaderCell>
+          <Table.HeaderCell textAlign='right'>Buy</Table.HeaderCell>
+          <Table.HeaderCell textAlign='right'>Current Price</Table.HeaderCell>
+          <Table.HeaderCell textAlign='right'>Value</Table.HeaderCell>
         </Table.Row>
       </Table.Header>
 
@@ -95,9 +96,14 @@ const PortfolioTable = ({ stocks, onDelete }) => (
           <Table.Row key={id}>
             <Table.Cell>{stock.ticker}</Table.Cell>
             <Table.Cell>{stock.exchange}</Table.Cell>
-            <Table.Cell>{stock.numShares}</Table.Cell>
-            <Table.Cell>{stock.purchasePrice}</Table.Cell>
-            <Table.Cell>{stock.currentPrice}</Table.Cell>
+            <Table.Cell textAlign='right'>{stock.numShares}</Table.Cell>
+            <Table.Cell textAlign='right'>{(stock.purchasePrice / stock.numShares).toFixed(2)}</Table.Cell>
+            <Table.Cell
+              textAlign='right'
+              className={(stock.currentPrice > stock.purchasePrice) ? 'profit' : 'loss'}>
+              {(stock.currentPrice / stock.numShares).toFixed(2)}
+              </Table.Cell>
+            <Table.Cell textAlign='right'>{stock.currentPrice.toFixed(2)}</Table.Cell>
           </Table.Row>
         ))}
       </Table.Body>
@@ -106,7 +112,9 @@ const PortfolioTable = ({ stocks, onDelete }) => (
     {/* Footer */}
     <ViewRow style={styles.tableFooter}>
       <button style={{ marginLeft: '1rem' }} onClick={onDelete}>Delete</button>
-      <p style={{ paddingRight: '1rem' }}>Value: ${stocks.reduce((acc, curr) => acc += curr.currentPrice, 0)}</p>
+      <p style={{ paddingRight: '1rem' }}>
+        Total Value: ${stocks.reduce((acc, curr) => acc += curr.currentPrice, 0).toFixed(2)}
+      </p>
     </ViewRow>
   </ViewCol>
 );

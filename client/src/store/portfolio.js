@@ -2,11 +2,13 @@ import {
   HANDLE_CREATE_PORTFOLIO_SUCCESS,
   HANDLE_DELETE_PORTFOLIO_SUCCESS,
   HANDLE_ORDER_SUCCESS,
-  HANDLE_CANCEL_ORDER_SUCCESS
+  HANDLE_CANCEL_ORDER_SUCCESS,
+
+  // from IPO actions
+  HANDLE_NEW_IPO_SUCCESS
 } from '../actions/constants';
 
 const initialState = {
-  tree: 'bear',
   portfolios: [
     {
       name: 'port1',
@@ -77,6 +79,28 @@ const Portfolio = (state = initialState, action) => {
         ...state,
         orders: newOrders
       };
+    }
+
+    case HANDLE_NEW_IPO_SUCCESS: {
+      // assign IPO shares to owner
+      const newStock = {
+        ticker: action.payload.ticker,
+        exchange: action.payload.exchange,
+        numShares: action.payload.numShares,
+        purchasePrice: action.payload.price,
+        currentPrice: action.payload.currentPrice
+      };
+
+      const newPortfolio = { ...state.portfolios.find(port => port.name === action.payload.portfolio)};
+      newPortfolio.stocks.push(newStock);
+
+      return {
+        ...state,
+        portfolios: [
+          ...state.portfolios.filter(port => port.name !== action.payload.portfolio),
+          newPortfolio
+        ]
+      }
     }
 
     default: {

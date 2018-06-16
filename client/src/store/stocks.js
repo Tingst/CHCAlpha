@@ -1,6 +1,9 @@
 import {
   HANDLE_TRENDS_REFRESH_SUCCESS,
-  HANDLE_GET_DETAILS_SUCCESS
+  HANDLE_GET_DETAILS_SUCCESS,
+
+  // from IPO actions
+  HANDLE_NEW_IPO_SUCCESS
 } from '../actions/constants';
 
 const initialState = {
@@ -72,10 +75,26 @@ const Stocks = (state = initialState, action) => {
       };
     }
 
-    case HANDLE_GET_DETAILS_SUCCESS:
+    case HANDLE_GET_DETAILS_SUCCESS: {
       const selected = state.stocks.find(stock => stock.ticker === action.payload.ticker);
 
       return { ...state, selected };
+    }
+
+    case HANDLE_NEW_IPO_SUCCESS: {
+      const newStock = {
+        ticker: action.payload.ticker,
+        exchange: action.payload.exchange,
+        price: action.payload.price,
+        industry: action.payload.industry,
+        companyName: action.payload.name
+      };
+
+      return {
+        ...state,
+        stocks: [ ...state.stocks, newStock ]
+      };
+    }
 
     default: {
       return state;

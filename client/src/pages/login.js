@@ -1,25 +1,59 @@
 import React from 'react';
 import { ViewCol, ViewRow } from '../components';
 import {connect} from 'react-redux';
+import { Button, Form } from 'semantic-ui-react';
 import * as loginActions from '../actions/actioncreators';
 import { bindActionCreators } from 'redux';
 
 const styles = {
   container: {
+    position: 'relative',
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center'
   },
+  canvas: {
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+    backgroundColor: '#e7f3fb',
+  },
   innerContainer: {
     alignItems: 'center',
-    width: 350
+    width: 350,
+    height: 400,
+    zIndex: 99
   },
-  buttonsRow: {
-    justifyContent: 'center',
-    width: '100%'
+  buttonsGroup: {
+    marginBottom: '1rem'
+  },
+  buttonLogin: isActive => {
+    return {
+      color: '#FFFFFF',
+      backgroundColor: isActive ? '#25dab9' : '#b0b0b0'
+    }
+  },
+  buttonCreate: isActive => {
+    return {
+      color: '#FFFFFF',
+      backgroundColor: isActive ? '#3981c1' : '#b0b0b0'
+    }
+  },
+  buttonLoginAction: {
+    marginTop: '1rem',
+    color: '#FFFFFF',
+    backgroundColor: '#25dab9'
+  },
+  buttonCreateAction: {
+    marginTop: '1rem',
+    color: '#FFFFFF',
+    backgroundColor: '#3981c1'
   },
   title: {
-    textAlign: 'center'
+    textAlign: 'center',
+    fontWeight: 700,
+    fontSize: 36,
+    marginBottom: '1rem'
   },
   loginPanel: {
     alignItems: 'center',
@@ -30,56 +64,60 @@ const styles = {
     width: 350
   },
   inputStyle: {
-    width: 200,
+    width: '100%',
   },
   buttonStyle: {
     marginTop: '1rem',
     width: 100
-  },
-  loginBtn: {
-    width: 200,
-    height: '2rem',
-    textAlign: 'center',
-    marginTop: '1rem'
-  },
-  createBtn: {
-    width: 200,
-    height: '2rem',
-    textAlign: 'center',
-    marginTop: '1rem'
   }
 };
 
 const LoginPanel = ({ onPasswordBlur, onUsernameBlur }) => (
-  <ViewCol>
-    <input style={styles.inputStyle} placeholder="username" onBlur={onUsernameBlur} />
-    <input style={styles.inputStyle} placeholder="password" onBlur={onPasswordBlur} />
-  </ViewCol>
+    <Form style={{ width: 288 }}>
+      <Form.Field style={{ display: 'flex' }}>
+      <input style={styles.inputStyle} placeholder="username" onBlur={onUsernameBlur} />
+      </Form.Field>
+
+      <Form.Field style={{ display: 'flex' }}>
+        <input style={styles.inputStyle} placeholder="password" onBlur={onPasswordBlur} />
+      </Form.Field>
+    </Form>
 );
 
 const CreateAccountPanel = ({ onCreateInputBlur }) => (
-  <ViewCol>
-    <input
-      style={styles.inputStyle}
-      placeholder="first name"
-      onBlur={e => onCreateInputBlur('newFname', e)}
-    />
-    <input
-      style={styles.inputStyle}
-      placeholder="last name"
-      onBlur={e => onCreateInputBlur('newLname', e)}
-    />
-    <input
-      style={styles.inputStyle}
-      placeholder="username"
-      onBlur={e => onCreateInputBlur('newUsername', e)}
-    />
-    <input
-      style={styles.inputStyle}
-      placeholder="password"
-      onBlur={e => onCreateInputBlur('newPassword', e)}
-    />
-  </ViewCol>
+    <Form style={{ width: 288 }}>
+      <Form.Field style={{ display: 'flex' }}>
+        <input
+          style={styles.inputStyle}
+          placeholder="first name"
+          onBlur={e => onCreateInputBlur('newFname', e)}
+        />
+      </Form.Field>
+
+      <Form.Field style={{ display: 'flex' }}>
+        <input
+          style={styles.inputStyle}
+          placeholder="last name"
+          onBlur={e => onCreateInputBlur('newLname', e)}
+        />
+      </Form.Field>
+
+      <Form.Field style={{ display: 'flex' }}>
+        <input
+          style={styles.inputStyle}
+          placeholder="username"
+          onBlur={e => onCreateInputBlur('newUsername', e)}
+        />
+      </Form.Field>
+
+      <Form.Field style={{ display: 'flex' }}>
+        <input
+          style={styles.inputStyle}
+          placeholder="password"
+          onBlur={e => onCreateInputBlur('newPassword', e)}
+        />
+      </Form.Field>
+    </Form>
 );
 
 class LoginWrapper extends React.Component {
@@ -89,7 +127,7 @@ class LoginWrapper extends React.Component {
       // login state
       username: '',
       password: '',
-      isCreate: true,
+      isCreate: false,
 
       // create account state
       newFname: '',
@@ -141,24 +179,28 @@ class LoginWrapper extends React.Component {
   render() {
     return (
       <ViewCol style={styles.container}>
+
+        <canvas style={styles.canvas} />
+
         <ViewCol style={styles.innerContainer}>
 
-          <h1 style={styles.title}>CPSC 304 Project</h1>
+          <h1 style={styles.title}>CHC Alpha</h1>
 
-          <ViewRow style={styles.buttonsRow}>
-            <button
-              disabled={!this.state.isCreate}
-              style={styles.buttonStyle}
+          <Button.Group style={styles.buttonsGroup}>
+            <Button
+              className="login-btn"
+              style={styles.buttonLogin(!this.state.isCreate)}
               onClick={() => this.handleSwitchPanel(this.state.isCreate)}>
               Login
-            </button>
-            <button
-              disabled={this.state.isCreate}
-              style={styles.buttonStyle}
+            </Button>
+            <Button.Or />
+            <Button
+              className="login-btn"
+              style={styles.buttonCreate(this.state.isCreate)}
               onClick={() => this.handleSwitchPanel(this.state.isCreate)}>
-              Create
-            </button>
-          </ViewRow>
+              Create New Account
+            </Button>
+          </Button.Group>
 
           {!this.state.isCreate && <LoginPanel
             onUsernameBlur={this.handleUsernameBlur}
@@ -173,17 +215,17 @@ class LoginWrapper extends React.Component {
             onSwitchPanel={this.handleSwitchPanel}
           />}
 
-          {!this.state.isCreate && <button
-            style={styles.loginBtn}
+          {!this.state.isCreate && <Button
+            style={styles.buttonLoginAction}
             onClick={this.handleLogin}>
             Login
-          </button>}
+          </Button>}
 
-          {this.state.isCreate && <button
-            style={styles.createBtn}
+          {this.state.isCreate && <Button
+            style={styles.buttonCreateAction}
             onClick={this.handleCreateClick}>
             Create Account & Login
-          </button>}
+          </Button>}
 
         </ViewCol>
       </ViewCol>
