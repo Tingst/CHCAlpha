@@ -55,10 +55,17 @@ export default class Settings extends React.Component {
   }
 
   handleConfirmPassword(user) {
+    let alphaNumericRegex = RegExp('^[a-zA-Z0-9]*$');
+
+    if (!alphaNumericRegex.test(user.oldpass) || !alphaNumericRegex.test(user.newpass) ||
+        !alphaNumericRegex.test(user.duppass)) {
+      window.alert("Passwords must not contain any special characters");
+    }
+
     if (user.oldpass === user.newpass) {
-      window.alert("Please choose a different password!");
+      window.alert("Please choose a different password");
     } else if (user.newpass !== user.duppass) {
-      window.alert("New passwords do not match!");
+      window.alert("New passwords do not match");
     }
     this.handleChangePassword(user.newpass);
   }
