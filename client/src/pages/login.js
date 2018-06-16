@@ -1,5 +1,6 @@
 import React from 'react';
-import { ViewCol, ViewRow } from '../components';
+import Particles from 'react-particles-js';
+import { ViewCol } from '../components';
 import {connect} from 'react-redux';
 import { Button, Form } from 'semantic-ui-react';
 import * as loginActions from '../actions/actioncreators';
@@ -14,9 +15,11 @@ const styles = {
   },
   canvas: {
     position: 'absolute',
+    left: 0,
+    top: 0,
     height: '100%',
     width: '100%',
-    backgroundColor: '#e7f3fb',
+    backgroundColor: '#374255',
   },
   innerContainer: {
     alignItems: 'center',
@@ -50,6 +53,7 @@ const styles = {
     backgroundColor: '#3981c1'
   },
   title: {
+    color: '#FFFFFF',
     textAlign: 'center',
     fontWeight: 700,
     fontSize: 36,
@@ -180,8 +184,20 @@ class LoginWrapper extends React.Component {
     return (
       <ViewCol style={styles.container}>
 
-        <canvas style={styles.canvas} />
-
+        <Particles
+          style={styles.canvas}
+          params={{
+            particles: {
+              line_linked: {
+                shadow: {
+                  enable: true,
+                  color: "#3CA9D1",
+                  blur: 5
+                }
+              }
+            }
+          }}
+        />
         <ViewCol style={styles.innerContainer}>
 
           <h1 style={styles.title}>CHC Alpha</h1>
