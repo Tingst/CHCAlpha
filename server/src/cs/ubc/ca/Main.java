@@ -28,8 +28,18 @@ public class Main {
 //                    System.out.println("Company Name: " + myResultSet.getString("c_name") + "P");
 //                }
 
-                PriceGenerator pg = new PriceGenerator();
-                pg.updateStockPrices(myConnection);
+//                PriceGenerator pg = new PriceGenerator("Company");
+//                pg.updateStockPrices(myConnection);
+
+
+//                System.out.println(DBCmd.login("bggoodman", "133", myConnection));
+//            System.out.println(DBCmd.createAccount("bearb", "133", "Edwin", "Chen", myConnection));
+//            System.out.println(DBCmd.createPortfolio("bggoodman", "super performance tech equity", myConnection));
+
+
+            System.out.println(DBCmd.buyShares("bggoodman", "MSFT", "NASDAQ", 100, "super performance equity", myConnection));
+
+
 
         }
         catch(Exception e)

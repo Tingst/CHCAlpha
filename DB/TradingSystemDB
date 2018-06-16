@@ -19,24 +19,22 @@ CREATE TABLE Account (
 
 /* We will do the portfolio purchased price on the fly by joining the Portfolio table with the ClosedOrder table*/
 CREATE TABLE Portfolio (
-	p_id INT AUTO_INCREMENT,
 	p_name CHAR(30),
 	username CHAR(20) NOT NULL,
-	PRIMARY KEY(p_id),
+	PRIMARY KEY(username, p_name),
 	FOREIGN KEY(username) REFERENCES Account(username) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Company (
-	c_id INT AUTO_INCREMENT, 
+	ticker CHAR(20),
 	c_name CHAR(255), 
 	industry CHAR(20),
-	ticker CHAR(20) UNIQUE,
 	price FLOAT,
 	username CHAR(20) NOT NULL,
 	abbre CHAR(10),
 	FOREIGN KEY(username) REFERENCES Account(username) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY(abbre) REFERENCES Exchange(abbreviation) ON DELETE CASCADE ON UPDATE CASCADE,
-	PRIMARY KEY(c_id)
+	PRIMARY KEY(ticker)
 );
 
 /* 0 for buy 1 for sell (Order is a keyword so cannot be used as the table name)*/
@@ -48,11 +46,12 @@ CREATE TABLE TradeOrder (
 	price FLOAT NOT NULL,
 	abbre CHAR(10) NOT NULL,
 	order_time DATETIME NOT NULL,
-	p_id INT,
+	p_name CHAR(30),
+	username CHAR(20),
 	PRIMARY KEY(to_id),
 	FOREIGN KEY(ticker) REFERENCES Company(ticker) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY(abbre) REFERENCES Exchange(abbreviation) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY(p_id) REFERENCES Portfolio(p_id) ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY(username, p_name) REFERENCES Portfolio(username, p_name) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE ClosedOrder (
@@ -62,11 +61,12 @@ CREATE TABLE ClosedOrder (
 	buy_price FLOAT NOT NULL,
 	abbre CHAR(10) NOT NULL,
 	closed_time DATETIME NOT NULL,
-	p_id INT,
+	p_name CHAR(30),
+	username CHAR(20),
 	PRIMARY KEY(o_id),
 	FOREIGN KEY(ticker) REFERENCES Company(ticker) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY(abbre) REFERENCES Exchange(abbreviation) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY(p_id) REFERENCES Portfolio(p_id) ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY(username, p_name) REFERENCES Portfolio(username, p_name) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 INSERT INTO Account(username, first_name, last_name, password)
@@ -87,11 +87,11 @@ VALUES ('Microsoft', 'Technology', 'MSFT', 98.84, 'bggoodman', 'NASDAQ');
 INSERT INTO Company (c_name, industry, ticker, price, username, abbre)
 VALUES ('Google', 'Technology', 'GOOGL', 1000, 'gHumpkins', 'NASDAQ');
 
-INSERT INTO TradeOrder (type, ticker, num_shares, price, abbre, order_time, p_id)
-VALUES (0, 'GOOGL', 1200, 1000, 'NASDAQ', NOW(), 1);
+INSERT INTO TradeOrder (type, ticker, num_shares, price, abbre, order_time, p_name, username)
+VALUES (1, 'GOOGL', 1200, 1000, 'NASDAQ', NOW(), 'super performance equity', 'bggoodman');
 
-INSERT INTO ClosedOrder (ticker, num_shares, buy_price, abbre, closed_time, p_id)
-VALUES ('GOOGL', 1200, 1001, 'NASDAQ', NOW(), 1);
+INSERT INTO ClosedOrder (ticker, num_shares, buy_price, abbre, closed_time, p_name, username)
+VALUES ('GOOGL', 1200, 1001, 'NASDAQ', NOW(), 'super performance equity', 'bggoodman');
 
 
 
