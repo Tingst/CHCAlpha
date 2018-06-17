@@ -79,11 +79,20 @@ const styles = {
 const LoginPanel = ({ onPasswordBlur, onUsernameBlur }) => (
     <Form style={{ width: 288 }}>
       <Form.Field style={{ display: 'flex' }}>
-      <input style={styles.inputStyle} placeholder="username" onBlur={onUsernameBlur} />
+      <input
+        style={styles.inputStyle}
+        placeholder="username"
+        onBlur={onUsernameBlur}
+      />
       </Form.Field>
 
       <Form.Field style={{ display: 'flex' }}>
-        <input style={styles.inputStyle} placeholder="password" onBlur={onPasswordBlur} />
+        <input
+          type="password"
+          style={styles.inputStyle}
+          placeholder="password"
+          onBlur={onPasswordBlur}
+        />
       </Form.Field>
     </Form>
 );
@@ -116,6 +125,7 @@ const CreateAccountPanel = ({ onCreateInputBlur }) => (
 
       <Form.Field style={{ display: 'flex' }}>
         <input
+          type="password"
           style={styles.inputStyle}
           placeholder="password"
           onBlur={e => onCreateInputBlur('newPassword', e)}
@@ -123,6 +133,27 @@ const CreateAccountPanel = ({ onCreateInputBlur }) => (
       </Form.Field>
     </Form>
 );
+
+class ParticleBackground extends React.PureComponent {
+  render() {
+    return (
+      <Particles
+        style={styles.canvas}
+        params={{
+          particles: {
+            line_linked: {
+              shadow: {
+                enable: true,
+                color: "#3CA9D1",
+                blur: 5
+              }
+            }
+          }
+        }}
+      />
+    )
+  }
+}
 
 class LoginWrapper extends React.Component {
   constructor(props) {
@@ -177,27 +208,15 @@ class LoginWrapper extends React.Component {
   }
 
   handleSwitchPanel(isCreate) {
-    this.setState({ isCreate: !isCreate });
+    this.setState({ isCreate });
   }
 
   render() {
     return (
       <ViewCol style={styles.container}>
 
-        <Particles
-          style={styles.canvas}
-          params={{
-            particles: {
-              line_linked: {
-                shadow: {
-                  enable: true,
-                  color: "#3CA9D1",
-                  blur: 5
-                }
-              }
-            }
-          }}
-        />
+        <ParticleBackground />
+
         <ViewCol style={styles.innerContainer}>
 
           <h1 style={styles.title}>CHC Alpha</h1>
@@ -206,14 +225,14 @@ class LoginWrapper extends React.Component {
             <Button
               className="login-btn"
               style={styles.buttonLogin(!this.state.isCreate)}
-              onClick={() => this.handleSwitchPanel(this.state.isCreate)}>
+              onClick={() => this.handleSwitchPanel(false)}>
               Login
             </Button>
             <Button.Or />
             <Button
               className="login-btn"
               style={styles.buttonCreate(this.state.isCreate)}
-              onClick={() => this.handleSwitchPanel(this.state.isCreate)}>
+              onClick={() => this.handleSwitchPanel(true)}>
               Create New Account
             </Button>
           </Button.Group>

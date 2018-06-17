@@ -9,9 +9,6 @@ import java.io.InputStreamReader;
 
 public class API {
 
-    public API() {
-    }
-
     public static JSONObject login(HttpExchange t) {
         // Extract JSON from Request Body
         // NOTE: You MUST include this outer if-statement! Otherwise,
@@ -19,7 +16,6 @@ public class API {
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
             // TODO: do something with login credentials
-            System.out.println(json);
         }
 
         // TODO: build response
@@ -250,7 +246,10 @@ public class API {
 
         try {
             JSONParser parser = new JSONParser();
-            return (JSONObject) parser.parse(body);
+            JSONObject result = (JSONObject) parser.parse(body);
+            System.out.print(result);
+            System.out.println();
+            return result;
         }
         catch(Exception e) {
             System.out.println(e.getMessage());

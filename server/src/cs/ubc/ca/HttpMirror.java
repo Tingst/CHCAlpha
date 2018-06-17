@@ -10,7 +10,6 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 public class HttpMirror {
 
@@ -51,6 +50,15 @@ public class HttpMirror {
             responseHeaders.add("Access-Control-Allow-Origin", "*");
             responseHeaders.add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE");
             responseHeaders.add("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization");
+
+            if (t.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+                System.out.println("[" + t.getRequestMethod() + "] " + "Preflight Request");
+            }
+
+            // Logging
+            if (!t.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+                System.out.print("[" + t.getRequestMethod() + "] " + "/" + this.endpoint + " ");
+            }
 
             // Delegate to appropriate API endpoint
             JSONObject jsonBuilder;
@@ -108,10 +116,13 @@ public class HttpMirror {
                 return;
             }
 
-            System.out.println("json is " + jsonBuilder.get("body"));
-
             // Convert to JSON string
             String json = jsonBuilder.toString();
+
+            // Logging
+            if (!t.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+                System.out.println("[RESPONSE] " + json);
+            }
 
             // Finish Response
             t.sendResponseHeaders((int)jsonBuilder.get("code"), json.length());
