@@ -26,6 +26,11 @@ class HistoryPanelWrapper extends React.Component {
     this.handleCancelOrder = this.handleCancelOrder.bind(this);
   }
 
+  componentDidMount() {
+    // retrieve all current orders for this user
+    this.props.handleGetOrders({ username: this.props.username});
+  }
+
   handleFilterChange(e) {
     console.log(e.target.value);
   }

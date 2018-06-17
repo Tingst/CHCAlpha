@@ -10,207 +10,208 @@ import java.io.InputStreamReader;
 public class API {
 
     public static JSONObject login(HttpExchange t) {
-        // Extract JSON from Request Body
-        // NOTE: You MUST include this outer if-statement! Otherwise,
-        // the server will fail the request!
+        JSONObject result = new JSONObject();
+
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
-            // TODO: do something with login credentials
+
+            // TODO: build response
+            //result = DBCmd.login(
+            // json.get("username"),
+            // json.get("password")
+            // );
         }
 
-        // TODO: build response
-        // Assemble JSON Response; ignore the "Unchecked call" warnings
-        JSONObject body = new JSONObject();
-        JSONObject jsonBuilder = new JSONObject();
-        body.put("PIGGY", "BEAR");
-        body.put("HALLOOOO", "PEOPLE");
-        body.put("MANY WOWS", "WOWOWOW");
-        jsonBuilder.put("code", 200);
-        jsonBuilder.put("body", body);
-
-        return jsonBuilder;
+        result.put("code", 200);
+        return result;
     }
 
     public static JSONObject create(HttpExchange t) {
-        // Extract JSON from Request Body
-        // NOTE: You MUST include this outer if-statement! Otherwise,
-        // the server will fail the request!
+        JSONObject result = new JSONObject();
+
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
-            // TODO: do something with create details
-            System.out.println(json);
+
+            // TODO: build response
+            //result = DBCmd.createAccount(
+            // json.get("username"),
+            // json.get("password"),
+            // json.get("fname"),
+            // json.get("lname")
+            // );
         }
 
-        // Assemble JSON Response; ignore the "Unchecked call" warnings
-        // TODO: build response
-        JSONObject body = new JSONObject();
-        JSONObject jsonBuilder = new JSONObject();
-        body.put("PIGGY", "BEAR");
-        jsonBuilder.put("code", 200);
-        jsonBuilder.put("body", body);
-
-        return jsonBuilder;
+        result.put("code", 200);
+        return result;
     }
 
     public static JSONObject createPortfolio(HttpExchange t) {
-        // Extract JSON from Request Body
-        // NOTE: You MUST include this outer if-statement! Otherwise,
-        // the server will fail the request!
+        JSONObject result = new JSONObject();
+
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
-            // TODO: do something with create portfolio details
-            System.out.println(json);
+
+            // TODO: build response
+            //result = DBCmd.createPortfolio(
+            // json.get("username"),
+            // json.get("name")
+            // );
         }
 
-        // Assemble JSON Response; ignore the "Unchecked call" warnings
-        // TODO: build response
-        JSONObject body = new JSONObject();
-        JSONObject jsonBuilder = new JSONObject();
-        body.put("message", "created portfolio");
-        jsonBuilder.put("code", 200);
-        jsonBuilder.put("body", body);
-
-        return jsonBuilder;
+        result.put("code", 200);
+        return result;
     }
 
     public static JSONObject deletePortfolio(HttpExchange t) {
-        // Extract JSON from Request Body
-        // NOTE: You MUST include this outer if-statement! Otherwise,
-        // the server will fail the request!
+        JSONObject result = new JSONObject();
+
         if (t.getRequestMethod().equalsIgnoreCase("DELETE")) {
             JSONObject json = parseBody(t);
-            // TODO: do something with deleting portfolio
-            System.out.println(json);
+
+            // TODO: build response
+            //result = DBCmd.deletePortfolio(
+            // json.get("username"),
+            // json.get("name")
+            // );
         }
 
-        // Assemble JSON Response; ignore the "Unchecked call" warnings
-        // TODO: build response
-        JSONObject body = new JSONObject();
-        JSONObject jsonBuilder = new JSONObject();
-        body.put("message", "deleted portfolio");
-        jsonBuilder.put("code", 200);
-        jsonBuilder.put("body", body);
+        result.put("code", 200);
+        return result;
+    }
 
-        return jsonBuilder;
+    public static JSONObject getOrders(HttpExchange t) {
+        JSONObject result = new JSONObject();
+
+        if (t.getRequestMethod().equalsIgnoreCase("POST")) {
+            JSONObject json = parseBody(t);
+
+            // TODO: build function, build response
+            // TODO: username value of "*" means get ALL orders
+            //result = DBCmd.getOrder(
+            // json.get("username")
+            // );
+        }
+
+        result.put("code", 200);
+        return result;
     }
 
     public static JSONObject placeOrder(HttpExchange t) {
-        // Extract JSON from Request Body
-        // NOTE: You MUST include this outer if-statement! Otherwise,
-        // the server will fail the request!
+        JSONObject result = new JSONObject();
+
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
-            // TODO: do something with placing orders
-            System.out.println(json);
+
+            // TODO: build response
+            // TODO: can we do this without passing in argument exchange?
+            //result = DBCmd.executeOrder(
+            // json.get("type"),
+            // json.get("username"),
+            // json.get("ticker"),
+            // json.get("exchange"),
+            // json.get("numShares"),
+            // json.get("name")
+            // );
         }
 
-        // Assemble JSON Response; ignore the "Unchecked call" warnings
-        // TODO: build response
-        JSONObject body = new JSONObject();
-        JSONObject jsonBuilder = new JSONObject();
-        body.put("message", "placed order");
-        jsonBuilder.put("code", 200);
-        jsonBuilder.put("body", body);
-
-        return jsonBuilder;
+        result.put("code", 200);
+        return result;
     }
 
     public static JSONObject cancelOrder(HttpExchange t) {
-        // Extract JSON from Request Body
-        // NOTE: You MUST include this outer if-statement! Otherwise,
-        // the server will fail the request!
+        JSONObject result = new JSONObject();
+
         if (t.getRequestMethod().equalsIgnoreCase("DELETE")) {
             JSONObject json = parseBody(t);
-            // TODO: do something with cancelling order
-            System.out.println(json);
+
+            // TODO: build response
+            //result = DBCmd.deletePendingOrder(
+            // json.get("id")
+            // );
         }
 
-        // Assemble JSON Response; ignore the "Unchecked call" warnings
-        // TODO: build response
-        JSONObject body = new JSONObject();
-        JSONObject jsonBuilder = new JSONObject();
-        body.put("message", "cancelled order");
-        jsonBuilder.put("code", 200);
-        jsonBuilder.put("body", body);
-
-        return jsonBuilder;
+        result.put("code", 200);
+        return result;
     }
 
-    public static JSONObject getTrends(HttpExchange t) {
+    public static JSONObject getTrends() {
+        JSONObject result = new JSONObject();
         // There is no body to parse in this GET request
 
-        // Assemble JSON Response; ignore the "Unchecked call" warnings
         // TODO: build response
-        JSONObject body = new JSONObject();
-        JSONObject jsonBuilder = new JSONObject();
-        body.put("message", "retrieved trends");
-        jsonBuilder.put("code", 200);
-        jsonBuilder.put("body", body);
+        //result = DBCmd.findMarketTrend(
+        // );
 
-        return jsonBuilder;
+        result.put("code", 200);
+        return result;
+    }
+
+    public static JSONObject getAllStocks() {
+        JSONObject result = new JSONObject();
+        // There is no body to parse in this GET request
+
+        // TODO: build response
+        // TODO: this api call needs to return: { exchanges, stocks, symbols }
+        //result = DBCmd.getAllTradedStocks(
+        // );
+
+        result.put("code", 200);
+        return result;
     }
 
     public static JSONObject getCompanyDetails(HttpExchange t) {
-        // Extract JSON from Request Body
-        // NOTE: You MUST include this outer if-statement! Otherwise,
-        // the server will fail the request!
+        JSONObject result = new JSONObject();
+
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
-            // TODO: get company trends
-            System.out.println(json);
+
+            // TODO: make function to get company trends
+            //result = DBCmd.getCompanyTrends(
+            // json.get("ticker")
+            // );
         }
 
-        // Assemble JSON Response; ignore the "Unchecked call" warnings
-        // TODO: build response
-        JSONObject body = new JSONObject();
-        JSONObject jsonBuilder = new JSONObject();
-        body.put("message", "getting company details");
-        jsonBuilder.put("code", 200);
-        jsonBuilder.put("body", body);
-
-        return jsonBuilder;
+        result.put("code", 200);
+        return result;
     }
 
     public static JSONObject createIPO(HttpExchange t) {
-        // Extract JSON from Request Body
-        // NOTE: You MUST include this outer if-statement! Otherwise,
-        // the server will fail the request!
+        JSONObject result = new JSONObject();
+
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
-            // TODO: create IPO
-            System.out.println(json);
+
+            // TODO: build response
+            //result = DBCmd.createIPO(
+            // json.get("username"),
+            // json.get("ticker"),
+            // json.get("companyName"),
+            // json.get("exchange"),
+            // json.get("startingPrice"),
+            // json.get("numShares")
+            // );
         }
 
-        // Assemble JSON Response; ignore the "Unchecked call" warnings
-        // TODO: build response
-        JSONObject body = new JSONObject();
-        JSONObject jsonBuilder = new JSONObject();
-        body.put("message", "issuing ipo");
-        jsonBuilder.put("code", 200);
-        jsonBuilder.put("body", body);
-
-        return jsonBuilder;
+        result.put("code", 200);
+        return result;
     }
 
     public static JSONObject updatePassword(HttpExchange t) {
-        // Extract JSON from Request Body
-        // NOTE: You MUST include this outer if-statement! Otherwise,
-        // the server will fail the request!
+        JSONObject result = new JSONObject();
+
         if (t.getRequestMethod().equalsIgnoreCase("UPDATE")) {
             JSONObject json = parseBody(t);
-            // TODO: update password
-            System.out.println(json);
+
+            // TODO: build response
+            //result = DBCmd.changePassword(
+            // json.get("username"),
+            // json.get("oldPassword"),
+            // json.get("newPassword")
+            // );
         }
 
-        // Assemble JSON Response; ignore the "Unchecked call" warnings
-        // TODO: build response
-        JSONObject body = new JSONObject();
-        JSONObject jsonBuilder = new JSONObject();
-        body.put("message", "updated password");
-        jsonBuilder.put("code", 200);
-        jsonBuilder.put("body", body);
-
-        return jsonBuilder;
+        result.put("code", 200);
+        return result;
     }
 
     // ------------------------------------------------

@@ -90,7 +90,9 @@ class OrderPanelWrapper extends React.Component {
         <h1>Buy & Sell</h1>
         <Form>
           <ViewRow style={{alignItems: 'center', marginTop: '1rem', marginBottom: '1rem'}}>
-            <Form.Field style={{ display: 'flex', width: 200 }}>
+
+            {/* Select Portfolio */}
+            <Form.Field style={{ width: 200 }}>
               <label style={{marginRight: '1rem'}}>Portfolio:</label>
               <select style={{ width: 100 }} onChange={this.handlePortChange}>
                 {this.props.portfolios.map((port, id) => (
@@ -99,6 +101,7 @@ class OrderPanelWrapper extends React.Component {
               </select>
             </Form.Field>
 
+            {/* Toggle Buy/Sell */}
             <Form.Field style={{ display: 'flex', width: 100 }}>
               <input
                 type="radio"
@@ -128,10 +131,9 @@ class OrderPanelWrapper extends React.Component {
                 Sell
               </label>
             </Form.Field>
-
           </ViewRow>
 
-          <ViewRow>
+          <ViewRow >
             <Form.Field>
               <label>Ticker Symbol</label>
               <Dropdown

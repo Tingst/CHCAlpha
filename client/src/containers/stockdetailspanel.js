@@ -15,7 +15,6 @@ const styles = {
     boxShadow: '0px 0px 5px #C1C1C1'
   },
   tableContainer: {
-    marginTop: '1rem'
   }
 };
 
@@ -24,6 +23,11 @@ class HistoryPanelWrapper extends React.Component {
     super(props);
     this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleCancelOrder = this.handleCancelOrder.bind(this);
+  }
+
+  componentDidMount() {
+    // retrieve all pending orders for this company
+    this.props.handleGetOrders({ username: "*" });
   }
 
   handleFilterChange(e) {
@@ -54,6 +58,7 @@ class HistoryPanelWrapper extends React.Component {
           <p className="details-subtitle">{exchange}: {ticker}</p>
           <p className="details-subtitle">{industry.charAt(0).toUpperCase() + industry.substr(1)}</p>
         </ViewRow>
+        <p style={{ fontWeight: 700, borderTop: '1px solid rgba(34,36,38,.1)' }}>Pending Orders: ${ticker}</p>
 
         <ViewCol style={styles.tableContainer}>
           <Table striped>
@@ -69,7 +74,7 @@ class HistoryPanelWrapper extends React.Component {
             </Table.Header>
 
             <Table.Body>
-              {this.props.orders
+              {this.props.allOrders
                 .filter(order => order.ticker === ticker)
                 .map((order, id) => (
                   <Table.Row key={id}>
@@ -94,7 +99,7 @@ class HistoryPanelWrapper extends React.Component {
 const mapStateToProps = ({ Stocks, Portfolio }) => {
   return {
     selected: Stocks.selected,
-    orders: Portfolio.orders
+    allOrders: Portfolio.allOrders
   }
 };
 

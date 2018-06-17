@@ -45,13 +45,16 @@ class StocksPanelWrapper extends React.Component {
     super(props);
     this.state = {
       search: '',
-      selectedExchange: '',
-
+      selectedExchange: ''
     };
 
     this.handleSearchKeyDown = this.handleSearchKeyDown.bind(this);
     this.handleExchangeSearch = this.handleExchangeSearch.bind(this);
     this.handleTableRowClick = this.handleTableRowClick.bind(this);
+  }
+
+  componentDidMount() {
+    this.props.handleGetAllStocks();
   }
 
   handleSearchKeyDown(e) {

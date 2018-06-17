@@ -12,11 +12,15 @@ import {
   HANDLE_CREATE_PORTFOLIO_FAILURE,
   HANDLE_DELETE_PORTFOLIO_SUCCESS,
   HANDLE_DELETE_PORTFOLIO_FAILURE,
+  HANDLE_GET_ORDERS_SUCCESS,
+  HANDLE_GET_ORDERS_FAILURE,
   HANDLE_PLACE_ORDER_SUCCESS,
   HANDLE_PLACE_ORDER_FAILURE,
   HANDLE_CANCEL_ORDER_SUCCESS,
   HANDLE_CANCEL_ORDER_FAILURE,
   // Stock Page Actions
+  HANDLE_GET_ALL_STOCKS_SUCCESS,
+  HANDLE_GET_ALL_STOCKS_FAILURE,
   HANDLE_TRENDS_REFRESH_SUCCESS,
   HANDLE_TRENDS_REFRESH_FAILURE,
   HANDLE_GET_DETAILS_SUCCESS,
@@ -173,6 +177,57 @@ export const handleDeletePortfolio = (payload) => {
   }
 };
 
+export const handleGetOrders = (payload) => {
+  // A username of "*" will retrieve ALL pending orders
+  const { username } = payload;
+
+  const mockOrders = [
+    { id: 1332, type: 0, ticker: 'APPL', date: '08/06/18', number: 5, price: 100 },
+    { id: 2515, type: 1, ticker: 'GOOGL', date: '08/06/18', number: 10, price: 1340 },
+    { id: 5443, type: 1, ticker: 'AMZN', date: '08/06/18', number: 42, price: 1010 }
+  ];
+  const mockAllOrders = [
+    { id: 1332, type: 0, ticker: 'APPL', date: '08/06/18', number: 7, price: 110 },
+    { id: 1333, type: 0, ticker: 'APPL', date: '08/06/18', number: 5, price: 105 },
+    { id: 132, type: 0, ticker: 'APPL', date: '08/06/18', number: 7, price: 100 },
+    { id: 2515, type: 1, ticker: 'GOOGL', date: '08/06/18', number: 10, price: 1340 },
+    { id: 5443, type: 1, ticker: 'AMZN', date: '08/06/18', number: 42, price: 1010 },
+    { id: 5643, type: 1, ticker: 'AMZN', date: '08/06/18', number: 30, price: 1015 },
+    { id: 5943, type: 1, ticker: 'AMZN', date: '08/06/18', number: 2, price: 1000 }
+  ];
+  if (username === "*") {
+    payload.allOrders = mockAllOrders;
+  } else {
+    payload.orders = mockOrders;
+  }
+
+  const options = {
+    ...optionsBase,
+    method: 'POST',
+    body: JSON.stringify({
+      username
+    })
+  };
+
+  return dispatch => {
+    fetch(`${HOST}orders`, options)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        if (res.code === 200) {
+          payload = { ...payload, ...res };
+          dispatch({ type: HANDLE_GET_ORDERS_SUCCESS, payload });
+        } else {
+          dispatch({ type: HANDLE_GET_ORDERS_FAILURE });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch({ type: HANDLE_GET_ORDERS_FAILURE });
+      });
+    }
+};
+
 export const handlePlaceOrder = (payload) => {
   const { username, portfolio, type, ticker, number, price } = payload;
 
@@ -246,6 +301,69 @@ export const handleCancelOrder = (payload) => {
 // -----------------------------------------------------------
 // Stock Page Actions
 // -----------------------------------------------------------
+export const handleGetAllStocks = () => {
+
+  const stocks = [
+    { ticker: 'APPL',   exchange: 'NASDAQ',  price: 100, industry: 'technology', companyName: 'Apple' },
+    { ticker: 'GOOGL',  exchange: 'NASDAQ',  price: 220, industry: 'technology', companyName: 'Alphabet' },
+    { ticker: 'TSLA',   exchange: 'NASDAQ',  price: 430, industry: 'automotive', companyName: 'Tesla' },
+    { ticker: 'GILD',   exchange: 'NASDAQ',  price: 300, industry: 'pharmaceutical', companyName: 'Gilead' },
+    { ticker: 'PFE',    exchange: 'NYSE',    price: 483, industry: 'pharmaceutical', companyName: 'Pfizer' },
+    { ticker: 'GLAXO',  exchange: 'NSE',     price: 100, industry: 'pharmaceutical', companyName: 'GlaxoSmithKline' },
+    { ticker: 'BAYN',   exchange: 'ETR',     price: 35,  industry: 'pharmaceutical', companyName: 'Bayer' },
+    { ticker: 'BABA',   exchange: 'NYSE',    price: 56,  industry: 'ecommerce', companyName: 'Alibaba' },
+    { ticker: 'BA',     exchange: 'NYSE',    price: 241, industry: 'aviation', companyName: 'Boeing' },
+    { ticker: 'AMZN',   exchange: 'NASDAQ',  price: 449, industry: 'ecommerce', companyName: 'Amazon' }
+  ];
+  const exchanges = [
+    { key: 0, text: 'ALL', value: 'ALL' },
+    { key: 1, text: 'NASDAQ', value: 'NASDAQ' },
+    { key: 2, text: 'NYSE', value: 'NYSE' },
+    { key: 3, text: 'TSX', value: 'TSX' },
+    { key: 4, text: 'NIKKEI', value: 'NIKKEI' },
+    { key: 5, text: 'INDEXDJX', value: 'INDEXDJX' }
+  ];
+  const symbols = [
+    { key: 1, text: 'APPL', value: 'APPL' },
+    { key: 2, text: 'GOOGL', value: 'GOOGL' },
+    { key: 3, text: 'TSLA', value: 'TSLA' },
+    { key: 10, text: 'GILD', value: 'GILD' },
+    { key: 4, text: 'PFE', value: 'PFE' },
+    { key: 5, text: 'GLAXO', value: 'GLAXO' },
+    { key: 6, text: 'BAYN', value: 'BAYN' },
+    { key: 7, text: 'BABA', value: 'BABA' },
+    { key: 8, text: 'BA', value: 'BA' },
+    { key: 9, text: 'AMZN', value: 'AMZN' }
+  ];
+
+  let payload = { stocks, exchanges, symbols };
+
+  const options = {
+    ...optionsBase,
+    method: 'GET'
+  };
+
+  return dispatch => {
+    fetch(`${HOST}stocks`, options)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        if (res.code === 200) {
+          payload = { ...payload, ...res };
+          dispatch({ type: HANDLE_GET_ALL_STOCKS_SUCCESS, payload });
+        } else {
+          dispatch({ type: HANDLE_GET_ALL_STOCKS_FAILURE });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch({ type: HANDLE_GET_ALL_STOCKS_FAILURE });
+      });
+  }
+};
+
+
+
 export const handleTrendsRefreshClick = () => {
 
   let payload = {
@@ -314,6 +432,7 @@ export const handleTableRowClick = (payload) => {
 // -----------------------------------------------------------
 export const handleIpoClick = (payload) => {
   const {
+    username,
     name,
     industry,
     ticker,
@@ -329,10 +448,11 @@ export const handleIpoClick = (payload) => {
     ...optionsBase,
     method: 'POST',
     body: JSON.stringify({
-      name,
+      username,
+      companyName: name,
       industry,
       ticker,
-      price,
+      startingPrice: price,
       numShares,
       portfolio,
       exchange

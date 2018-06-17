@@ -20,9 +20,11 @@ public class HttpMirror {
         server.createContext("/create", new Handler("create"));
         server.createContext("/createportfolio", new Handler("createportfolio"));
         server.createContext("/deleteportfolio", new Handler("deleteportfolio"));
+        server.createContext("/orders", new Handler("orders"));
         server.createContext("/placeorder", new Handler("placeorder"));
         server.createContext("/cancelorder", new Handler("cancelorder"));
         server.createContext("/trends", new Handler("trends"));
+        server.createContext("/stocks", new Handler("stocks"));
         server.createContext("/company", new Handler("company"));
         server.createContext("/ipo", new Handler("ipo"));
         server.createContext("/password", new Handler("password"));
@@ -80,6 +82,10 @@ public class HttpMirror {
                     jsonBuilder = API.deletePortfolio(t);
                     break;
                 }
+                case "orders": {
+                    jsonBuilder = API.getOrders(t);
+                    break;
+                }
                 case "placeorder": {
                     jsonBuilder = API.placeOrder(t);
                     break;
@@ -89,7 +95,11 @@ public class HttpMirror {
                     break;
                 }
                 case "trends": {
-                    jsonBuilder = API.getTrends(t);
+                    jsonBuilder = API.getTrends();
+                    break;
+                }
+                case "stocks": {
+                    jsonBuilder = API.getAllStocks();
                     break;
                 }
                 case "company": {

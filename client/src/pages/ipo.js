@@ -44,9 +44,10 @@ class IpoWrapper extends React.Component {
     } = this.state;
 
     this.props.handleIpoClick({
+      username: this.props.username,
       name,
       industry,
-      ticker,
+      ticker: ticker.toUpperCase(),
       price: Number(price),
       numShares: Number(numShares),
       portfolio,
@@ -122,10 +123,11 @@ class IpoWrapper extends React.Component {
   }
 }
 
-const mapStateToProps = ({ Stocks, Portfolio }) => {
+const mapStateToProps = ({ Stocks, Portfolio, Login }) => {
   return {
     exchanges: Stocks.exchanges,
-    portfolios: Portfolio.portfolios
+    portfolios: Portfolio.portfolios,
+    username: Login.username
   }
 };
 

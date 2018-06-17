@@ -93,7 +93,7 @@ class SettingsWrapper extends React.Component {
           <span style={{ ...styles.detailsRow, marginBottom: '1rem' }}><label style={styles.label}>Last Name: </label>{this.props.lname}</span>
 
           <h1 style={{ ...styles.title, marginTop: '2rem' }}>Change your Password</h1>
-          <form id="password-change">
+          <form id="password-change" style={{ display: 'flex', flexFlow: 'column' }}>
             <input
               type="password"
               style={styles.inputStyle}
