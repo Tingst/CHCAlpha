@@ -31,7 +31,10 @@ class HistoryPanelWrapper extends React.Component {
   }
 
   handleCancelOrder(id) {
-    this.props.handleCancelOrder({ id });
+    this.props.handleCancelOrder({
+      username: this.props.username,
+      id
+    });
   }
 
   render() {
@@ -94,9 +97,10 @@ class HistoryPanelWrapper extends React.Component {
   }
 }
 
-const mapStateToProps = ({ Portfolio }) => {
+const mapStateToProps = ({ Portfolio, Login }) => {
   return {
-    orders: Portfolio.orders
+    orders: Portfolio.orders,
+    username: Login.username
   }
 };
 

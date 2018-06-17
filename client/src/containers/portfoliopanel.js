@@ -135,7 +135,10 @@ class PortfolioPanelWrapper extends React.Component {
       // names must be at least 4 characters long
       return;
     }
-    this.props.handleCreateNewPortfolio({ name: this.state.newPortfolioName });
+    this.props.handleCreateNewPortfolio({
+      name: this.state.newPortfolioName,
+      username: this.props.username
+    });
 
     // reset fields
     this.setState({
@@ -148,7 +151,10 @@ class PortfolioPanelWrapper extends React.Component {
   }
 
   handleDeletePortfolio(id) {
-    this.props.handleDeletePortfolio({id});
+    this.props.handleDeletePortfolio({
+      username: this.props.username,
+      id
+    });
   }
 
   render() {
@@ -185,9 +191,10 @@ class PortfolioPanelWrapper extends React.Component {
   }
 }
 
-const mapStateToProps = ({ Portfolio }) => {
+const mapStateToProps = ({ Portfolio, Login }) => {
   return {
-    portfolios: Portfolio.portfolios
+    portfolios: Portfolio.portfolios,
+    username: Login.username
   }
 };
 
