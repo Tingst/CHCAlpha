@@ -27,19 +27,7 @@ public class TestClass {
             //2. Create statement object
             Statement myStatement = myConnection.createStatement();
 
-
-
-//                System.out.println(DBCmd.login("bggoodman", "133", myConnection));
-//            System.out.println(DBCmd.createAccount("bearb", "133", "Edwin", "Chen", myConnection));
-//            System.out.println(DBCmd.createPortfolio("bggoodman", "super performance tech equity", myConnection));
-
-
-//            System.out.println(DBCmd.buyShares("bggoodman", "MSFT", "NASDAQ", 100, "super performance equity", myConnection));
-
-//            Records records = DBCmd.getTradesByPortfolio("bggoodman", "super performance equity", myConnection);
-//            Records records = DBCmd.getTradesByPortfolio("bggoodman", "super performance equity", myConnection);
-//            Records records = DBCmd.getPendingOrders("bggoodman", myConnection);
-
+            
 //            JSONArray jArr = DBCmd.getTradesByPortfolio("bggoodman", "super performance equity", myConnection);
 //            JSONArray jArr = DBCmd.getPendingOrders("bggoodman", myConnection);
 
