@@ -1,8 +1,12 @@
 package cs.ubc.ca;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
+import java.util.Iterator;
 import java.util.Map;
 
 public class TestClass {
@@ -23,17 +27,6 @@ public class TestClass {
             //2. Create statement object
             Statement myStatement = myConnection.createStatement();
 
-//                //3. Execute query
-//                ResultSet myResultSet = myStatement.executeQuery("SELECT * FROM Company");
-//
-//                //4. Process resultSet
-//
-//                while(myResultSet.next()) {
-//                    System.out.println("Company Name: " + myResultSet.getString("c_name") + "P");
-//                }
-
-//                PriceGenerator pg = new PriceGenerator("Company");
-//                pg.updateStockPrices(myConnection);
 
 
 //                System.out.println(DBCmd.login("bggoodman", "133", myConnection));
@@ -43,18 +36,24 @@ public class TestClass {
 
 //            System.out.println(DBCmd.buyShares("bggoodman", "MSFT", "NASDAQ", 100, "super performance equity", myConnection));
 
-            Records records = DBCmd.getTradesByPortfolio("bggoodman", "super performance equity", myConnection);
+//            Records records = DBCmd.getTradesByPortfolio("bggoodman", "super performance equity", myConnection);
+//            Records records = DBCmd.getTradesByPortfolio("bggoodman", "super performance equity", myConnection);
+//            Records records = DBCmd.getPendingOrders("bggoodman", myConnection);
 
-            while(!records.isEmpty()) {
-                Map<String, String> re =records.getNextRecord();
-                StringBuilder sb = new StringBuilder();
-                for(Map.Entry<String,String> entry : re.entrySet()) {
-                    sb.append(entry.getKey() + ": " + entry.getValue() + " ");
-                }
+//            JSONArray jArr = DBCmd.getTradesByPortfolio("bggoodman", "super performance equity", myConnection);
+//            JSONArray jArr = DBCmd.getPendingOrders("bggoodman", myConnection);
 
-                System.out.println(sb);
-            }
+//            for(int i = 0; i < jArr.size();i++) {
+//                JSONObject innerObj = (JSONObject) jArr.get(i);
+//                System.out.print(innerObj);
+//            }
 
+//            DBCmd.deletePortfolio("bggoodman", "super performance equity", myConnection);
+//            DBCmd.deleteCompany("bggoodman", "MSFT", myConnection);
+
+//            DBCmd.changePassword("bggoodman", "123", "234", myConnection);
+
+            DBCmd.executeOrder(OrderTypes.BUY,"gHumpkins", "GOOGL", "NASDAQ", 1000, "tech sector", myConnection);
         }
         catch(Exception e)
         {

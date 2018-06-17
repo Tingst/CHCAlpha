@@ -9,25 +9,33 @@ import {
   HANDLE_CREATE_ACCOUNT_FAILURE,
   // Portfolio Page Actions
   HANDLE_CREATE_PORTFOLIO_SUCCESS,
+  HANDLE_CREATE_PORTFOLIO_FAILURE,
   HANDLE_DELETE_PORTFOLIO_SUCCESS,
-  HANDLE_ORDER_SUCCESS,
+  HANDLE_DELETE_PORTFOLIO_FAILURE,
+  HANDLE_PLACE_ORDER_SUCCESS,
+  HANDLE_PLACE_ORDER_FAILURE,
   HANDLE_CANCEL_ORDER_SUCCESS,
+  HANDLE_CANCEL_ORDER_FAILURE,
   // Stock Page Actions
   HANDLE_TRENDS_REFRESH_SUCCESS,
+  HANDLE_TRENDS_REFRESH_FAILURE,
   HANDLE_GET_DETAILS_SUCCESS,
+  HANDLE_GET_DETAILS_FAILURE,
   // IPO Page Actions
   HANDLE_NEW_IPO_SUCCESS,
+  HANDLE_NEW_IPO_FAILURE,
   // SettingsPage Actions
   HANDLE_CHANGE_PASSWORD_SUCCESS,
-  // wtf?
-  TEST_BEAR
+  HANDLE_CHANGE_PASSWORD_FAILURE
 } from './constants';
 
-export const testAction = (payload) => {
-  console.log('im clicked!');
-  return dispatch => {
-    dispatch({ type: TEST_BEAR, payload });
-  }
+const HOST = "http://localhost:9000/";
+const optionsBase = {
+  credentials: 'same-origin',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  mode: 'cors'
 };
 
 // -----------------------------------------------------------
@@ -36,77 +44,202 @@ export const testAction = (payload) => {
 export const handleLogin = (payload) => {
   const { username, password } = payload;
 
-  // TODO: add http request here
-  console.log('logging in with username: ', username, ' and password: ', password);
-  payload.fname = 'tree';
-  payload.lname = 'bear';
-
-  history.push('/dashboard');
+  const options = {
+    ...optionsBase,
+    method: 'POST',
+    body: JSON.stringify({
+      username,
+      password
+    })
+  };
 
   return dispatch => {
-    dispatch({ type: HANDLE_LOGIN_SUCCESS, payload });
-  }
+    fetch(`${HOST}login`, options)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        if (res.code === 200) {
+          payload = res;
+          dispatch({ type: HANDLE_LOGIN_SUCCESS, payload });
+          history.push('/dashboard');
+        } else {
+          dispatch({ type: HANDLE_LOGIN_FAILURE });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch({ type: HANDLE_LOGIN_FAILURE });
+      });
+
+    }
 };
 
 export const handleCreateNewAccount = (payload) => {
   const { fname, lname, username, password } = payload;
 
-  // TODO: add http request here
-  console.log('creating new account! ', payload);
-
-  history.push('/dashboard');
+  const options = {
+    ...optionsBase,
+    method: 'POST',
+    body: JSON.stringify({
+      fname,
+      lname,
+      username,
+      password
+    })
+  };
 
   return dispatch => {
-    dispatch({ type: HANDLE_CREATE_ACCOUNT_SUCCESS, payload });
-  }
+    fetch(`${HOST}create`, options)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        if (res.code === 200) {
+          payload = { ...payload, ...res };
+          dispatch({ type: HANDLE_CREATE_ACCOUNT_SUCCESS, payload });
+          history.push('/dashboard');
+        } else {
+          dispatch({ type: HANDLE_CREATE_ACCOUNT_FAILURE });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch({ type: HANDLE_CREATE_ACCOUNT_FAILURE });
+      });
+    }
 };
 
 // -----------------------------------------------------------
 // Portfolio Page Actions
 // -----------------------------------------------------------
 export const handleCreateNewPortfolio = (payload) => {
-  const { name } = payload;
+  const { name, username } = payload;
 
-  // TODO: add http request here
-  console.log('creating new portfolio with name: ', name);
+  const options = {
+    ...optionsBase,
+    method: 'POST',
+    body: JSON.stringify({
+      username,
+      name
+    })
+  };
 
   return dispatch => {
-    dispatch({ type: HANDLE_CREATE_PORTFOLIO_SUCCESS, payload });
-  }
+    fetch(`${HOST}createportfolio`, options)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        if (res.code === 200) {
+          payload = { ...payload, ...res };
+          dispatch({ type: HANDLE_CREATE_PORTFOLIO_SUCCESS, payload });
+        } else {
+          dispatch({ type: HANDLE_CREATE_PORTFOLIO_FAILURE });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch({ type: HANDLE_CREATE_PORTFOLIO_FAILURE });
+      });
+    }
 };
 
 export const handleDeletePortfolio = (payload) => {
-  const { id } = payload;
+  const { id, username } = payload;
 
-  // TODO: add http request here
-  console.log('deleting portfolio with id: ', id);
+  const options = {
+    ...optionsBase,
+    method: 'DELETE',
+    body: JSON.stringify({
+      username,
+      name: id
+    })
+  };
 
   return dispatch => {
-    dispatch({ type: HANDLE_DELETE_PORTFOLIO_SUCCESS, payload });
+    fetch(`${HOST}deleteportfolio`, options)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        if (res.code === 200) {
+          payload = { ...payload, ...res };
+          dispatch({ type: HANDLE_DELETE_PORTFOLIO_SUCCESS, payload });
+        } else {
+          dispatch({ type: HANDLE_DELETE_PORTFOLIO_FAILURE });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch({ type: HANDLE_DELETE_PORTFOLIO_FAILURE });
+      });
   }
 };
 
 export const handlePlaceOrder = (payload) => {
-  const { portfolio, type, ticker, number, price } = payload;
+  const { username, portfolio, type, ticker, number, price } = payload;
 
-  // TODO: add http request here
-  payload.id = number + price; // TODO: get ID number from request
+  payload.id = number + price; // TODO: get order ID number from request
   payload.date = moment().format('DD/MM/YY');
-  console.log('placing order: ', portfolio, ticker);
+
+  const options = {
+    ...optionsBase,
+    method: 'POST',
+    body: JSON.stringify({
+      username,
+      portfolio,
+      type,
+      ticker,
+      number,
+      price,
+      date: payload.date
+    })
+  };
 
   return dispatch => {
-    dispatch({ type: HANDLE_ORDER_SUCCESS, payload });
-  }
+    fetch(`${HOST}placeorder`, options)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        if (res.code === 200) {
+          payload = { ...payload, ...res };
+          dispatch({ type: HANDLE_PLACE_ORDER_SUCCESS, payload });
+        } else {
+          dispatch({ type: HANDLE_PLACE_ORDER_FAILURE });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch({ type: HANDLE_PLACE_ORDER_FAILURE });
+      });
+    }
 };
 
 export const handleCancelOrder = (payload) => {
-  const { id } = payload;
+  const { username, id } = payload;
 
-  // TODO: add http request here
-  console.log('cancelling order with id: ', id);
+  const options = {
+    ...optionsBase,
+    method: 'DELETE',
+    body: JSON.stringify({
+      username,
+      id,
+    })
+  };
 
   return dispatch => {
-    dispatch({ type: HANDLE_CANCEL_ORDER_SUCCESS, payload });
+    fetch(`${HOST}cancelorder`, options)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        if (res.code === 200) {
+          payload = { ...payload, ...res };
+          dispatch({ type: HANDLE_CANCEL_ORDER_SUCCESS, payload });
+        } else {
+          dispatch({ type: HANDLE_CANCEL_ORDER_FAILURE });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch({ type: HANDLE_CANCEL_ORDER_FAILURE });
+      });
   }
 };
 
@@ -115,31 +248,65 @@ export const handleCancelOrder = (payload) => {
 // -----------------------------------------------------------
 export const handleTrendsRefreshClick = () => {
 
-  // TODO: add http request here
-  console.log('refreshing stock trends...');
-
-  const payload = {
+  let payload = {
     stockTrendHighest: { ticker: 'GOOGL',  exchange: 'NASDAQ',  price: 220, companyName: 'Alphabet' },
     stockTrendLowest: { ticker: 'BAYN',   exchange: 'ETR',     price: 35,  companyName: 'Bayer' },
     stockTrendMostFrequent: { ticker: 'PFE',    exchange: 'NYSE',    price: 483, companyName: 'Pfizer' },
     stockTrendLeastFrequent: { ticker: 'AMZN',   exchange: 'NASDAQ',  price: 449, companyName: 'Amazon' }
+  };
 
+  const options = {
+    ...optionsBase,
+    method: 'GET'
   };
 
   return dispatch => {
-    dispatch({ type: HANDLE_TRENDS_REFRESH_SUCCESS, payload });
+    fetch(`${HOST}trends`, options)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        if (res.code === 200) {
+          payload = { ...payload, ...res };
+          dispatch({ type: HANDLE_TRENDS_REFRESH_SUCCESS, payload });
+        } else {
+          dispatch({ type: HANDLE_TRENDS_REFRESH_FAILURE });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch({ type: HANDLE_TRENDS_REFRESH_FAILURE });
+      });
   }
 };
 
 export const handleTableRowClick = (payload) => {
   const { ticker } = payload;
 
-  // TODO: add http request here to get company-specific details
-  console.log('retrieving details for ticker: ', ticker);
+  const options = {
+    ...optionsBase,
+    method: 'POST',
+    body: JSON.stringify({
+      ticker
+    })
+  };
 
   return dispatch => {
-    dispatch({ type: HANDLE_GET_DETAILS_SUCCESS, payload });
-  }
+    fetch(`${HOST}company`, options)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        if (res.code === 200) {
+          payload = { ...payload, ...res };
+          dispatch({ type: HANDLE_GET_DETAILS_SUCCESS, payload });
+        } else {
+          dispatch({ type: HANDLE_GET_DETAILS_FAILURE });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch({ type: HANDLE_GET_DETAILS_FAILURE });
+      });
+    }
 };
 
 // -----------------------------------------------------------
@@ -156,14 +323,41 @@ export const handleIpoClick = (payload) => {
     exchange,
   } = payload;
 
-  console.table(payload);
-
-  // TODO: add http request here
   console.log(`issuing ${numShares} new shares at $${price}/share for company: `, name, ticker);
-  payload.currentPrice = price + 20;
+
+  const options = {
+    ...optionsBase,
+    method: 'POST',
+    body: JSON.stringify({
+      name,
+      industry,
+      ticker,
+      price,
+      numShares,
+      portfolio,
+      exchange
+    })
+  };
 
   return dispatch => {
-    dispatch({ type: HANDLE_NEW_IPO_SUCCESS, payload });
+    fetch(`${HOST}ipo`, options)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        if (res.code === 200) {
+          payload = { ...payload, ...res };
+
+          // TODO: remove following line, get current price from server
+          payload.currentPrice = price + 20;
+          dispatch({ type: HANDLE_NEW_IPO_SUCCESS, payload });
+        } else {
+          dispatch({ type: HANDLE_NEW_IPO_FAILURE });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch({ type: HANDLE_NEW_IPO_FAILURE });
+      });
   }
 };
 
@@ -173,11 +367,32 @@ export const handleIpoClick = (payload) => {
 export const handleChangePasswordClick = (payload) => {
   const { username, oldPassword, newPassword } = payload;
 
-  // TODO: add http request here to change password
-  console.log('changing password for user: ', username);
+  const options = {
+    ...optionsBase,
+    method: 'UPDATE',
+    body: JSON.stringify({
+      username,
+      oldPassword,
+      newPassword
+    })
+  };
 
   return dispatch => {
-    dispatch({ type: HANDLE_CHANGE_PASSWORD_SUCCESS, payload });
+    fetch(`${HOST}password`, options)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        if (res.code === 200) {
+          payload = { ...payload, ...res };
+
+          dispatch({ type: HANDLE_CHANGE_PASSWORD_SUCCESS, payload });
+        } else {
+          dispatch({ type: HANDLE_CHANGE_PASSWORD_FAILURE });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch({ type: HANDLE_CHANGE_PASSWORD_FAILURE });
+      });
   }
 };
-

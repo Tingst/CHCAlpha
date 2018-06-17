@@ -66,6 +66,7 @@ class OrderPanelWrapper extends React.Component {
   handlePlaceOrder() {
     // TODO: checks
     this.props.handlePlaceOrder({
+      username: this.props.username,
       portfolio: this.state.portfolio,
       type: this.state.type,
       ticker: this.state.ticker,
@@ -167,10 +168,11 @@ class OrderPanelWrapper extends React.Component {
   }
 }
 
-const mapStateToProps = ({ Portfolio, Stocks }) => {
+const mapStateToProps = ({ Portfolio, Stocks, Login }) => {
   return {
     portfolios: Portfolio.portfolios,
-    symbols: Stocks.symbols
+    symbols: Stocks.symbols,
+    username: Login.username
   }
 };
 

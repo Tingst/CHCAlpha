@@ -1,7 +1,7 @@
 import {
   HANDLE_CREATE_PORTFOLIO_SUCCESS,
   HANDLE_DELETE_PORTFOLIO_SUCCESS,
-  HANDLE_ORDER_SUCCESS,
+  HANDLE_PLACE_ORDER_SUCCESS,
   HANDLE_CANCEL_ORDER_SUCCESS,
 
   // from IPO actions
@@ -63,7 +63,7 @@ const Portfolio = (state = initialState, action) => {
       };
     }
 
-    case HANDLE_ORDER_SUCCESS: {
+    case HANDLE_PLACE_ORDER_SUCCESS: {
       return {
         ...state,
         orders: [...state.orders, action.payload]
