@@ -59,11 +59,20 @@ class SettingsWrapper extends React.Component {
       window.alert("New passwords do not match!");
     }
 
+    // submit change request
     this.props.handleChangePasswordClick({
       username: this.props.username,
       oldPassword: user.oldpass,
       newPassword: user.newpass
     });
+
+    // reset fields
+    this.setState({
+      password: '',
+      oldpass: '',
+      newpass: '',
+      duppass: ''
+    })
   }
 
   render() {

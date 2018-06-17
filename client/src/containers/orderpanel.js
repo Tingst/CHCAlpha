@@ -69,6 +69,15 @@ class OrderPanelWrapper extends React.Component {
       number: this.state.number,
       price: this.state.price
     });
+
+    // reset fields
+    this.setState({
+      portfolio: '',
+      type: 0,
+      ticker: '',
+      number: 0,
+      price: 0
+    })
   }
 
   render() {
