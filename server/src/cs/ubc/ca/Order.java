@@ -30,6 +30,7 @@ public class Order {
         if(orderIDSet)
             return false;
 
+        orderIDSet = true;
         orderID = id;
         return true;
     }
@@ -52,22 +53,25 @@ public class Order {
     }
 
     public String getTradedOrder() {
-        String tradedOrder = "(" + type + ",'" + ticker + "'," + numShares + "," + price + ",'" + exchange + "'," +
+        String tradedOrder = "(" + type + ",'" + ticker + "'," + numShares + "," + price + "," +
                 "NOW()" + ",'" + portName + "','" + username + "')";
 
         return tradedOrder;
     }
 
+    public int getNumShares() {
+        return numShares;
+    }
+
     public String getTradedOrderFields() {
-        return "(type, ticker, num_shares, price, abbre, order_time, p_name, username)";
+        return "(type, ticker, num_shares, price, order_time, p_name, username)";
     }
 
     public String getCloseOrder() {
-        return "";
+        return "('" + ticker + "'," + numShares + "," + price + ",NOW(),'" + portName + "','" + username + "')";
     }
 
     public String getClosedOrderFields() {
-        return "";
+        return "(ticker, num_shares, buy_price, closed_time, p_name, username)";
     }
-
 }

@@ -74,6 +74,9 @@ VALUES ('gHumpkins', 'Paul', 'Williams', '456');
 INSERT INTO Portfolio (p_name, username)
 VALUES('super performance equity', 'bggoodman');
 
+INSERT INTO Portfolio (p_name, username)
+VALUES('tech sector', 'gHumpkins');
+
 INSERT INTO Exchange (abbreviation, ex_name)
 VALUES ('NASDAQ', 'National Association of Securities Dealers Automated Quotations');
 
