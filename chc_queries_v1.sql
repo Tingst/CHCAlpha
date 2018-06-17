@@ -24,58 +24,55 @@ WHERE   abbre = 'NASDAQ' AND
 
 /*
  *  QUERY:  Join
- *  DESC:   Display the company, exchange, and real-time price of
- *          technology stocks
+ *  DESC:   Display the real-time price of company stocks in specified industry
+ *          and the names of traders who share ownership of the company
  */
 
-SELECT  C.c_name AS Company,
-        E.abbreviation AS Abbrev,
-        E.ex_name AS Exchange
-        C.price AS Price
-FROM    Company C, Exchange E
-WHERE   C.abbre = E.abbreviation AND
+SELECT  A.first_name, A.last_name, C.c_name, C.ticker, C.price
+FROM    Account A, Company C
+WHERE   A.username = C.username AND
         C.industry = 'Healthcare';
-
 
 /*
  *  QUERY:  Division
  *  DESC:   Find portfolio titles containing successful transactions with every
  *          company of a specified industry.
- *  RA:     AllCompany <-- π_(ticker) [σ_(industry='Energy') (Company)]
- *          CompanyOrder <-- π_(ticker),(p_name),(username) [AllCompany ⋈ ClosedOrder]
+ *  RA:     AllCompany <-- π_(ticker) [σ_(industry='Electronics') (Company)]
+ *          CompanyOrder <-- π_(ticker),(username) [AllCompany ⋈ ClosedOrder]
  *          AllOrderCombos <-- π_(p_name),(username),(ticker) [CompanyOrder X Portfolio]
  *          MissingOrders <-- π_(p_name),(username),(ticker) [AllOrderCombos - CompanyOrder]
  *          π_(p_name) [CompanyOrder - MissingOrders]
  */
 
-SELECT  P.p_name
+SELECT  P.username, P.p_name
 FROM    Portfolio P, ClosedOrder CO
 WHERE   P.username = CO.username AND
         P.p_name = CO.p_name AND
-        NOT EXISTS (SElECT   *
+        NOT EXISTS (SElECT   CO.ticker
                     FROM     ClosedOrder CO)
-                    EXCEPT   (SELECT  *
+                    NOT IN   (SELECT  C.ticker
                               FROM    Company C, ClosedOrder CO
                               WHERE   C.ticker = CO.ticker AND
-                                      C.industry = 'Energy');
+                                      C.username = CO.username AND
+                                      C.industry = 'Electronics');
+
+
 
 /*
  *  QUERY:  Aggregation I
- *  DESC:   Get number of accounts sharing ownership of a company
- *          called Microsoft
+ *  DESC:   Get number of companies belonging to each industry
  */
 
-SELECT  COUNT(A.username) as TotalAccounts
-FROM    Account A, Company C
-WHERE   C.username = A.username AND
-        C.c_name = 'Microsoft';
+SELECT  industry, COUNT(*) as No_Companies
+FROM    Company
+GROUP BY industry;
 
 /*
  *  QUERY:  Aggregation II
  *  DESC:   Get the lowest price a stock has sold for in each industry
  */
 
-SELECT    C.industry, MIN(CO.buy_price) AS MinPrice
+SELECT    C.industry, MIN(CO.buy_price) AS Min_Price
 FROM      Company C, ClosedOrder CO
 WHERE     C.ticker = CO.ticker
 GROUP BY  C.industry;
@@ -95,16 +92,17 @@ HAVING    AVG(CO.buy_price) < (SELECT   AVG(buy_price)
 
 /*
  *  QUERY:  Nested Aggregation with Group By II
- *  DESC:   Find the total value of all portfolios which have at least
- *          5 closed orders
+ *  DESC:   Find the total amount made by companies who have closed at least
+ *          2 orders
  */
 
-SELECT    SUM(purchase_value) AS Total
-FROM      Portfolio P, ClosedOrder C
-WHERE     P.p_name = C.p_name AND
-          P.username = C.username
-HAVING    5 < (SELECT   COUNT(ticker)
-               FROM     ClosedOrder);
+SElECT    C.c_name, SUM(CO.buy_price) AS Total_Value
+FROM      Company C, ClosedOrder CO
+WHERE     C.username = CO.username AND
+          C.ticker = CO.ticker
+GROUP BY  C.c_name
+HAVING    2 <= (SELECT   COUNT(ticker)
+                FROM     ClosedOrder);
 
 /*
  *  QUERY:  Delete operation with Cascading
@@ -113,16 +111,16 @@ HAVING    5 < (SELECT   COUNT(ticker)
  */
 
 DELETE FROM   Company
-WHERE         c_name='Enron' AND industry='Energy';
+WHERE         c_name='Bosch' AND industry='Engineering';
 
 /*
  *  QUERY:  Delete operation without Cascading
  *  DESC:   Remove all buy orders issued with a price higher than
- *          $1000
+ *          $150 per share
  */
 
 DELETE FROM   TradeOrder
-WHERE         type=0 AND price > 1000;
+WHERE         type=0 AND price > 150;
 
 /*
  *  QUERY:  Update operation
@@ -131,4 +129,4 @@ WHERE         type=0 AND price > 1000;
 
 ALTER TABLE Account
 ADD CONSTRAINT ck_alphanumeric
-  CHECK (password NOT LIKE '%[^A-Z0-9]%');
+  CHECK (password NOT LIKE '%[^a-zA-Z0-9]%');

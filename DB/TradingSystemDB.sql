@@ -1,3 +1,6 @@
+CREATE DATABASE   TradingSystemDB;
+USE               TradingSystemDB;
+
 DROP TABLE ClosedOrder;
 DROP TABLE TradeOrder;
 DROP TABLE Company;
@@ -68,10 +71,6 @@ CREATE TABLE ClosedOrder (
 /*
  *  Populate database script:
  */
-
-CREATE DATABASE   TradingSystemDB;
-USE               TradingSystemDB;
-SOURCE            TradingSystemDB;
 
 LOAD DATA LOCAL INFILE './exchange.txt' INTO TABLE Exchange LINES TERMINATED BY '\r';
 LOAD DATA LOCAL INFILE './account.txt' INTO TABLE Account LINES TERMINATED BY '\r';
