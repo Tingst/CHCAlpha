@@ -53,10 +53,17 @@ class SettingsWrapper extends React.Component {
   }
 
   handleConfirmPassword(user) {
+    let alphaNumericCheck = RegExp('^[a-zA-Z0-9]*$');
+
+    if (!alphaNumericCheck.test(user.oldpass) || !alphaNumericCheck.test(user.newpass) ||
+        !alphaNumericCheck.test(user.duppass)) {
+      window.alert("Passwords must not contain any special characters");
+    }
+
     if (user.oldpass === user.newpass) {
-      window.alert("Please choose a different password!");
+      window.alert("Please choose a different password");
     } else if (user.newpass !== user.duppass) {
-      window.alert("New passwords do not match!");
+      window.alert("New passwords do not match");
     }
 
     // submit change request

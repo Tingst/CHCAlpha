@@ -16,6 +16,8 @@ const styles = {
   }
 };
 
+const numericCheck = RegExp('^[0-9]*$');
+
 class OrderPanelWrapper extends React.Component {
   constructor(props) {
     super(props);
@@ -36,27 +38,28 @@ class OrderPanelWrapper extends React.Component {
   }
 
   handlePortChange(e) {
-    // Todo: checks
     this.setState({ portfolio: e.target.value });
   }
 
   handleRadioChange(e) {
-    // Todo: checks
     this.setState({ type: Number(e.target.value) });
   }
 
   handleTickerSearch(e, val) {
-    // Todo: checks
     this.setState({ ticker: val.value });
   }
 
   handleNumberBlur(e) {
-    // Todo: checks
+    if (!numericCheck.test(e.target.value)) {
+      window.alert("Please enter whole share numbers only");
+    }
     this.setState({ number: Number(e.target.value) });
   }
 
   handlePriceBlur(e) {
-    // Todo: checks
+    if (!numericCheck.test(e.target.value)) {
+      window.alert("Please enter a dollar amount (e.g. 450)");
+    }
     this.setState({ price: Number(e.target.value) });
   }
 
