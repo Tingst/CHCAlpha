@@ -16,7 +16,11 @@ const styles = {
   buttonsRow: {
     width: '100%'
   },
-  title: {
+  detailsRow: {
+    marginTop: '1rem'
+  },
+  label: {
+    fontWeight: 700
   },
   inputStyle: {
     marginTop: '1rem',
@@ -67,19 +71,26 @@ class SettingsWrapper extends React.Component {
       <ViewCol style={styles.container}>
         <ViewCol style={styles.innerContainer}>
 
-          <h1 style={styles.title}>Change your password</h1>
+          <h1 style={styles.title}>Account</h1>
+          <span style={styles.detailsRow}><label style={styles.label}>Username: </label>{this.props.username}</span>
+          <span style={styles.detailsRow}><label style={styles.label}>First Name: </label>{this.props.fname}</span>
+          <span style={{ ...styles.detailsRow, marginBottom: '1rem' }}><label style={styles.label}>Last Name: </label>{this.props.lname}</span>
 
+          <h1 style={{ ...styles.title, marginTop: '2rem' }}>Change your Password</h1>
           <input
+            type="password"
             style={styles.inputStyle}
             placeholder="Enter old password"
             onBlur={e => this.handleInputBlur('oldpass', e)}
           />
           <input
+            type="password"
             style={styles.inputStyle}
             placeholder="Enter new password"
             onBlur={e => this.handleInputBlur('newpass', e)}
           />
           <input
+            type="password"
             style={styles.inputStyle}
             placeholder={"Confirm new password"}
             onBlur={e => this.handleInputBlur('duppass', e)}
@@ -101,7 +112,9 @@ class SettingsWrapper extends React.Component {
 
 const mapStateToProps = ({ Login }) => {
   return {
-    username: Login.username
+    username: Login.username,
+    fname: Login.fname,
+    lname: Login.lname
   }
 };
 

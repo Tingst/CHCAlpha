@@ -7,8 +7,10 @@ import {
 } from '../actions/constants';
 
 const initialState = {
-  username: '',
-  password: ''
+  username: 'PiggySpeed',
+  password: '',
+  fname: 'Tree',
+  lname: 'Bear'
 };
 
 const Login = (state = initialState, action) => {

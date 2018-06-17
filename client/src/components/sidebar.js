@@ -5,7 +5,7 @@ import history from '../utils/history';
 const styles = {
   container: {
     height: '100%',
-    width: '3rem',
+    width: '3.5rem',
     borderRight: '1px solid rgba(34, 36, 38, 0.1)'
   },
   button: {
@@ -21,17 +21,17 @@ const styles = {
     marginLeft: '0.25rem',
     borderRadius: 5,
     boxShadow: '0 0 5px grey',
-    backgroundColor: '#292929',
+    backgroundColor: '#374255',
     color: 'white',
     zIndex: 99
   }
 };
 
 const icons = {
-  portfolio: <i className="folder open icon" />,
-  stocks: <i className="chart line icon" />,
-  ipo: <i className="money bill alternate icon" />,
-  account: <i className="user icon" />,
+  portfolio: <i style={{margin: 0}} className="folder open icon" />,
+  stocks: <i style={{margin: 0}} className="chart line icon" />,
+  ipo: <i style={{margin: 0}} className="money bill alternate icon" />,
+  account: <i style={{margin: 0}} className="user icon" />
 };
 
 class SideBtn extends React.Component {

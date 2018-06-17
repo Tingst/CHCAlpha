@@ -168,7 +168,7 @@ export const handleIpoClick = (payload) => {
 };
 
 // -----------------------------------------------------------
-// IPO Page Actions
+// Settings Page Actions
 // -----------------------------------------------------------
 export const handleChangePasswordClick = (payload) => {
   const { username, oldPassword, newPassword } = payload;
