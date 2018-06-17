@@ -41,6 +41,21 @@ export const handleLogin = (payload) => {
   payload.fname = 'tree';
   payload.lname = 'bear';
 
+  const options = {
+    body: JSON.stringify({ username, password }),
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'POST',
+    mode: 'cors'
+  };
+
+  fetch("http://localhost:9000/test", options)
+    .then(res => res.json())
+    .then(res => console.log(res))
+    .catch(err => console.log(err));
+
   history.push('/dashboard');
 
   return dispatch => {
