@@ -51,7 +51,18 @@ class IpoWrapper extends React.Component {
       numShares: Number(numShares),
       portfolio,
       exchange
-    })
+    });
+
+    // reset fields
+    this.setState({
+      name: '',
+      industry: '',
+      ticker: '',
+      price: 0,
+      numShares: 0,
+      portfolio: '',
+      exchange: ''
+    });
   }
 
   render() {
