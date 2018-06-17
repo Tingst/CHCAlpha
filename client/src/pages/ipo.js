@@ -29,7 +29,41 @@ class IpoWrapper extends React.Component {
   }
 
   handleInputBlur(e, key) {
+    let alphaCheck = RegExp('^[a-zA-Z]*$');
+    let alphaNumericCheck = RegExp('^[a-zA-Z0-9]*$');
+    let numericCheck = RegExp('^[0-9]*$');
+
+    if (key === 'name') {
+      if (!alphaNumericCheck.test(e.target.value))
+        window.alert("Please avoid special characters");
+    } else if (key === 'industry' || key === 'ticker' || key === 'exchange') {
+      if (!alphaCheck.test(e.target.value))
+        window.alert("Please avoid numbers and special characters");
+    } else if (key === 'price' || key === 'numShares') {
+      if (!numericCheck.test(e.target.value))
+        window.alert("Please enter a whole number (e.g. 300)");
+    }
+
     this.setState({ [key]: e.target.value });
+
+    // switch (key) {
+    //   case 'name':
+    //     if (!alphaNumericCheck.test(e.target.value))
+    //       window.alert("Please avoid special characters");
+    //     break;
+    //   case 'industry':
+    //   case 'ticker':
+    //   case 'exchange':
+    //     if (!alphaCheck.test(e.target.value))
+    //       window.alert("Please avoid numbers and special characters");
+    //     break;
+    //   case 'price':
+    //   case 'numShares':
+    //     if (!numericCheck.test(e.target.value))
+    //       window.alert("Please enter a whole number (e.g. 300)");
+    //     break;
+    // }
+    // this.setState({ [key]: e.target.value });
   }
 
   handleIpoClick() {
@@ -78,7 +112,7 @@ class IpoWrapper extends React.Component {
           <input placeholder="e.g. Apple" onBlur={e => this.handleInputBlur(e, 'name')} />
 
           <label style={styles.label}>Industry</label>
-          <input placeholder="e.g. 30" onBlur={e => this.handleInputBlur(e, 'industry')} />
+          <input placeholder="e.g. Energy" onBlur={e => this.handleInputBlur(e, 'industry')} />
 
           <label style={styles.label}>Ticker Symbol</label>
           <input placeholder="e.g. APPL" onBlur={e => this.handleInputBlur(e, 'ticker')} />

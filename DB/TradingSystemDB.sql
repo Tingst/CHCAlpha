@@ -1,3 +1,6 @@
+CREATE DATABASE   TradingSystemDB;
+USE               TradingSystemDB;
+
 DROP TABLE ClosedOrder;
 DROP TABLE TradeOrder;
 DROP TABLE Company;
@@ -11,7 +14,7 @@ CREATE TABLE Exchange (
 );
 
 CREATE TABLE Account (
-	username CHAR(20) PRIMARY KEY,
+	username CHAR(50) PRIMARY KEY,
 	first_name CHAR(20),
 	last_name CHAR(20),
 	password CHAR(20)
@@ -20,17 +23,17 @@ CREATE TABLE Account (
 /* We will do the portfolio purchased price on the fly by joining the Portfolio table with the ClosedOrder table*/
 CREATE TABLE Portfolio (
 	p_name CHAR(30),
-	username CHAR(20) NOT NULL,
+	username CHAR(50) NOT NULL,
 	PRIMARY KEY(username, p_name),
 	FOREIGN KEY(username) REFERENCES Account(username) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Company (
 	ticker CHAR(20),
-	c_name CHAR(255), 
-	industry CHAR(20),
+	c_name CHAR(255),
+	industry CHAR(50),
 	price FLOAT,
-	username CHAR(20) NOT NULL,
+	username CHAR(50) NOT NULL,
 	abbre CHAR(10),
 	FOREIGN KEY(username) REFERENCES Account(username) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY(abbre) REFERENCES Exchange(abbreviation) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -40,13 +43,13 @@ CREATE TABLE Company (
 /* 0 for buy 1 for sell (Order is a keyword so cannot be used as the table name)*/
 CREATE TABLE TradeOrder (
 	to_id INT AUTO_INCREMENT,
-	type bit NOT NULL,
+	type BOOL NOT NULL,
 	ticker CHAR(20) NOT NULL,
 	num_shares INT NOT NULL,
 	price FLOAT NOT NULL,
 	order_time DATETIME NOT NULL,
 	p_name CHAR(30),
-	username CHAR(20),
+	username CHAR(50),
 	PRIMARY KEY(to_id),
 	FOREIGN KEY(ticker) REFERENCES Company(ticker) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY(username, p_name) REFERENCES Portfolio(username, p_name) ON DELETE CASCADE ON UPDATE CASCADE
@@ -59,41 +62,19 @@ CREATE TABLE ClosedOrder (
 	buy_price FLOAT NOT NULL,
 	closed_time DATETIME NOT NULL,
 	p_name CHAR(30),
-	username CHAR(20),
+	username CHAR(50),
 	PRIMARY KEY(o_id),
 	FOREIGN KEY(ticker) REFERENCES Company(ticker) ON DELETE CASCADE ON UPDATE CASCADE,
 	FOREIGN KEY(username, p_name) REFERENCES Portfolio(username, p_name) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-INSERT INTO Account(username, first_name, last_name, password)
-VALUES ('bggoodman', 'Bill', 'Gates', '123');
+/*
+ *  Populate database script:
+ */
 
-INSERT INTO Account(username, first_name, last_name, password)
-VALUES ('gHumpkins', 'Paul', 'Williams', '456');
-
-INSERT INTO Portfolio (p_name, username)
-VALUES('super performance equity', 'bggoodman');
-
-INSERT INTO Portfolio (p_name, username)
-VALUES('tech sector', 'gHumpkins');
-
-INSERT INTO Exchange (abbreviation, ex_name)
-VALUES ('NASDAQ', 'National Association of Securities Dealers Automated Quotations');
-
-INSERT INTO Company (c_name, industry, ticker, price, username, abbre)
-VALUES ('Microsoft', 'Technology', 'MSFT', 98.84, 'bggoodman', 'NASDAQ');
-
-INSERT INTO Company (c_name, industry, ticker, price, username, abbre)
-VALUES ('Google', 'Technology', 'GOOGL', 1000, 'gHumpkins', 'NASDAQ');
-
-INSERT INTO TradeOrder (type, ticker, num_shares, price, order_time, p_name, username)
-VALUES (1, 'GOOGL', 1200, 1000, NOW(), 'super performance equity', 'bggoodman');
-
-INSERT INTO TradeOrder (type, ticker, num_shares, price, order_time, p_name, username)
-VALUES (1, 'MSFT', 100, 98.84, NOW(), 'super performance equity', 'bggoodman');
-
-INSERT INTO ClosedOrder (ticker, num_shares, buy_price, closed_time, p_name, username)
-VALUES ('GOOGL', 1200, 1001, NOW(), 'super performance equity', 'bggoodman');
-
-
-
+LOAD DATA LOCAL INFILE './exchange.txt' INTO TABLE Exchange LINES TERMINATED BY '\r';
+LOAD DATA LOCAL INFILE './account.txt' INTO TABLE Account LINES TERMINATED BY '\r';
+LOAD DATA LOCAL INFILE './portfolio.txt' INTO TABLE Portfolio LINES TERMINATED BY '\r';
+LOAD DATA LOCAL INFILE './company.txt' INTO TABLE Company LINES TERMINATED BY '\r';
+LOAD DATA LOCAL INFILE './tradeorder.txt' INTO TABLE TradeOrder LINES TERMINATED BY '\r';
+LOAD DATA LOCAL INFILE './closedorder.txt' INTO table ClosedOrder LINES TERMINATED BY '\r';
