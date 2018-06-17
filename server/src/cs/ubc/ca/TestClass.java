@@ -27,7 +27,7 @@ public class TestClass {
             //2. Create statement object
             Statement myStatement = myConnection.createStatement();
 
-            
+
 //            JSONArray jArr = DBCmd.getTradesByPortfolio("bggoodman", "super performance equity", myConnection);
 //            JSONArray jArr = DBCmd.getPendingOrders("bggoodman", myConnection);
 
@@ -40,8 +40,13 @@ public class TestClass {
 //            DBCmd.deleteCompany("bggoodman", "MSFT", myConnection);
 
 //            DBCmd.changePassword("bggoodman", "123", "234", myConnection);
+//            Order order = new Order(OrderTypes.BUY , "bggoodman", "GOOGL", "NASDAQ", "super performance equity", 3, 123f);
+//            DBCmd.mergeOrders(order, myConnection);
 
-            DBCmd.executeOrder(OrderTypes.BUY,"gHumpkins", "GOOGL", "NASDAQ", 1000, "tech sector", myConnection);
+            DBCmd.addFunds("gHumpkins", 20000000f, myConnection);
+            DBCmd.executeBuy("gHumpkins", "GOOGL", "NASDAQ", 1500, "tech sector", myConnection);
+
+
         }
         catch(Exception e)
         {

@@ -14,7 +14,8 @@ CREATE TABLE Account (
 	username CHAR(20) PRIMARY KEY,
 	first_name CHAR(20),
 	last_name CHAR(20),
-	password CHAR(20)
+	password CHAR(20),
+	funds_available FLOAT NOT NULL
 );
 
 /* We will do the portfolio purchased price on the fly by joining the Portfolio table with the ClosedOrder table*/
@@ -65,11 +66,11 @@ CREATE TABLE ClosedOrder (
 	FOREIGN KEY(username, p_name) REFERENCES Portfolio(username, p_name) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-INSERT INTO Account(username, first_name, last_name, password)
-VALUES ('bggoodman', 'Bill', 'Gates', '123');
+INSERT INTO Account(username, first_name, last_name, password, funds_available)
+VALUES ('bggoodman', 'Bill', 'Gates', '123', 0);
 
-INSERT INTO Account(username, first_name, last_name, password)
-VALUES ('gHumpkins', 'Paul', 'Williams', '456');
+INSERT INTO Account(username, first_name, last_name, password, funds_available)
+VALUES ('gHumpkins', 'Paul', 'Williams', '456', 0);
 
 INSERT INTO Portfolio (p_name, username)
 VALUES('super performance equity', 'bggoodman');
@@ -90,10 +91,10 @@ INSERT INTO TradeOrder (type, ticker, num_shares, price, order_time, p_name, use
 VALUES (1, 'GOOGL', 1200, 1000, NOW(), 'super performance equity', 'bggoodman');
 
 INSERT INTO TradeOrder (type, ticker, num_shares, price, order_time, p_name, username)
-VALUES (1, 'MSFT', 100, 98.84, NOW(), 'super performance equity', 'bggoodman');
+VALUES (1, 'GOOGL', 300, 1000, NOW(), 'super performance equity', 'bggoodman');
 
 INSERT INTO ClosedOrder (ticker, num_shares, buy_price, closed_time, p_name, username)
-VALUES ('GOOGL', 1200, 1001, NOW(), 'super performance equity', 'bggoodman');
+VALUES ('GOOGL', 1200, 1000, NOW(), 'super performance equity', 'bggoodman');
 
 
 

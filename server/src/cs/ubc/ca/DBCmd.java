@@ -52,12 +52,26 @@ public class DBCmd {
         }
 
 
-        createUsrAcc.executeUpdate("INSERT INTO " + ACCOUNTS_TABLE + " (username, password, first_name, last_name)" +
-                " VALUES('" + username + "','" + password + "','" + firstName + "','" + lastName + "')");
+        createUsrAcc.executeUpdate("INSERT INTO " + ACCOUNTS_TABLE + " (username, password, first_name, last_name, funds_available)" +
+                " VALUES('" + username + "','" + password + "','" + firstName + "','" + lastName + "'"+ 0 + ")");
 
         obj.put("body", "User " + username + " created successfully");
         return obj;
     }
+
+    public static void addFunds(String username, Float amount, Connection con) throws Exception {
+        String addFundsQuery = "SELECT username,funds_available FROM " + ACCOUNTS_TABLE + " WHERE username='" + username + "'";
+        Statement addFunds = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        ResultSet accountInfo = addFunds.executeQuery(addFundsQuery);
+
+        if(accountInfo.next()) {
+            Float test = accountInfo.getFloat("funds_available");
+            Float sum = accountInfo.getFloat("funds_available") + amount;
+            accountInfo.updateFloat("funds_available", accountInfo.getFloat("funds_available") + amount);
+            accountInfo.updateRow();
+        }
+    }
+
 
     // We don't allow two portfolio to have the same name for one particular user
     public static JSONObject createPortfolio(String username, String portName, Connection con) throws Exception {
@@ -193,7 +207,7 @@ public class DBCmd {
         }
     }
 
-    public static JSONObject executeOrder(OrderTypes type, String username, String ticker, String exchange, int numShares, String portName, Connection con) throws Exception {
+    public static JSONObject executeBuy(String username, String ticker, String exchange, int numShares, String portName, Connection con) throws Exception {
 
         // Check if company is traded on the particular exchange in the company table if so pick out the record.
         Statement checkTradedStock = con.createStatement();
@@ -214,7 +228,18 @@ public class DBCmd {
             return obj;
         }
 
-        Order buyOrder = new Order(type, username, ticker, exchange, portName, numShares, tickerInfo.getFloat("price"));
+        // Check if sufficient fund
+        Float currentPrice = tickerInfo.getFloat("price");
+        Statement checkFund = con.createStatement();
+        ResultSet accountInfo = checkFund.executeQuery("SELECT funds_available FROM " + ACCOUNTS_TABLE + " WHERE username='" + username + "'");
+        accountInfo.next();
+        Float fundsAvailable  = accountInfo.getFloat("funds_available");
+        if(fundsAvailable < currentPrice * numShares) {
+            obj.put("body", "Insufficient fund");
+            return obj;
+        }
+
+        Order buyOrder = new Order(OrderTypes.BUY, username, ticker, exchange, portName, numShares, currentPrice);
 
         //Insert into database and select last_insert_id()
         Statement insertUserPort = con.createStatement();
@@ -228,8 +253,8 @@ public class DBCmd {
             return obj;
         }
 
-        int test = insertID.getInt("last_insert_id()");
-        buyOrder.addOrderID(test);
+        int orderId = insertID.getInt("last_insert_id()");
+        buyOrder.addOrderID(orderId);
 
         closeOrder(buyOrder, con);
 
@@ -237,42 +262,122 @@ public class DBCmd {
         return obj;
     }
 
+    public static JSONObject executeSell(String username, String ticker, String exchange, int numShares, String portName, Connection con) throws Exception {
+        JSONObject obj = new JSONObject();
+
+        // Check user has the amount to sell;
+        
+
+        return obj;
+    }
+
+    //  order must have been inserted into the TradeOrder table
     private static void closeOrder(Order order, Connection con) throws Exception{
 
         // Select all opposite orders (i.e if order is buy, then we select all sell orders) and group by ascending order by order_time
         OrderTypes oppositeType = order.getType() == OrderTypes.BUY ? OrderTypes.SELL : OrderTypes.BUY;
-        String query = "SELECT * FROM " + TRADED_ORDER_TABLE + " WHERE type=" + oppositeType + " AND to_id<>" + order.getOrderID() +
+        String oppositeOrdersQuery = "SELECT * FROM " + TRADED_ORDER_TABLE + " WHERE type=" + oppositeType + " AND to_id<>" + order.getOrderID() +
                 " AND ticker='" + order.getTicker() + "' ORDER BY order_time ASC";
 
-        Statement selectClosingCandidates = con.createStatement();
-        ResultSet closingCandidates = selectClosingCandidates.executeQuery(query);
+        Statement selectClosingCandidates = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        ResultSet closingCandidates = selectClosingCandidates.executeQuery(oppositeOrdersQuery);
+
+        // Select closing target
+        String closingTargetQuery = "SELECT * FROM " + TRADED_ORDER_TABLE + " WHERE to_id=" + order.getOrderID();
+        Statement selectClosingTarget = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        ResultSet closingTarget = selectClosingTarget.executeQuery(closingTargetQuery);
+        closingTarget.next();
 
         while(closingCandidates.next()) {
+            if(closingCandidates.getFloat("price") == order.getPrice()) {
+                int numShares = closingCandidates.getInt("num_shares");
+                if (numShares > order.getNumShares()) {
+                    closingCandidates.updateInt("num_shares", numShares - order.getNumShares());
 
-            int numShares = closingCandidates.getInt("num_shares");
-            if(numShares > order.getNumShares()) {
-                String updateOrderQuery = "UPDATE " + TRADED_ORDER_TABLE + " SET num_shares=" +
-                        (numShares - order.getNumShares()) + " WHERE to_id=" + closingCandidates.getInt("to_id");
-                Statement updateOppositeOrder = con.createStatement();
-                updateOppositeOrder.executeUpdate(updateOrderQuery);
+                    String updateClosingCandidateQuery = "UPDATE " + TRADED_ORDER_TABLE +
+                            " SET num_shares=" + (numShares - order.getNumShares()) + " WHERE to_id=" + closingCandidates.getInt("to_id");
 
-                //Delete Placed Order
-                String removePlacedOrderQuery = "DELETE FROM " + TRADED_ORDER_TABLE + " WHERE to_id=" + order.getOrderID();
-                Statement removePlacedOrder = con.createStatement();
-                removePlacedOrder.executeUpdate(removePlacedOrderQuery);
+                    Statement updateClosingCandidate = con.createStatement();
+                    updateClosingCandidate.executeUpdate(updateClosingCandidateQuery);
+                    closingTarget.deleteRow();
 
-                //add order for user
-                String addOrder = "INSERT INTO " + CLOSED_ORDER_TABLE + " " + order.getClosedOrderFields() +
-                        " VALUES " + order.getCloseOrder();
+                    updateValues(order, con);
 
-                Statement addClosedOrder = con.createStatement();
-                addClosedOrder.executeUpdate(addOrder);
-                return;
+                } else if (numShares < order.getNumShares()) {
+                    String updateClosingTargetQuery = "UPDATE " + TRADED_ORDER_TABLE +
+                            " SET num_shares=" + (order.getNumShares() - numShares) + " WHERE to_id=" + closingTarget.getInt("to_id");
+                    Statement updateClosingTarget = con.createStatement();
+                    updateClosingTarget.executeUpdate(updateClosingTargetQuery);
+
+                    Order closedPortion = new Order(order);
+                    closedPortion.updateQty(numShares);
+                    updateValues(closedPortion, con);
+
+                    order.updateQty(order.getNumShares() - numShares);
+                    closingCandidates.deleteRow();
+                } else {
+                    closingTarget.deleteRow();
+                    closingCandidates.deleteRow();
+
+                    updateValues(order, con);
+                }
             }
-            else {
+        }
+    }
 
-                //TODO:
-            }
+    private static void updateValues(Order order, Connection con) throws Exception {
+        // If buy order add closed order, if sell order remove from closed order
+        if (order.getType() == OrderTypes.BUY) {
+            String addClosedOrderQuery = "INSERT INTO " + CLOSED_ORDER_TABLE + " " + order.getClosedOrderFields() +
+                    " VALUES " + order.getClosedOrder();
+            Statement addClosedOrder = con.createStatement();
+            addClosedOrder.executeUpdate(addClosedOrderQuery);
+            mergeOrders(order, con);
+            addFunds(order.getUsername(), -order.getPrice() * order.getNumShares(), con);
+        } else {
+            String removeOrderQuery = "DELETE FROM " + CLOSED_ORDER_TABLE + " WHERE o_id=" + order.getOrderID();
+            Statement removeOrder = con.createStatement();
+            removeOrder.executeUpdate(removeOrderQuery);
+            addFunds(order.getUsername(), order.getPrice() * order.getNumShares(), con);
+        }
+
+    }
+
+    public static void mergeOrders(Order order, Connection con) throws Exception {
+        String selectFromClosedQuery = "SELECT o_id,buy_price,num_shares FROM ClosedOrder WHERE " +
+                "ticker='" + order.getTicker() + "' AND username='" + order.getUsername() + "' AND p_name='" + order.getPortName() + "'";
+
+        int totalNumShares = 0;
+        Float totalBuyPrice = 0f;
+        boolean merged = false;
+
+        Statement getMergedCandidate = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        ResultSet mergedCandidate = getMergedCandidate.executeQuery(selectFromClosedQuery);
+
+        if (mergedCandidate.last()) {
+            int rowCount = mergedCandidate.getRow();
+            mergedCandidate.beforeFirst();
+            if(rowCount > 1)
+                merged = true;
+        }
+
+        while(mergedCandidate.next() && merged) {
+            int currNumShares = mergedCandidate.getInt("num_shares");
+            totalNumShares += currNumShares;
+            totalBuyPrice += mergedCandidate.getFloat("buy_price") * currNumShares;
+            mergedCandidate.deleteRow();
+        }
+
+        if(merged) {
+            Float newAvgPrice = totalBuyPrice / totalNumShares;
+            Order newClosedOrder = new Order(order);
+            newClosedOrder.updateQty(totalNumShares);
+            newClosedOrder.updatePrice(newAvgPrice);
+
+            String updateTrade = "INSERT INTO " + CLOSED_ORDER_TABLE + " " + newClosedOrder.getClosedOrderFields() + " VALUES " +
+                    newClosedOrder.getClosedOrder();
+            Statement updateClosedOrder = con.createStatement();
+            updateClosedOrder.executeUpdate(updateTrade);
         }
     }
 }
