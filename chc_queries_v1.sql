@@ -1,23 +1,26 @@
 /*
  *  QUERY:  Selection and Projection I
- *  DESC:   Gets the id, price, and post date of buy orders listed
- *          on exchange NASDAQ
+ *  DESC:   Gets the id, price, and post date of buy orders requested
+ *          for PBR stocks
  */
 
-SELECT  o_id, price, ticker, o_date
+SELECT  to_id, price, ticker, order_time
 FROM    TradeOrder
-WHERE   type = 'buy' AND
-        exchange = 'NASDAQ';
+WHERE   type = 0 AND
+        ticker = 'PBR';
 
 /*
  *  QUERY:  Selection and Projection II
- *  DESC:   Display the portfolio titles, whose purchase value is at least
- *          $5000, that are owned and maintained by a trader's account
+ *  DESC:   Find all companies being traded on exchange NASDAQ, with
+ *          share value of at least 100
  */
 
-SELECT  DISTINCT title, purchase_value
-FROM    Portfolio
-WHERE   purchase_value >= 5000;
+SELECT  DISTINCT ticker AS Ticker,
+                 c_name AS Company,
+                 abbre AS Exchange
+FROM    Company
+WHERE   abbre = 'NASDAQ' AND
+        price >= 100;
 
 /*
  *  QUERY:  Join
@@ -25,32 +28,35 @@ WHERE   purchase_value >= 5000;
  *          technology stocks
  */
 
-SELECT  c_name AS Company,
-        abbreviation AS Exchange,
-        price AS Price
-FROM    Company, Exchange
-WHERE   industry = 'Technology';
+SELECT  C.c_name AS Company,
+        E.abbreviation AS Abbrev,
+        E.ex_name AS Exchange
+        C.price AS Price
+FROM    Company C, Exchange E
+WHERE   C.abbre = E.abbreviation AND
+        C.industry = 'Healthcare';
 
 
 /*
  *  QUERY:  Division
  *  DESC:   Find portfolio titles containing successful transactions with every
  *          company of a specified industry.
- *  RA:     AllCompany <-- π_(c_id) [σ_(industry='Energy') (Company)]
- *          CompanyOrder <-- π_(c_id),(p_id) [AllCompany ⋈ ClosedOrder]
- *          AllOrderCombos <-- π_(title),(c_id),(p_id) [CompanyOrder X Portfolio]
- *          MissingOrders <-- π_(title),(c_id),(p_id) [AllOrderCombos - CompanyOrder]
- *          π_(title) [CompanyOrder - MissingOrders]
+ *  RA:     AllCompany <-- π_(ticker) [σ_(industry='Energy') (Company)]
+ *          CompanyOrder <-- π_(ticker),(p_name),(username) [AllCompany ⋈ ClosedOrder]
+ *          AllOrderCombos <-- π_(p_name),(username),(ticker) [CompanyOrder X Portfolio]
+ *          MissingOrders <-- π_(p_name),(username),(ticker) [AllOrderCombos - CompanyOrder]
+ *          π_(p_name) [CompanyOrder - MissingOrders]
  */
 
-SELECT  P.title
+SELECT  P.p_name
 FROM    Portfolio P, ClosedOrder CO
-WHERE   P.p_id = CO.p_id AND
+WHERE   P.username = CO.username AND
+        P.p_name = CO.p_name AND
         NOT EXISTS (SElECT   *
                     FROM     ClosedOrder CO)
                     EXCEPT   (SELECT  *
                               FROM    Company C, ClosedOrder CO
-                              WHERE   C.c_id = CO.c_id AND
+                              WHERE   C.ticker = CO.ticker AND
                                       C.industry = 'Energy');
 
 /*
@@ -71,7 +77,7 @@ WHERE   C.username = A.username AND
 
 SELECT    C.industry, MIN(CO.buy_price) AS MinPrice
 FROM      Company C, ClosedOrder CO
-WHERE     C.c_id = CO.c_id
+WHERE     C.ticker = CO.ticker
 GROUP BY  C.industry;
 
 /*
@@ -82,7 +88,7 @@ GROUP BY  C.industry;
 
 SELECT    C.industry, MIN(CO.buy_price)
 FROM      Company C, ClosedOrder CO
-WHERE     C.c_id = CO.c_id
+WHERE     C.ticker = CO.ticker
 GROUP BY  C.industry
 HAVING    AVG(CO.buy_price) < (SELECT   AVG(buy_price)
                                FROM     ClosedOrder);
@@ -95,8 +101,9 @@ HAVING    AVG(CO.buy_price) < (SELECT   AVG(buy_price)
 
 SELECT    SUM(purchase_value) AS Total
 FROM      Portfolio P, ClosedOrder C
-WHERE     P.p_id = C.p_id
-HAVING    5 < (SELECT   COUNT(c_id)
+WHERE     P.p_name = C.p_name AND
+          P.username = C.username
+HAVING    5 < (SELECT   COUNT(ticker)
                FROM     ClosedOrder);
 
 /*
