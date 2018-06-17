@@ -14,10 +14,6 @@ import org.json.simple.parser.JSONParser;
 
 public class HttpMirror {
 
-    public void Test() {
-
-    }
-
     public void run() throws Exception {
         HttpServer server = HttpServer.create(new InetSocketAddress(9000), 0);
 
@@ -54,7 +50,7 @@ public class HttpMirror {
                 System.out.println(bodyJSON.get("password"));
             }
 
-            // 3. Assemble JSON Response
+            // 3. Assemble JSON Response; ignore the "Unchecked call" warnings
             JSONObject jsonBuilder = new JSONObject();
             jsonBuilder.put("PIGGY", "BEAR");
             jsonBuilder.put("HALLOOOO", "PEOPLE");
