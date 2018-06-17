@@ -18,16 +18,17 @@ import {
   // IPO Page Actions
   HANDLE_NEW_IPO_SUCCESS,
   // SettingsPage Actions
-  HANDLE_CHANGE_PASSWORD_SUCCESS,
-  // wtf?
-  TEST_BEAR
+  HANDLE_CHANGE_PASSWORD_SUCCESS
 } from './constants';
 
-export const testAction = (payload) => {
-  console.log('im clicked!');
-  return dispatch => {
-    dispatch({ type: TEST_BEAR, payload });
-  }
+const HOST = "http://localhost:9000/";
+const optionsBase = {
+  credentials: 'same-origin',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  method: 'POST',
+  mode: 'cors'
 };
 
 // -----------------------------------------------------------
@@ -36,44 +37,66 @@ export const testAction = (payload) => {
 export const handleLogin = (payload) => {
   const { username, password } = payload;
 
-  // TODO: add http request here
-  console.log('logging in with username: ', username, ' and password: ', password);
-  payload.fname = 'tree';
-  payload.lname = 'bear';
-
   const options = {
-    body: JSON.stringify({ username, password }),
-    credentials: 'same-origin',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    method: 'POST',
-    mode: 'cors'
+    ...optionsBase,
+    body: JSON.stringify({
+      username,
+      password
+    })
   };
 
-  fetch("http://localhost:9000/test", options)
-    .then(res => res.json())
-    .then(res => console.log(res))
-    .catch(err => console.log(err));
-
-  history.push('/dashboard');
-
   return dispatch => {
-    dispatch({ type: HANDLE_LOGIN_SUCCESS, payload });
-  }
+    fetch(`${HOST}login`, options)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        if (res.code === 200) {
+          payload = res;
+          dispatch({ type: HANDLE_LOGIN_SUCCESS, payload });
+          history.push('/dashboard');
+        } else {
+          dispatch({ type: HANDLE_LOGIN_FAILURE });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch({ type: HANDLE_LOGIN_FAILURE });
+      });
+
+    }
 };
 
 export const handleCreateNewAccount = (payload) => {
   const { fname, lname, username, password } = payload;
 
-  // TODO: add http request here
-  console.log('creating new account! ', payload);
-
-  history.push('/dashboard');
+  const options = {
+    ...optionsBase,
+    body: JSON.stringify({
+      fname,
+      lname,
+      username,
+      password
+    })
+  };
 
   return dispatch => {
-    dispatch({ type: HANDLE_CREATE_ACCOUNT_SUCCESS, payload });
-  }
+    fetch(`${HOST}create`, options)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        if (res.code === 200) {
+          payload = res;
+          dispatch({ type: HANDLE_CREATE_ACCOUNT_SUCCESS, payload });
+          history.push('/dashboard');
+        } else {
+          dispatch({ type: HANDLE_CREATE_ACCOUNT_FAILURE });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch({ type: HANDLE_CREATE_ACCOUNT_FAILURE });
+      });
+    }
 };
 
 // -----------------------------------------------------------

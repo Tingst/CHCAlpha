@@ -17,79 +17,67 @@ public class HttpMirror {
     public void run() throws Exception {
         HttpServer server = HttpServer.create(new InetSocketAddress(9000), 0);
 
-        server.createContext("/test", new MyHandler());
+        server.createContext("/login", new Handler("login"));
+        server.createContext("/create", new Handler("create"));
         server.setExecutor(null); // creates a default executor
         server.start();
     }
 
-    static class MyHandler implements HttpHandler {
+    static class Handler implements HttpHandler {
+        private String endpoint;
+
+        public Handler(String endpoint) {
+            this.endpoint = endpoint;
+        }
+
         @Override
         public void handle(HttpExchange t) throws IOException {
-            // 1. Process Request
+            // Receive Request
             Headers requestHeaders = t.getRequestHeaders();
             Headers responseHeaders = t.getResponseHeaders();
             for (Map.Entry<String, List<String>> header : requestHeaders.entrySet()) {
                 responseHeaders.put(header.getKey(), header.getValue());
             }
 
-            // 2. Extract JSON from Request Body
-            // NOTE: You MUST include this outer if-statement! Otherwise,
-            // the server will fail the request!
-            if (t.getRequestMethod().equalsIgnoreCase("POST")) {
-                String body = process(t);
-                JSONObject bodyJSON;
-                try {
-                    JSONParser parser = new JSONParser();
-                    bodyJSON = (JSONObject) parser.parse(body);
-                }
-                catch(Exception e) {
-                    System.out.println(e.getMessage());
-                    return;
-                }
-                System.out.println("HERE IS THE JSON");
-                System.out.println(bodyJSON.get("password"));
-            }
-
-            // 3. Assemble JSON Response; ignore the "Unchecked call" warnings
-            JSONObject jsonBuilder = new JSONObject();
-            jsonBuilder.put("PIGGY", "BEAR");
-            jsonBuilder.put("HALLOOOO", "PEOPLE");
-            jsonBuilder.put("MANY WOWS", "WOWOWOW");
-            String json = jsonBuilder.toString();
-
-            // 4. Take care of CORS issues
+            // Take care of CORS issues
             responseHeaders.add("Access-Control-Allow-Origin", "*");
             responseHeaders.add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE");
             responseHeaders.add("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization");
 
-            // 5. Finish Response
-            t.sendResponseHeaders(200, json.length());
+            // Delegate to appropriate API endpoint
+            JSONObject jsonBuilder;
+            switch(this.endpoint) {
+
+                case "login": {
+                    jsonBuilder = API.login(t);
+                    break;
+                }
+                case "create": {
+                    jsonBuilder = API.create(t);
+                    break;
+                }
+
+                default: {
+                    jsonBuilder = null;
+                    break;
+                }
+
+            }
+
+            if (jsonBuilder == null) {
+                return;
+            }
+
+            System.out.println("json is " + jsonBuilder.get("body"));
+
+            // Convert to JSON string
+            String json = jsonBuilder.toString();
+
+            // Finish Response
+            t.sendResponseHeaders((int)jsonBuilder.get("code"), json.length());
             OutputStream os = t.getResponseBody();
             os.write(json.getBytes());
             os.close();
-        }
-
-        private String process(HttpExchange t) {
-            StringBuilder buf = new StringBuilder(512);
-
-            try {
-                InputStreamReader isr =  new InputStreamReader(t.getRequestBody(),"utf-8");
-                BufferedReader br = new BufferedReader(isr);
-
-                // Converting bytes to UTF-8:
-                int b;
-                while ((b = br.read()) != -1) {
-                    buf.append((char) b);
-                }
-
-                br.close();
-                isr.close();
-            }
-            catch(Exception e) {
-                System.out.println(e.toString());
-            }
-
-            return buf.toString();
         }
     }
 
