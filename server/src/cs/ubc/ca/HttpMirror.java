@@ -19,6 +19,14 @@ public class HttpMirror {
 
         server.createContext("/login", new Handler("login"));
         server.createContext("/create", new Handler("create"));
+        server.createContext("/createportfolio", new Handler("createportfolio"));
+        server.createContext("/deleteportfolio", new Handler("deleteportfolio"));
+        server.createContext("/placeorder", new Handler("placeorder"));
+        server.createContext("/cancelorder", new Handler("cancelorder"));
+        server.createContext("/trends", new Handler("trends"));
+        server.createContext("/company", new Handler("company"));
+        server.createContext("/ipo", new Handler("ipo"));
+        server.createContext("/password", new Handler("password"));
         server.setExecutor(null); // creates a default executor
         server.start();
     }
@@ -41,7 +49,7 @@ public class HttpMirror {
 
             // Take care of CORS issues
             responseHeaders.add("Access-Control-Allow-Origin", "*");
-            responseHeaders.add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE");
+            responseHeaders.add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE");
             responseHeaders.add("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization");
 
             // Delegate to appropriate API endpoint
@@ -54,6 +62,38 @@ public class HttpMirror {
                 }
                 case "create": {
                     jsonBuilder = API.create(t);
+                    break;
+                }
+                case "createportfolio": {
+                    jsonBuilder = API.createPortfolio(t);
+                    break;
+                }
+                case "deleteportfolio": {
+                    jsonBuilder = API.deletePortfolio(t);
+                    break;
+                }
+                case "placeorder": {
+                    jsonBuilder = API.placeOrder(t);
+                    break;
+                }
+                case "cancelorder": {
+                    jsonBuilder = API.cancelOrder(t);
+                    break;
+                }
+                case "trends": {
+                    jsonBuilder = API.getTrends(t);
+                    break;
+                }
+                case "company": {
+                    jsonBuilder = API.getCompanyDetails(t);
+                    break;
+                }
+                case "ipo": {
+                    jsonBuilder = API.createIPO(t);
+                    break;
+                }
+                case "password": {
+                    jsonBuilder = API.updatePassword(t);
                     break;
                 }
 
