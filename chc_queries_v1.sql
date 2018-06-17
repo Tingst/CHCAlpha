@@ -39,24 +39,36 @@ WHERE   A.username = C.username AND
  *          company of a specified industry.
  *  RA:     AllCompany <-- π_(ticker) [σ_(industry='Electronics') (Company)]
  *          CompanyOrder <-- π_(ticker),(username) [AllCompany ⋈ ClosedOrder]
- *          AllOrderCombos <-- π_(p_name),(username),(ticker) [CompanyOrder X Portfolio]
- *          MissingOrders <-- π_(p_name),(username),(ticker) [AllOrderCombos - CompanyOrder]
- *          π_(p_name) [CompanyOrder - MissingOrders]
+ *          AllOrderCombos <-- π_(username),(ticker) [CompanyOrder X Portfolio]
+ *          MissingOrders <-- π_(username),(ticker) [AllOrderCombos - CompanyOrder]
+ *          π_(username) [CompanyOrder - MissingOrders]
  */
 
-SELECT  P.username, P.p_name
-FROM    Portfolio P, ClosedOrder CO
-WHERE   P.username = CO.username AND
-        P.p_name = CO.p_name AND
-        NOT EXISTS (SElECT   CO.ticker
-                    FROM     ClosedOrder CO)
-                    NOT IN   (SELECT  C.ticker
-                              FROM    Company C, ClosedOrder CO
-                              WHERE   C.ticker = CO.ticker AND
-                                      C.username = CO.username AND
-                                      C.industry = 'Electronics');
+ /* T1 */
+CREATE VIEW T1 AS (
+ SELECT username, ticker
+ FROM   ClosedOrder
+);
 
+ /* T2 */
+CREATE VIEW T2 AS (
+  SELECT  ticker
+  FROM    Company
+  WHERE   industry = 'Electronics'
+);
 
+SELECT  DISTINCT x.username
+FROM    T1 AS x
+WHERE NOT EXISTS (
+  SELECT  *
+  FROM    T2 y
+  WHERE NOT EXISTS (
+    SELECT  *
+    FROM    T1 AS z
+    WHERE   (z.username = x.username) AND
+            (z.ticker = y.ticker)
+  )
+);
 
 /*
  *  QUERY:  Aggregation I
