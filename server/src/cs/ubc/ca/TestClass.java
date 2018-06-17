@@ -43,9 +43,12 @@ public class TestClass {
 //            Order order = new Order(OrderTypes.BUY , "bggoodman", "GOOGL", "NASDAQ", "super performance equity", 3, 123f);
 //            DBCmd.mergeOrders(order, myConnection);
 
-            DBCmd.addFunds("gHumpkins", 20000000f, myConnection);
-            DBCmd.executeBuy("gHumpkins", "GOOGL", "NASDAQ", 1500, "tech sector", myConnection);
+//            DBCmd.addFunds("gHumpkins", 20000000f, myConnection);
+//            DBCmd.executeBuy("gHumpkins", "GOOGL", "NASDAQ", 1500, "tech sector", myConnection);
 
+//            DBCmd.executeSell("gHumpkins", "GOOGL", "NASDAQ", 1200, "tech sector", myConnection);
+
+            DBCmd.createIPO("gHumpkins", "AMZN", "Technology", "Amazon", "NASDAQ", 200f, 1000000, myConnection);
 
         }
         catch(Exception e)

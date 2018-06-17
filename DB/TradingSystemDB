@@ -87,14 +87,17 @@ VALUES ('Microsoft', 'Technology', 'MSFT', 98.84, 'bggoodman', 'NASDAQ');
 INSERT INTO Company (c_name, industry, ticker, price, username, abbre)
 VALUES ('Google', 'Technology', 'GOOGL', 1000, 'gHumpkins', 'NASDAQ');
 
-INSERT INTO TradeOrder (type, ticker, num_shares, price, order_time, p_name, username)
-VALUES (1, 'GOOGL', 1200, 1000, NOW(), 'super performance equity', 'bggoodman');
+-- INSERT INTO TradeOrder (type, ticker, num_shares, price, order_time, p_name, username)
+-- VALUES (1, 'GOOGL', 1200, 1000, NOW(), 'super performance equity', 'bggoodman');
 
-INSERT INTO TradeOrder (type, ticker, num_shares, price, order_time, p_name, username)
-VALUES (1, 'GOOGL', 300, 1000, NOW(), 'super performance equity', 'bggoodman');
+-- INSERT INTO TradeOrder (type, ticker, num_shares, price, order_time, p_name, username)
+-- VALUES (1, 'GOOGL', 300, 1000, NOW(), 'super performance equity', 'bggoodman');
 
-INSERT INTO ClosedOrder (ticker, num_shares, buy_price, closed_time, p_name, username)
-VALUES ('GOOGL', 1200, 1000, NOW(), 'super performance equity', 'bggoodman');
+-- INSERT INTO TradeOrder (type, ticker, num_shares, price, order_time, p_name, username)
+-- VALUES (0, 'GOOGL', 1200, 1000, NOW(), 'super performance equity', 'bggoodman');
+
+-- INSERT INTO ClosedOrder (ticker, num_shares, buy_price, closed_time, p_name, username)
+-- VALUES ('GOOGL', 1200, 1000, NOW(), 'tech sector', 'gHumpkins');
 
 
 
