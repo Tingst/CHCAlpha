@@ -130,6 +130,10 @@ class PortfolioPanelWrapper extends React.Component {
     this.handleDeletePortfolio = this.handleDeletePortfolio.bind(this);
   }
 
+  componentDidMount() {
+    this.props.handleGetAllStocks();
+  }
+
   handleCreateNewPortfolio() {
     if (this.state.newPortfolioName.length < 4) {
       window.alert("Portfolio names must be at least 4 characters long");
