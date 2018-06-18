@@ -6,167 +6,191 @@ import * as ipoActions from '../actions/actioncreators';
 import { ViewRow, ViewCol } from '../components';
 
 const styles = {
-  label: {
-    paddingTop: '1rem',
-    fontWeight: 700
-  }
+    label: {
+        paddingTop: '1rem',
+        fontWeight: 700
+    }
 };
 
 class IpoWrapper extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: '',
-      industry: '',
-      ticker: '',
-      price: 0,
-      numShares: 0,
-      portfolio: '',
-      exchange: ''
-    };
-    this.handleInputBlur = this.handleInputBlur.bind(this);
-    this.handleIpoClick = this.handleIpoClick.bind(this);
-  }
-
-  handleInputBlur(e, key) {
-    let alphaCheck = RegExp('^[a-zA-Z]*$');
-    let alphaNumericCheck = RegExp('^[a-zA-Z0-9]*$');
-    let numericCheck = RegExp('^[0-9]*$');
-
-    if (key === 'name') {
-      if (!alphaNumericCheck.test(e.target.value))
-        window.alert("Please avoid special characters");
-    } else if (key === 'industry' || key === 'ticker' || key === 'exchange') {
-      if (!alphaCheck.test(e.target.value))
-        window.alert("Please avoid numbers and special characters");
-    } else if (key === 'price' || key === 'numShares') {
-      if (!numericCheck.test(e.target.value))
-        window.alert("Please enter a whole number (e.g. 300)");
+    constructor(props) {
+        super(props);
+        this.state = {
+            name: '',
+            industry: '',
+            ticker: '',
+            price: 0,
+            numShares: 0,
+            portfolio: '',
+            exchange: ''
+        };
+        this.handleInputBlur = this.handleInputBlur.bind(this);
+        this.handleIpoClick = this.handleIpoClick.bind(this);
     }
 
-    this.setState({ [key]: e.target.value });
+    handleInputBlur(e, key) {
+        let alphaCheck = RegExp('^[a-zA-Z]*$');
+        let alphaNumericCheck = RegExp('^[a-zA-Z0-9]*$');
+        let numericCheck = RegExp('^[0-9]*$');
 
-    // switch (key) {
-    //   case 'name':
-    //     if (!alphaNumericCheck.test(e.target.value))
-    //       window.alert("Please avoid special characters");
-    //     break;
-    //   case 'industry':
-    //   case 'ticker':
-    //   case 'exchange':
-    //     if (!alphaCheck.test(e.target.value))
-    //       window.alert("Please avoid numbers and special characters");
-    //     break;
-    //   case 'price':
-    //   case 'numShares':
-    //     if (!numericCheck.test(e.target.value))
-    //       window.alert("Please enter a whole number (e.g. 300)");
-    //     break;
-    // }
-    // this.setState({ [key]: e.target.value });
-  }
+        if (key === 'name') {
+            if (!alphaNumericCheck.test(e.target.value))
+                window.alert("Please avoid special characters");
+        } else if (key === 'industry' || key === 'ticker' || key === 'exchange') {
+            if (!alphaCheck.test(e.target.value))
+                window.alert("Please avoid numbers and special characters");
+        } else if (key === 'price' || key === 'numShares') {
+            if (!numericCheck.test(e.target.value))
+                window.alert("Please enter a whole number (e.g. 300)");
+        }
 
-  handleIpoClick() {
-    const {
-      name,
-      industry,
-      ticker,
-      price,
-      numShares,
-      portfolio,
-      exchange
-    } = this.state;
+        this.setState({
+            [key]: e.target.value
+        });
 
-    this.props.handleIpoClick({
-      username: this.props.username,
-      name,
-      industry,
-      ticker: ticker.toUpperCase(),
-      price: Number(price),
-      numShares: Number(numShares),
-      portfolio,
-      exchange
-    });
+        // switch (key) {
+        //   case 'name':
+        //     if (!alphaNumericCheck.test(e.target.value))
+        //       window.alert("Please avoid special characters");
+        //     break;
+        //   case 'industry':
+        //   case 'ticker':
+        //   case 'exchange':
+        //     if (!alphaCheck.test(e.target.value))
+        //       window.alert("Please avoid numbers and special characters");
+        //     break;
+        //   case 'price':
+        //   case 'numShares':
+        //     if (!numericCheck.test(e.target.value))
+        //       window.alert("Please enter a whole number (e.g. 300)");
+        //     break;
+        // }
+        // this.setState({ [key]: e.target.value });
+    }
 
-    // reset fields
-    this.setState({
-      name: '',
-      industry: '',
-      ticker: '',
-      price: 0,
-      numShares: 0,
-      portfolio: '',
-      exchange: ''
-    });
-  }
+    handleIpoClick() {
+        const {
+            name,
+            industry,
+            ticker,
+            price,
+            numShares,
+            portfolio,
+            exchange
+        } = this.state;
+        console.log('clicky');
+        this.props.handleIpoClick({
+            username: this.props.username,
+            name,
+            industry,
+            ticker: ticker.toUpperCase(),
+            price: Number(price),
+            numShares: Number(numShares),
+            portfolio,
+            exchange
+        });
 
-  render() {
-    const portfolios = this.props.portfolios.map((port, id) => ({ key: id, text: port.name, value: port.name }));
+        // reset fields
+        // this.setState({
+        //   name: '',
+        //   industry: '',
+        //   ticker: '',
+        //   price: 0,
+        //   numShares: 0,
+        //   portfolio: '',
+        //   exchange: ''
+        // });
+    }
 
-    return (
-      <ViewRow style={{ height: '100%' }}>
-        <ViewCol style={{ padding: '1rem' }}>
-          <h1>Initial Public Offering</h1>
+    render() {
+        const portfolios = this.props.portfolios.map((port, id) => ({ key: id, text: port.name, value: port.name }));
 
-          <label style={styles.label}>Company Name</label>
-          <input placeholder="e.g. Apple" onBlur={e => this.handleInputBlur(e, 'name')} />
+        return ( <
+            ViewRow style = {
+                { height: '100%' }
+            } >
+            <
+            ViewCol style = {
+                { padding: '1rem' }
+            } >
+            <
+            h1 > Initial Public Offering < /h1>
 
-          <label style={styles.label}>Industry</label>
-          <input placeholder="e.g. Energy" onBlur={e => this.handleInputBlur(e, 'industry')} />
+            <
+            label style = { styles.label } > Company Name < /label> <
+            input placeholder = "e.g. Apple"
+            onBlur = { e => this.handleInputBlur(e, 'name') }
+            />
 
-          <label style={styles.label}>Ticker Symbol</label>
-          <input placeholder="e.g. APPL" onBlur={e => this.handleInputBlur(e, 'ticker')} />
+            <
+            label style = { styles.label } > Industry < /label> <
+            input placeholder = "e.g. Energy"
+            onBlur = { e => this.handleInputBlur(e, 'industry') }
+            />
 
-          <label style={styles.label}>Price</label>
-          <input placeholder="e.g. 30" onBlur={e => this.handleInputBlur(e, 'price')} />
+            <
+            label style = { styles.label } > Ticker Symbol < /label> <
+            input placeholder = "e.g. APPL"
+            onBlur = { e => this.handleInputBlur(e, 'ticker') }
+            />
 
-          <label style={styles.label}># Shares</label>
-          <input placeholder="e.g. 10000" onBlur={e => this.handleInputBlur(e, 'numShares')} />
+            <
+            label style = { styles.label } > Price < /label> <
+            input placeholder = "e.g. 30"
+            onBlur = { e => this.handleInputBlur(e, 'price') }
+            />
 
-          <label style={styles.label}>Portfolio</label>
-          <Dropdown
-            button
-            className='icon'
-            floating
-            labeled
-            icon='open folder'
-            options={portfolios}
-            search
-            text={this.state.portfolio ? this.state.portfolio : '---'}
-            onChange={(e, val) => this.handleInputBlur({target: val}, 'portfolio')}
-          />
+            <
+            label style = { styles.label } > #Shares < /label> <
+            input placeholder = "e.g. 10000"
+            onBlur = { e => this.handleInputBlur(e, 'numShares') }
+            />
 
-          <label style={styles.label}>Exchange</label>
-          <Dropdown
-            button
-            className='icon'
-            floating
-            labeled
-            icon='world'
-            options={this.props.exchanges}
-            search
-            text={this.state.exchange ? this.state.exchange : '---'}
-            onChange={(e, val) => this.handleInputBlur({target: val}, 'exchange')}
-          />
+            <
+            label style = { styles.label } > Portfolio < /label> <
+            Dropdown button className = 'icon'
+            floating labeled icon = 'open folder'
+            options = { portfolios }
+            search text = { this.state.portfolio ? this.state.portfolio : '---' }
+            onChange = {
+                (e, val) => this.handleInputBlur({ target: val }, 'portfolio')
+            }
+            />
 
-          <Button style={{ marginTop: '1rem' }} onClick={this.handleIpoClick}>Submit</Button>
+            <
+            label style = { styles.label } > Exchange < /label> <
+            Dropdown button className = 'icon'
+            floating labeled icon = 'world'
+            options = { this.props.exchanges }
+            search text = { this.state.exchange ? this.state.exchange : '---' }
+            onChange = {
+                (e, val) => this.handleInputBlur({ target: val }, 'exchange')
+            }
+            />
 
-        </ViewCol>
-      </ViewRow>
-    )
-  }
+            <
+            Button style = {
+                { marginTop: '1rem' }
+            }
+            onClick = { this.handleIpoClick } > Submit < /Button>
+
+            <
+            /ViewCol> < /
+            ViewRow >
+        )
+    }
 }
 
 const mapStateToProps = ({ Stocks, Portfolio, Login }) => {
-  return {
-    exchanges: Stocks.exchanges,
-    portfolios: Portfolio.portfolios,
-    username: Login.username
-  }
+    return {
+        exchanges: Stocks.exchanges,
+        portfolios: Portfolio.portfolios,
+        username: Login.username
+    }
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return bindActionCreators({...ipoActions}, dispatch);
+    return bindActionCreators({...ipoActions }, dispatch);
 };
 
 const Ipo = connect(mapStateToProps, mapDispatchToProps)(IpoWrapper);

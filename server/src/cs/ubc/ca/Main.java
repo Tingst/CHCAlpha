@@ -1,6 +1,6 @@
 package cs.ubc.ca;
-import java.io.PrintStream;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
 
 public class Main {
 
