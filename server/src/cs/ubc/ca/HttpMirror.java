@@ -57,19 +57,27 @@ public class HttpMirror {
                 responseHeaders.put(header.getKey(), header.getValue());
             }
 
-            // Take care of CORS issues
+            // Take care of Preflight Request
+            // https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request
             responseHeaders.add("Access-Control-Allow-Origin", "*");
             responseHeaders.add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE");
             responseHeaders.add("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization");
-
             if (t.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
-                System.out.println("[" + t.getRequestMethod() + "] " + "Preflight Request");
+                System.out.println("[OPTIONS] Preflight Request");
+                JSONObject preflight = new JSONObject();
+                preflight.put("code", 200);
+                String preflightjson = preflight.toString();
+
+                // Finish Preflight Response
+                t.sendResponseHeaders((int) preflight.get("code"), preflightjson.length());
+                OutputStream os = t.getResponseBody();
+                os.write(preflightjson.getBytes());
+                os.close();
+                return;
             }
 
             // Logging
-            if (!t.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
-                System.out.print("[" + t.getRequestMethod() + "] " + "/" + this.endpoint + " ");
-            }
+            System.out.print("[" + t.getRequestMethod() + "] " + "/" + this.endpoint + " ");
 
             // Delegate to appropriate API endpoint
             JSONObject jsonBuilder;
@@ -131,7 +139,21 @@ public class HttpMirror {
 
             }
 
+            // Handle null case
             if (jsonBuilder == null) {
+                // Error response
+                jsonBuilder.put("body", "error");
+                jsonBuilder.put("code", 400);
+                String json = jsonBuilder.toString();
+
+                // Logging
+                System.out.println("[WARNING] There was no JSON response for endpoint: " + this.endpoint);
+
+                // Finish Response
+                t.sendResponseHeaders((int) jsonBuilder.get("code"), json.length());
+                OutputStream os = t.getResponseBody();
+                os.write(json.getBytes());
+                os.close();
                 return;
             }
 
@@ -139,12 +161,10 @@ public class HttpMirror {
             String json = jsonBuilder.toString();
 
             // Logging
-            if (!t.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
-                System.out.println("[RESPONSE] " + json);
-            }
+            System.out.println("[" + t.getRequestMethod() + " - RESPONSE] " + json);
 
             // Finish Response
-            t.sendResponseHeaders((int)jsonBuilder.get("code"), json.length());
+            t.sendResponseHeaders((int) jsonBuilder.get("code"), json.length());
             OutputStream os = t.getResponseBody();
             os.write(json.getBytes());
             os.close();

@@ -38,8 +38,7 @@ const optionsBase = {
   credentials: 'same-origin',
   headers: {
     'Content-Type': 'application/json'
-  },
-  mode: 'cors'
+  }
 };
 
 // -----------------------------------------------------------
@@ -63,7 +62,11 @@ export const handleLogin = (payload) => {
       .then(res => {
         console.log(res);
         if (res.code === 200) {
-          payload = res;
+          payload = {
+            ...payload,
+            fname: res.fname,
+            lname: res.lname
+          };
           dispatch({ type: HANDLE_LOGIN_SUCCESS, payload });
           history.push('/dashboard');
         } else {
@@ -98,7 +101,6 @@ export const handleCreateNewAccount = (payload) => {
       .then(res => {
         console.log(res);
         if (res.code === 200) {
-          payload = { ...payload, ...res };
           dispatch({ type: HANDLE_CREATE_ACCOUNT_SUCCESS, payload });
           history.push('/dashboard');
         } else {
@@ -126,6 +128,7 @@ export const handleCreateNewPortfolio = (payload) => {
       name
     })
   };
+  console.log("it is ", username);
 
   return dispatch => {
     fetch(`${HOST}createportfolio`, options)
@@ -302,6 +305,16 @@ export const handleCancelOrder = (payload) => {
 // Stock Page Actions
 // -----------------------------------------------------------
 export const handleGetAllStocks = () => {
+
+
+  const data = {
+    exchanges: ["NASDAQ", "TSX"],
+    symbols: ["APPL", "GOOG"],
+    stocks: [
+      { ticker: 'APPL',   exchange: 'NASDAQ',  price: 100, industry: 'technology', companyName: 'Apple' },
+      { ticker: 'GOOGL',  exchange: 'NASDAQ',  price: 220, industry: 'technology', companyName: 'Alphabet' }
+    ]
+  };
 
   const stocks = [
     { ticker: 'APPL',   exchange: 'NASDAQ',  price: 100, industry: 'technology', companyName: 'Apple' },

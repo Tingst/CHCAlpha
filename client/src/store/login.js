@@ -7,10 +7,14 @@ import {
 } from '../actions/constants';
 
 const initialState = {
-  username: 'PiggySpeed',
+  username: '',
   password: '',
-  fname: 'Tree',
-  lname: 'Bear'
+  fname: '',
+  lname: ''
+  // username: '123',
+  // password: '123',
+  // fname: 'john',
+  // lname: 'lee'
 };
 
 const Login = (state = initialState, action) => {

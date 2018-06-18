@@ -23,19 +23,25 @@ public class DBCmd {
     public static JSONObject login(String username, String password, Connection con) throws Exception {
         Statement loginCmd = con.createStatement();
 
-        ResultSet resultsSet = loginCmd.executeQuery("SELECT username, password FROM " + ACCOUNTS_TABLE + " WHERE username='" + username + "'");
+        ResultSet resultsSet = loginCmd.executeQuery("SELECT username, password, first_name, last_name FROM " + ACCOUNTS_TABLE + " WHERE username='" + username + "'");
 
         JSONObject obj = new JSONObject();
+        JSONObject body = new JSONObject();
         if(resultsSet.next()) {
+            String fn = resultsSet.getString("first_name");
+            String ln = resultsSet.getString("last_name");
             String pw = resultsSet.getString("password");
             if(password.equals(pw)) {
-                obj.put("body", "Login successful");
+                body.put("fname", fn);
+                body.put("lname", ln);
+                obj.put("body", body);
                 obj.put("code", 200);
                 return obj;
             }
         }
+        body.put("text", "error");
+        obj.put("body", body);
         obj.put("code", 400);
-        obj.put("body", "Login failed");
         return obj;
     }
 
