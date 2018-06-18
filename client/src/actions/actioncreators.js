@@ -33,7 +33,8 @@ import {
   HANDLE_CHANGE_PASSWORD_FAILURE
 } from './constants';
 
-const HOST = "http://localhost:9000/";
+const ERROR_UNEXPECTED = 'An unexpected error occurred';
+const HOST = 'http://localhost:9000/';
 const optionsBase = {
   credentials: 'same-origin',
   headers: {
@@ -60,7 +61,6 @@ export const handleLogin = (payload) => {
     fetch(`${HOST}login`, options)
       .then(res => res.json())
       .then(res => {
-        console.log(res);
         if (res.code === 200) {
           payload = {
             ...payload,
@@ -70,12 +70,11 @@ export const handleLogin = (payload) => {
           dispatch({ type: HANDLE_LOGIN_SUCCESS, payload });
           history.push('/dashboard');
         } else {
-          dispatch({ type: HANDLE_LOGIN_FAILURE });
+          dispatch({ type: HANDLE_LOGIN_FAILURE, text: res.text });
         }
       })
       .catch(err => {
-        console.log(err);
-        dispatch({ type: HANDLE_LOGIN_FAILURE });
+        dispatch({ type: HANDLE_LOGIN_FAILURE, text: ERROR_UNEXPECTED });
       });
 
     }
@@ -99,17 +98,20 @@ export const handleCreateNewAccount = (payload) => {
     fetch(`${HOST}create`, options)
       .then(res => res.json())
       .then(res => {
-        console.log(res);
         if (res.code === 200) {
+          payload = {
+            ...payload,
+            fname: res.fname,
+            lname: res.lname
+          };
           dispatch({ type: HANDLE_CREATE_ACCOUNT_SUCCESS, payload });
           history.push('/dashboard');
         } else {
-          dispatch({ type: HANDLE_CREATE_ACCOUNT_FAILURE });
+          dispatch({ type: HANDLE_CREATE_ACCOUNT_FAILURE, text: res.text });
         }
       })
       .catch(err => {
-        console.log(err);
-        dispatch({ type: HANDLE_CREATE_ACCOUNT_FAILURE });
+        dispatch({ type: HANDLE_CREATE_ACCOUNT_FAILURE, text: ERROR_UNEXPECTED });
       });
     }
 };
@@ -128,23 +130,20 @@ export const handleCreateNewPortfolio = (payload) => {
       name
     })
   };
-  console.log("it is ", username);
 
   return dispatch => {
     fetch(`${HOST}createportfolio`, options)
       .then(res => res.json())
       .then(res => {
-        console.log(res);
         if (res.code === 200) {
-          payload = { ...payload, ...res };
+          payload = { name };
           dispatch({ type: HANDLE_CREATE_PORTFOLIO_SUCCESS, payload });
         } else {
-          dispatch({ type: HANDLE_CREATE_PORTFOLIO_FAILURE });
+          dispatch({ type: HANDLE_CREATE_PORTFOLIO_FAILURE, text: res.text });
         }
       })
       .catch(err => {
-        console.log(err);
-        dispatch({ type: HANDLE_CREATE_PORTFOLIO_FAILURE });
+        dispatch({ type: HANDLE_CREATE_PORTFOLIO_FAILURE, text: ERROR_UNEXPECTED });
       });
     }
 };
@@ -165,17 +164,15 @@ export const handleDeletePortfolio = (payload) => {
     fetch(`${HOST}deleteportfolio`, options)
       .then(res => res.json())
       .then(res => {
-        console.log(res);
         if (res.code === 200) {
-          payload = { ...payload, ...res };
+          payload = { id };
           dispatch({ type: HANDLE_DELETE_PORTFOLIO_SUCCESS, payload });
         } else {
-          dispatch({ type: HANDLE_DELETE_PORTFOLIO_FAILURE });
+          dispatch({ type: HANDLE_DELETE_PORTFOLIO_FAILURE, text: ERROR_UNEXPECTED });
         }
       })
       .catch(err => {
-        console.log(err);
-        dispatch({ type: HANDLE_DELETE_PORTFOLIO_FAILURE });
+        dispatch({ type: HANDLE_DELETE_PORTFOLIO_FAILURE, text: ERROR_UNEXPECTED });
       });
   }
 };
@@ -226,7 +223,7 @@ export const handleGetOrders = (payload) => {
       })
       .catch(err => {
         console.log(err);
-        dispatch({ type: HANDLE_GET_ORDERS_FAILURE });
+        dispatch({ type: HANDLE_GET_ORDERS_FAILURE, text: ERROR_UNEXPECTED });
       });
     }
 };
@@ -265,7 +262,7 @@ export const handlePlaceOrder = (payload) => {
       })
       .catch(err => {
         console.log(err);
-        dispatch({ type: HANDLE_PLACE_ORDER_FAILURE });
+        dispatch({ type: HANDLE_PLACE_ORDER_FAILURE, text: ERROR_UNEXPECTED });
       });
     }
 };
@@ -296,7 +293,7 @@ export const handleCancelOrder = (payload) => {
       })
       .catch(err => {
         console.log(err);
-        dispatch({ type: HANDLE_CANCEL_ORDER_FAILURE });
+        dispatch({ type: HANDLE_CANCEL_ORDER_FAILURE, text: ERROR_UNEXPECTED });
       });
   }
 };
@@ -370,7 +367,7 @@ export const handleGetAllStocks = () => {
       })
       .catch(err => {
         console.log(err);
-        dispatch({ type: HANDLE_GET_ALL_STOCKS_FAILURE });
+        dispatch({ type: HANDLE_GET_ALL_STOCKS_FAILURE, text: ERROR_UNEXPECTED });
       });
   }
 };
@@ -405,7 +402,7 @@ export const handleTrendsRefreshClick = () => {
       })
       .catch(err => {
         console.log(err);
-        dispatch({ type: HANDLE_TRENDS_REFRESH_FAILURE });
+        dispatch({ type: HANDLE_TRENDS_REFRESH_FAILURE, text: ERROR_UNEXPECTED });
       });
   }
 };
@@ -435,7 +432,7 @@ export const handleTableRowClick = (payload) => {
       })
       .catch(err => {
         console.log(err);
-        dispatch({ type: HANDLE_GET_DETAILS_FAILURE });
+        dispatch({ type: HANDLE_GET_DETAILS_FAILURE, text: ERROR_UNEXPECTED });
       });
     }
 };
@@ -489,7 +486,7 @@ export const handleIpoClick = (payload) => {
       })
       .catch(err => {
         console.log(err);
-        dispatch({ type: HANDLE_NEW_IPO_FAILURE });
+        dispatch({ type: HANDLE_NEW_IPO_FAILURE, text: ERROR_UNEXPECTED });
       });
   }
 };
@@ -525,7 +522,7 @@ export const handleChangePasswordClick = (payload) => {
       })
       .catch(err => {
         console.log(err);
-        dispatch({ type: HANDLE_CHANGE_PASSWORD_FAILURE });
+        dispatch({ type: HANDLE_CHANGE_PASSWORD_FAILURE, text: ERROR_UNEXPECTED });
       });
   }
 };

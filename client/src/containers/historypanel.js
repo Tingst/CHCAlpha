@@ -57,14 +57,16 @@ class HistoryPanelWrapper extends React.Component {
       <ViewCol style={styles.container}>
         <ViewRow style={{ justifyContent: 'space-between' }}>
           <h1>Pending Orders</h1>
-          <ViewRow style={{ alignItems: 'center' }}>
-            <label style={{marginRight: '1rem'}}>Filter By:</label>
-            <select style={{ width: 100 }} onChange={this.handleFilterChange}>
-              {FILTERS.map((key, id) => (
-                <option key={id} value={key}>{key}</option>
-              ))}
-            </select>
-          </ViewRow>
+
+          {/*<ViewRow style={{ alignItems: 'center' }}>*/}
+            {/*<label style={{marginRight: '1rem'}}>Filter By:</label>*/}
+            {/*<select style={{ width: 100 }} onChange={this.handleFilterChange}>*/}
+              {/*{FILTERS.map((key, id) => (*/}
+                {/*<option key={id} value={key}>{key}</option>*/}
+              {/*))}*/}
+            {/*</select>*/}
+          {/*</ViewRow>*/}
+
         </ViewRow>
         <Table striped>
           <Table.Header>

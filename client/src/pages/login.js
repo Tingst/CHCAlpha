@@ -25,7 +25,7 @@ const styles = {
   innerContainer: {
     alignItems: 'center',
     width: 350,
-    height: 400,
+    height: 450,
     zIndex: 99
   },
   buttonsGroup: {

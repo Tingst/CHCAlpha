@@ -39,7 +39,7 @@ public class DBCmd {
                 return obj;
             }
         }
-        body.put("text", "error");
+        body.put("text", "Incorrect username and/or password");
         obj.put("body", body);
         obj.put("code", 400);
         return obj;
@@ -50,18 +50,28 @@ public class DBCmd {
         Statement createUsrAcc = con.createStatement();
 
         JSONObject obj = new JSONObject();
+        JSONObject body = new JSONObject();
 
-        ResultSet resultsSet = checkExisting.executeQuery("SELECT username FROM " + ACCOUNTS_TABLE + " WHERE username='" + username + "'");
+        ResultSet resultsSet = checkExisting.executeQuery("SELECT username, first_name, last_name FROM " + ACCOUNTS_TABLE + " WHERE username='" + username + "'");
 
         if(resultsSet.next()) {
-            obj.put("body", "Username " + username + " already existed");
+            body.put("text", "Username " + username + " already exists");
+            obj.put("code", 400);
+            obj.put("body", body);
             return obj;
         }
 
         createUsrAcc.executeUpdate("INSERT INTO " + ACCOUNTS_TABLE + " (username, password, first_name, last_name, funds_available)" +
                 " VALUES('" + username + "','" + password + "','" + firstName + "','" + lastName + "',"+ 0 + ")");
 
-        obj.put("body", "User " + username + " created successfully");
+        String fn = resultsSet.getString("first_name");
+        String ln = resultsSet.getString("last_name");
+
+        body.put("body", "User " + username + " created successfully");
+        body.put("fname", fn);
+        body.put("lname", ln);
+        obj.put("code", 200);
+        obj.put("body", body);
         return obj;
     }
 
@@ -82,12 +92,16 @@ public class DBCmd {
     // We don't allow two portfolio to have the same name for one particular user
     public static JSONObject createPortfolio(String username, String portName, Connection con) throws Exception {
         JSONObject obj = new JSONObject();
+        JSONObject body = new JSONObject();
+
         String checkCompanyQuery = "SELECT * FROM " + COMPANY_TABLE + " WHERE username='" + username + "'";
         Statement checkCompany = con.createStatement();
         ResultSet companyRecord = checkCompany.executeQuery(checkCompanyQuery);
 
         if(portName.toLowerCase().equals("ipo") && !companyRecord.next()) {
-            obj.put("body", "Portfolio of name " + portName + " reserved for IPO");
+            body.put("text", "Portfolio of name " + portName + " reserved for IPO");
+            obj.put("body", body);
+            obj.put("code", 400);
             return obj;
         }
 
@@ -96,7 +110,9 @@ public class DBCmd {
         ResultSet usrPortInfo = checkUsrPortfolio.executeQuery("SELECT p_name FROM " + PORTFOLIO_TABLE + " WHERE username='" + username + "'AND p_name='" + portName + "'");
 
         if(usrPortInfo.next()){
-            obj.put("body", "Portfolio of name " + portName + " already existed");
+            body.put("text", "Portfolio of name " + portName + " already exists");
+            obj.put("body", body);
+            obj.put("code", 400);
             return obj;
         }
 
@@ -104,7 +120,9 @@ public class DBCmd {
 
         addUsrPortfolio.executeUpdate("INSERT INTO " + PORTFOLIO_TABLE + " (username,p_name)" + " VALUES('" + username + "','" + portName + "')");
 
-        obj.put("body", "Portfolio of name " + portName + " created successfully");
+        body.put("text", "Portfolio of name " + portName + " created successfully");
+        obj.put("body", body);
+        obj.put("code", 200);
 
         return obj;
     }

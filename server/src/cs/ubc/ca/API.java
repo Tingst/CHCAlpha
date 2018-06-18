@@ -11,7 +11,7 @@ import java.sql.Connection;
 public class API {
 
     public static JSONObject login(HttpExchange t, Connection conn) {
-        JSONObject result;
+        JSONObject result = new JSONObject();
 
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
@@ -27,8 +27,7 @@ public class API {
                 return null;
             }
         } else {
-            result = new JSONObject();
-            result.put("code", 400);
+            result.put("code", 404);
         }
 
         return result;
@@ -52,10 +51,10 @@ public class API {
                 e.printStackTrace(System.out);
                 return null;
             }
-
+        } else {
+            result.put("code", 404);
         }
 
-        result.put("code", 200);
         return result;
     }
 
@@ -64,7 +63,6 @@ public class API {
 
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
-            System.out.println("HERE");
             System.out.println(json);
 
             try {
@@ -77,9 +75,10 @@ public class API {
                 e.printStackTrace(System.out);
                 return null;
             }
+        } else {
+            result.put("code", 404);
         }
 
-        result.put("code", 200);
         return result;
     }
 
@@ -89,21 +88,21 @@ public class API {
         if (t.getRequestMethod().equalsIgnoreCase("DELETE")) {
             JSONObject json = parseBody(t);
 
-            // TODO: build response
-
-            //try {
-            //    result = DBCmd.deletePortfolio(
-            //            (String) json.get("username"),
-            //            (String) json.get("name"),
-            //            conn
-            //    );
-            //} catch(Exception e) {
-            //    System.out.println(e.getMessage());
-            // return null;
-            //}
+            try {
+                DBCmd.deletePortfolio(
+                        (String) json.get("username"),
+                        (String) json.get("name"),
+                        conn
+                );
+                result.put("code", 200);
+            } catch(Exception e) {
+                e.printStackTrace(System.out);
+                return null;
+            }
+        } else {
+            result.put("code", 404);
         }
 
-        result.put("code", 200);
         return result;
     }
 
