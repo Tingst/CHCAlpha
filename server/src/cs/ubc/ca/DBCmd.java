@@ -4,6 +4,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
@@ -21,9 +22,11 @@ public class DBCmd {
 
     // Build a JSON with "body" Success
     public static JSONObject login(String username, String password, Connection con) throws Exception {
-        Statement loginCmd = con.createStatement();
-
-        ResultSet resultsSet = loginCmd.executeQuery("SELECT username, password, first_name, last_name FROM " + ACCOUNTS_TABLE + " WHERE username='" + username + "'");
+        String sql = "SELECT username, password, first_name, last_name FROM " + ACCOUNTS_TABLE + " WHERE username=?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setString(1, username);
+        System.out.println("[EXECUTING SQL]: " + ps);
+        ResultSet resultsSet = ps.executeQuery();
 
         JSONObject obj = new JSONObject();
         JSONObject body = new JSONObject();
@@ -39,29 +42,46 @@ public class DBCmd {
                 return obj;
             }
         }
-        body.put("text", "error");
+        body.put("text", "Incorrect username and/or password");
         obj.put("body", body);
         obj.put("code", 400);
         return obj;
     }
 
     public static JSONObject createAccount(String username, String password, String firstName, String lastName, Connection con) throws Exception {
-        Statement checkExisting = con.createStatement();
-        Statement createUsrAcc = con.createStatement();
-
         JSONObject obj = new JSONObject();
+        JSONObject body = new JSONObject();
 
-        ResultSet resultsSet = checkExisting.executeQuery("SELECT username FROM " + ACCOUNTS_TABLE + " WHERE username='" + username + "'");
+        // check if username already exists
+        String sql1 = "SELECT username, first_name, last_name FROM " + ACCOUNTS_TABLE + " WHERE username=?";
+        PreparedStatement checkExisting = con.prepareStatement(sql1);
+        checkExisting.setString(1, username);
+        System.out.println("[EXECUTING SQL]: " + checkExisting);
+        ResultSet resultsSet = checkExisting.executeQuery();
 
         if(resultsSet.next()) {
-            obj.put("body", "Username " + username + " already existed");
+            body.put("text", "Username " + username + " already exists");
+            obj.put("code", 400);
+            obj.put("body", body);
             return obj;
         }
 
-        createUsrAcc.executeUpdate("INSERT INTO " + ACCOUNTS_TABLE + " (username, password, first_name, last_name, funds_available)" +
-                " VALUES('" + username + "','" + password + "','" + firstName + "','" + lastName + "',"+ 0 + ")");
+        // create account operation
+        String sql2 = "INSERT INTO " + ACCOUNTS_TABLE + " (username, password, first_name, last_name, funds_available) VALUES (?, ?, ?, ?, ?);";
+        PreparedStatement createUsrAcc = con.prepareStatement(sql2);
+        createUsrAcc.setString(1, username);
+        createUsrAcc.setString(2, password);
+        createUsrAcc.setString(3, firstName);
+        createUsrAcc.setString(4, lastName);
+        createUsrAcc.setFloat(5, 0);
+        System.out.println("[EXECUTING SQL]: " + createUsrAcc);
+        createUsrAcc.executeUpdate();
 
-        obj.put("body", "User " + username + " created successfully");
+        body.put("body", "User " + username + " created successfully");
+        body.put("fname", firstName);
+        body.put("lname", lastName);
+        obj.put("code", 200);
+        obj.put("body", body);
         return obj;
     }
 
@@ -82,38 +102,68 @@ public class DBCmd {
     // We don't allow two portfolio to have the same name for one particular user
     public static JSONObject createPortfolio(String username, String portName, Connection con) throws Exception {
         JSONObject obj = new JSONObject();
-        String checkCompanyQuery = "SELECT * FROM " + COMPANY_TABLE + " WHERE username='" + username + "'";
-        Statement checkCompany = con.createStatement();
-        ResultSet companyRecord = checkCompany.executeQuery(checkCompanyQuery);
+        JSONObject body = new JSONObject();
+
+        // check if portfolio reserved for IPO
+        String sql1 = "SELECT * FROM " + COMPANY_TABLE + " WHERE username=?";
+        PreparedStatement checkCompany = con.prepareStatement(sql1);
+        checkCompany.setString(1, username);
+        System.out.println("[EXECUTING SQL]: " + checkCompany);
+        ResultSet companyRecord = checkCompany.executeQuery();
 
         if(portName.toLowerCase().equals("ipo") && !companyRecord.next()) {
-            obj.put("body", "Portfolio of name " + portName + " reserved for IPO");
+            body.put("text", "Portfolio of name " + portName + " reserved for IPO");
+            obj.put("body", body);
+            obj.put("code", 400);
             return obj;
         }
 
         // Check if the user already have a portfolio with this name
-        Statement checkUsrPortfolio = con.createStatement();
-        ResultSet usrPortInfo = checkUsrPortfolio.executeQuery("SELECT p_name FROM " + PORTFOLIO_TABLE + " WHERE username='" + username + "'AND p_name='" + portName + "'");
+        String sql2 = "SELECT p_name FROM " + PORTFOLIO_TABLE + " WHERE username=? AND p_name=?";
+        PreparedStatement checkUsrPortfolio = con.prepareStatement(sql2);
+        checkUsrPortfolio.setString(1, username);
+        checkUsrPortfolio.setString(2, portName);
+        System.out.println("[EXECUTING SQL]: " + checkUsrPortfolio);
+        ResultSet usrPortInfo = checkUsrPortfolio.executeQuery();
 
         if(usrPortInfo.next()){
-            obj.put("body", "Portfolio of name " + portName + " already existed");
+            body.put("text", "Portfolio of name " + portName + " already exists");
+            obj.put("body", body);
+            obj.put("code", 400);
             return obj;
         }
 
-        Statement addUsrPortfolio = con.createStatement();
+        // insert new portfolio
+        String sql3 = "INSERT INTO " + PORTFOLIO_TABLE + " (username, p_name)" + " VALUES(?, ?)";
+        PreparedStatement addUsrPortfolio = con.prepareStatement(sql3);
+        addUsrPortfolio.setString(1, username);
+        addUsrPortfolio.setString(2, portName);
+        System.out.println("[EXECUTING SQL]: " + addUsrPortfolio);
+        addUsrPortfolio.executeUpdate();
 
-        addUsrPortfolio.executeUpdate("INSERT INTO " + PORTFOLIO_TABLE + " (username,p_name)" + " VALUES('" + username + "','" + portName + "')");
-
-        obj.put("body", "Portfolio of name " + portName + " created successfully");
+        body.put("text", "Portfolio of name " + portName + " created successfully");
+        obj.put("body", body);
+        obj.put("code", 200);
 
         return obj;
     }
 
-    public static void deletePortfolio(String username, String portName, Connection con) throws Exception {
-        String query = "DELETE FROM " + PORTFOLIO_TABLE + " WHERE username='" + username + "' AND p_name='" + portName + "'";
-        Statement deletePortfolio = con.createStatement();
+    public static JSONObject deletePortfolio(String username, String portName, Connection con) throws Exception {
+        JSONObject obj = new JSONObject();
+        JSONObject body = new JSONObject();
 
-        deletePortfolio.executeUpdate(query);
+        String sql = "DELETE FROM " + PORTFOLIO_TABLE + " WHERE username=? AND p_name=?";
+        PreparedStatement deletePortfolio = con.prepareStatement(sql);
+        deletePortfolio.setString(1, username);
+        deletePortfolio.setString(2, portName);
+        System.out.println("[EXECUTING SQL]: " + deletePortfolio);
+        deletePortfolio.executeUpdate();
+
+        body.put("text", "Portfolio " + portName + " successfully deleted");
+        obj.put("body", body);
+        obj.put("code", 200);
+
+        return obj;
     }
 
     public static JSONArray getTradesByPortfolio(String username, String portName, Connection con) throws Exception {
@@ -133,10 +183,10 @@ public class DBCmd {
     }
 
     public static JSONArray getPendingOrders(String username, Connection con) throws Exception{
-        String query = "SELECT to_id,type,ticker,order_time,num_shares,price FROM TradeOrder WHERE username='" + username + "'";
-        Statement getPendingOrders = con.createStatement();
-
-        ResultSet pendingOrders = getPendingOrders.executeQuery(query);
+        String query = "SELECT to_id,type,ticker,order_time,num_shares,price FROM TradeOrder WHERE username=?";
+        PreparedStatement getPendingOrders = con.prepareStatement(query);
+        getPendingOrders.setString(1, username);
+        ResultSet pendingOrders = getPendingOrders.executeQuery();
 
         Map<String, String> mp = new HashMap<>();
         mp.put("id", "to_id");
@@ -149,7 +199,9 @@ public class DBCmd {
         return DataProvider.getAllData(mp, pendingOrders);
     }
 
-    public static JSONArray getAllTradedStocks(Connection con) throws Exception {
+    public static JSONObject getAllTradedStocks(Connection con) throws Exception {
+        JSONObject allTradedStocksInfo = new JSONObject();
+
         String query = "SELECT ticker,abbre,price,industry,c_name FROM Company";
         Statement getAllTradedStocks = con.createStatement();
 
@@ -162,7 +214,30 @@ public class DBCmd {
         mp.put("industry", "industry");
         mp.put("companyName", "c_name");
 
-        return DataProvider.getAllData(mp, allTradedStocks);
+        //Get all exchanges
+        String allExchangesQuery = "SELECT abbreviation FROM " + EXCHANGE_TABLE;
+        Statement getAllExchanges = con.createStatement();
+        ResultSet allExchanges = getAllExchanges.executeQuery(allExchangesQuery);
+        JSONArray exchanges = new JSONArray();
+        while(allExchanges.next()) {
+            exchanges.add(allExchanges.getString("abbreviation"));
+        }
+
+        //Get all tickers
+        String allTickersQuery = "SELECT ticker FROM " + COMPANY_TABLE;
+        Statement getAllTickers = con.createStatement();
+        ResultSet allTickers = getAllTickers.executeQuery(allTickersQuery);
+        JSONArray tickers = new JSONArray();
+        while(allTickers.next()) {
+            tickers.add(allTickers.getString("ticker"));
+        }
+
+
+        allTradedStocksInfo.put("exchanges", exchanges);
+        allTradedStocksInfo.put("symbols", tickers);
+        allTradedStocksInfo.put("stocks", DataProvider.getAllData(mp, allTradedStocks));
+
+        return allTradedStocksInfo;
     }
 
     public static JSONObject changePassword(String username, String oldPassword, String newPassword, Connection con) throws Exception {
@@ -190,12 +265,79 @@ public class DBCmd {
         return obj;
     }
 
-    public static JSONArray findMarketTrend() {
-        // mostFrequenlyTraded
-        // leastFrequenlyTraded
+    public static JSONObject findMarketTrend(Connection con) throws Exception{
+        JSONObject trends = new JSONObject();
         // highest price
+        String highestPriceQuery = "SELECT ticker,c_name,industry,username,abbre,MAX(price) AS price FROM " + COMPANY_TABLE + " GROUP BY ticker";
+        Statement getHighestPriceTrade = con.createStatement();
+        System.out.println("[EXECUTING SQL]: " + highestPriceQuery);
+        ResultSet highestPriceTrade = getHighestPriceTrade.executeQuery(highestPriceQuery);
+        if(highestPriceTrade.next()) {
+            JSONObject highest = new JSONObject();
+            highest.put("ticker", highestPriceTrade.getString("ticker"));
+            highest.put("exchange", highestPriceTrade.getString("abbre"));
+            highest.put("price", highestPriceTrade.getFloat("price"));
+            highest.put("industry", highestPriceTrade.getString("industry"));
+            highest.put("companyName", highestPriceTrade.getString("c_name"));
+            trends.put("stockTrendHighest", highest);
+        }
+
         // lowest price
-        return new JSONArray();
+        String lowestPriceQuery = "SELECT ticker,c_name,industry,username,abbre,MIN(price) AS price FROM " + COMPANY_TABLE + " GROUP BY ticker";
+        Statement getLowestPriceTrade = con.createStatement();
+        System.out.println("[EXECUTING SQL]: " + lowestPriceQuery);
+        ResultSet lowestPriceTrade = getLowestPriceTrade.executeQuery(lowestPriceQuery);
+        if(lowestPriceTrade.next()) {
+            JSONObject lowest = new JSONObject();
+            lowest.put("ticker", lowestPriceTrade.getString("ticker"));
+            lowest.put("exchange", lowestPriceTrade.getString("abbre"));
+            lowest.put("price", lowestPriceTrade.getFloat("price"));
+            lowest.put("industry", lowestPriceTrade.getString("industry"));
+            lowest.put("companyName", lowestPriceTrade.getString("c_name"));
+            trends.put("stockTrendLowest", lowest);
+        }
+
+        // mostFrequentlyTraded
+        String frequentQuery = "SELECT ticker, COUNT(ticker) AS ticker_occurrence FROM " + TRADED_ORDER_TABLE + " GROUP BY ticker ORDER BY ticker_occurrence DESC";
+        Statement getMostFrequentTrade = con.createStatement();
+        System.out.println("[EXECUTING SQL]: " + frequentQuery);
+        ResultSet mostFrequentTrade = getMostFrequentTrade.executeQuery(frequentQuery);
+        if(mostFrequentTrade.first()) {
+            String mostFrequentQuery = "SELECT * FROM " + COMPANY_TABLE + " WHERE ticker='" + mostFrequentTrade.getString("ticker") + "'";
+            Statement getMostFrequent = con.createStatement();
+            System.out.println("[EXECUTING SQL]: " + mostFrequentQuery);
+            ResultSet res = getMostFrequent.executeQuery(mostFrequentQuery);
+            if(res.first()) {
+                JSONObject mostFrequent = new JSONObject();
+                mostFrequent.put("ticker", res.getString("ticker"));
+                mostFrequent.put("exchange", res.getString("abbre"));
+                mostFrequent.put("price", res.getFloat("price"));
+                mostFrequent.put("industry", res.getString("industry"));
+                mostFrequent.put("companyName", res.getString("c_name"));
+                trends.put("stockTrendMostFrequent", mostFrequent);
+            }
+        }
+
+        // leastFrequentlyTraded
+        if(mostFrequentTrade.last()) {
+            String leastFrequentQuery = "SELECT * FROM " + COMPANY_TABLE + " WHERE ticker='" + mostFrequentTrade.getString("ticker") + "'";
+            Statement getMostFrequent = con.createStatement();
+            System.out.println("[EXECUTING SQL]: " + leastFrequentQuery);
+            ResultSet res = getMostFrequent.executeQuery(leastFrequentQuery);
+
+            if(res.first()) {
+                JSONObject leastFrequent = new JSONObject();
+                leastFrequent.put("ticker", res.getString("ticker"));
+                leastFrequent.put("exchange", res.getString("abbre"));
+                leastFrequent.put("price", res.getFloat("price"));
+                leastFrequent.put("industry", res.getString("industry"));
+                leastFrequent.put("companyName", res.getString("c_name"));
+                trends.put("stockTrendLeastFrequent", leastFrequent);
+            }
+        }
+
+        trends.put("code", 200);
+        return trends;
     }
 
     public static void createIPO(String username, String ticker, String industry, String companyName, String exchange, Float startingPrice, int numShares, Connection con) throws Exception {
@@ -352,6 +494,32 @@ public class DBCmd {
         Statement deletePendingOrder = con.createStatement();
 
         deletePendingOrder.executeUpdate(query);
+    }
+
+    public static JSONObject getCompanyTrends(String ticker, Connection con) throws Exception {
+        JSONObject obj = new JSONObject();
+        JSONObject body = new JSONObject();
+
+        String query = "SELECT * FROM " + COMPANY_TABLE + " WHERE ticker=?";
+        PreparedStatement getCompanyDetails = con.prepareStatement(query);
+        getCompanyDetails.setString(1, ticker);
+        System.out.println("[EXECUTING SQL]: " + getCompanyDetails);
+        ResultSet company = getCompanyDetails.executeQuery();
+
+        if (!company.next()) {
+            obj.put("code", 400);
+            body.put("text", "Company does not exist");
+            return obj;
+        }
+
+        obj.put("code", 200);
+        obj.put("ticker",company.getString("ticker"));
+        obj.put("exchange",company.getString("abbre"));
+        obj.put("price",company.getFloat("price"));
+        obj.put("industry",company.getString("industry"));
+        obj.put("companyName",company.getString("c_name"));
+
+        return obj;
     }
 
     private static void closeOrder(Order order, Connection con) throws Exception{

@@ -1,3 +1,6 @@
+CREATE DATABASE   stock;
+USE               stock;
+
 DROP TABLE ClosedOrder;
 DROP TABLE TradeOrder;
 DROP TABLE Company;

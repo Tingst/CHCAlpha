@@ -1,0 +1,48 @@
+import {
+  HANDLE_LOGIN_FAILURE,
+  HANDLE_CREATE_ACCOUNT_FAILURE,
+  HANDLE_CREATE_PORTFOLIO_FAILURE,
+  HANDLE_DELETE_PORTFOLIO_FAILURE,
+  HANDLE_GET_ORDERS_FAILURE,
+  HANDLE_PLACE_ORDER_FAILURE,
+  HANDLE_CANCEL_ORDER_FAILURE,
+  HANDLE_GET_ALL_STOCKS_FAILURE,
+  HANDLE_TRENDS_REFRESH_FAILURE,
+  HANDLE_GET_DETAILS_FAILURE,
+  HANDLE_NEW_IPO_FAILURE,
+  HANDLE_CHANGE_PASSWORD_FAILURE,
+  // Error Messages
+  ERROR_UNEXPECTED
+} from '../actions/constants';
+
+const initialState = {
+};
+
+const Errors = (state = initialState, action) => {
+  switch(action.type) {
+
+    case HANDLE_LOGIN_FAILURE:
+    case HANDLE_CREATE_ACCOUNT_FAILURE:
+    case HANDLE_CREATE_PORTFOLIO_FAILURE:
+    case HANDLE_DELETE_PORTFOLIO_FAILURE:
+    case HANDLE_GET_ORDERS_FAILURE:
+    case HANDLE_PLACE_ORDER_FAILURE:
+    case HANDLE_CANCEL_ORDER_FAILURE:
+    case HANDLE_GET_ALL_STOCKS_FAILURE:
+    case HANDLE_TRENDS_REFRESH_FAILURE:
+    case HANDLE_GET_DETAILS_FAILURE:
+    case HANDLE_NEW_IPO_FAILURE:
+    case HANDLE_CHANGE_PASSWORD_FAILURE: {
+      const msg = action.text ? action.text : ERROR_UNEXPECTED;
+      window.alert(msg);
+      return state;
+    }
+
+    default: {
+      return state;
+    }
+
+  }
+};
+
+export default Errors;
