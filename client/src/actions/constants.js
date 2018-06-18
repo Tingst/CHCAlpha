@@ -31,3 +31,8 @@ export const HANDLE_NEW_IPO_FAILURE = 'HANDLE_NEW_IPO_FAILURE';
 // Settings Page Actions
 export const HANDLE_CHANGE_PASSWORD_SUCCESS = 'HANDLE_CHANGE_PASSWORD_SUCCESS';
 export const HANDLE_CHANGE_PASSWORD_FAILURE = 'HANDLE_CHANGE_PASSWORD_FAILURE';
+
+// Error Messages
+export const ERROR_UNEXPECTED = 'An unexpected error occurred';
+
+

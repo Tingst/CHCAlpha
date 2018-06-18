@@ -30,10 +30,11 @@ import {
   HANDLE_NEW_IPO_FAILURE,
   // SettingsPage Actions
   HANDLE_CHANGE_PASSWORD_SUCCESS,
-  HANDLE_CHANGE_PASSWORD_FAILURE
+  HANDLE_CHANGE_PASSWORD_FAILURE,
+  // Error Messages
+  ERROR_UNEXPECTED
 } from './constants';
 
-const ERROR_UNEXPECTED = 'An unexpected error occurred';
 const HOST = 'http://localhost:9000/';
 const optionsBase = {
   credentials: 'same-origin',
@@ -70,7 +71,7 @@ export const handleLogin = (payload) => {
           dispatch({ type: HANDLE_LOGIN_SUCCESS, payload });
           history.push('/dashboard');
         } else {
-          dispatch({ type: HANDLE_LOGIN_FAILURE, text: res.text });
+          dispatch({ type: HANDLE_LOGIN_FAILURE, text: res.body.text });
         }
       })
       .catch(err => {
@@ -107,7 +108,7 @@ export const handleCreateNewAccount = (payload) => {
           dispatch({ type: HANDLE_CREATE_ACCOUNT_SUCCESS, payload });
           history.push('/dashboard');
         } else {
-          dispatch({ type: HANDLE_CREATE_ACCOUNT_FAILURE, text: res.text });
+          dispatch({ type: HANDLE_CREATE_ACCOUNT_FAILURE, text: res.body.text });
         }
       })
       .catch(err => {
@@ -139,7 +140,7 @@ export const handleCreateNewPortfolio = (payload) => {
           payload = { name };
           dispatch({ type: HANDLE_CREATE_PORTFOLIO_SUCCESS, payload });
         } else {
-          dispatch({ type: HANDLE_CREATE_PORTFOLIO_FAILURE, text: res.text });
+          dispatch({ type: HANDLE_CREATE_PORTFOLIO_FAILURE, text: res.body.text });
         }
       })
       .catch(err => {
@@ -359,7 +360,7 @@ export const handleGetAllStocks = () => {
       .then(res => {
         console.log(res);
         if (res.code === 200) {
-          payload = { ...payload, ...res };
+          // payload = { ...payload, ...res };
           dispatch({ type: HANDLE_GET_ALL_STOCKS_SUCCESS, payload });
         } else {
           dispatch({ type: HANDLE_GET_ALL_STOCKS_FAILURE });
@@ -392,12 +393,11 @@ export const handleTrendsRefreshClick = () => {
     fetch(`${HOST}trends`, options)
       .then(res => res.json())
       .then(res => {
-        console.log(res);
+        payload = { ...payload, ...res };
         if (res.code === 200) {
-          payload = { ...payload, ...res };
           dispatch({ type: HANDLE_TRENDS_REFRESH_SUCCESS, payload });
         } else {
-          dispatch({ type: HANDLE_TRENDS_REFRESH_FAILURE });
+          dispatch({ type: HANDLE_TRENDS_REFRESH_FAILURE, text: res.body.text });
         }
       })
       .catch(err => {
@@ -424,10 +424,9 @@ export const handleTableRowClick = (payload) => {
       .then(res => {
         console.log(res);
         if (res.code === 200) {
-          payload = { ...payload, ...res };
-          dispatch({ type: HANDLE_GET_DETAILS_SUCCESS, payload });
+          dispatch({ type: HANDLE_GET_DETAILS_SUCCESS, payload: res });
         } else {
-          dispatch({ type: HANDLE_GET_DETAILS_FAILURE });
+          dispatch({ type: HANDLE_GET_DETAILS_FAILURE, text: res.body.text });
         }
       })
       .catch(err => {
