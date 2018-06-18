@@ -104,11 +104,11 @@ public class HttpMirror {
                     break;
                 }
                 case "trends": {
-                    jsonBuilder = API.getTrends();
+                    jsonBuilder = API.getTrends(conn);
                     break;
                 }
                 case "stocks": {
-                    jsonBuilder = API.getAllStocks();
+                    jsonBuilder = API.getAllStocks(conn);
                     break;
                 }
                 case "company": {
