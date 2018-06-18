@@ -30,10 +30,11 @@ import {
   HANDLE_NEW_IPO_FAILURE,
   // SettingsPage Actions
   HANDLE_CHANGE_PASSWORD_SUCCESS,
-  HANDLE_CHANGE_PASSWORD_FAILURE
+  HANDLE_CHANGE_PASSWORD_FAILURE,
+  // Error Messages
+  ERROR_UNEXPECTED
 } from './constants';
 
-const ERROR_UNEXPECTED = 'An unexpected error occurred';
 const HOST = 'http://localhost:9000/';
 const optionsBase = {
   credentials: 'same-origin',
