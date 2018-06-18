@@ -289,7 +289,6 @@ export const handleCancelOrder = (payload) => {
 // -----------------------------------------------------------
 export const handleGetAllStocks = () => {
 
-
   const data = {
     exchanges: ["NASDAQ", "TSX"],
     symbols: ["APPL", "GOOG"],
@@ -332,8 +331,6 @@ export const handleGetAllStocks = () => {
     { key: 9, text: 'AMZN', value: 'AMZN' }
   ];
 
-  let payload = { stocks, exchanges, symbols };
-
   const options = {
     ...optionsBase,
     method: 'GET'
@@ -343,9 +340,26 @@ export const handleGetAllStocks = () => {
     fetch(`${HOST}stocks`, options)
       .then(res => res.json())
       .then(res => {
-        console.log(res);
+
+        // preprocess data for dropdown ui
+        const newExchanges = res.exchanges.map((exc, id) => ({
+          key: id,
+          text: exc,
+          value: exc
+        }));
+        const newSymbols = res.symbols.map((sym, id) => ({
+          key: id,
+          text: sym,
+          value: sym
+        }));
+
+        const payload = {
+          exchanges: newExchanges,
+          symbols: newSymbols,
+          stocks: res.stocks
+        };
+
         if (res.code === 200) {
-          // payload = { ...payload, ...res };
           dispatch({ type: HANDLE_GET_ALL_STOCKS_SUCCESS, payload });
         } else {
           dispatch({ type: HANDLE_GET_ALL_STOCKS_FAILURE });
@@ -378,9 +392,8 @@ export const handleTrendsRefreshClick = () => {
     fetch(`${HOST}trends`, options)
       .then(res => res.json())
       .then(res => {
-        payload = { ...payload, ...res };
         if (res.code === 200) {
-          dispatch({ type: HANDLE_TRENDS_REFRESH_SUCCESS, payload });
+          dispatch({ type: HANDLE_TRENDS_REFRESH_SUCCESS, payload: { ...res } });
         } else {
           dispatch({ type: HANDLE_TRENDS_REFRESH_FAILURE, text: res.body.text });
         }

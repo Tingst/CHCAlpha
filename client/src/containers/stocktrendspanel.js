@@ -33,6 +33,10 @@ class StockTrendsPanelWrapper extends React.Component {
     this.handleTrendsRefreshClick = this.handleTrendsRefreshClick.bind(this);
   }
 
+  componentDidMount() {
+    this.props.handleTrendsRefreshClick();
+  }
+
   handleTrendsRefreshClick() {
     this.props.handleTrendsRefreshClick();
   }
@@ -52,19 +56,21 @@ class StockTrendsPanelWrapper extends React.Component {
       companyName: companyNameLo
     } = this.props.stockTrendLowest;
 
-    const {
-      ticker: tickerFr,
-      exchange: exchangeFr,
-      price: priceFr,
-      companyName: companyNameFr
-    } = this.props.stockTrendMostFrequent;
+    const mostFreq = this.props.stockTrendMostFrequent;
+    const leastFreq = this.props.stockTrendLeastFrequent;
+    // const {
+    //   ticker: tickerFr,
+    //   exchange: exchangeFr,
+    //   price: priceFr,
+    //   companyName: companyNameFr
+    // } = this.props.stockTrendMostFrequent;
 
-    const {
-      ticker: tickerLFr,
-      exchange: exchangeLFr,
-      price: priceLFr,
-      companyName: companyNameLFr
-    } = this.props.stockTrendLeastFrequent;
+    // const {
+    //   ticker: tickerLFr,
+    //   exchange: exchangeLFr,
+    //   price: priceLFr,
+    //   companyName: companyNameLFr
+    // } = this.props.stockTrendLeastFrequent;
 
     return (
       <ViewCol style={styles.container}>
@@ -75,8 +81,18 @@ class StockTrendsPanelWrapper extends React.Component {
 
         <span style={styles.trendsRow}><label style={styles.trendsLabel}>Highest Price/Share: </label><p>{companyNameHi} ({tickerHi}) Price: {priceHi} ({exchangeHi})</p></span>
         <span style={styles.trendsRow}><label style={styles.trendsLabel}>Lowest Price/Share: </label><p>{companyNameLo} ({tickerLo}) Price: {priceLo} ({exchangeLo})</p></span>
-        <span style={styles.trendsRow}><label style={styles.trendsLabel}>Most Frequently Traded: </label><p>{companyNameFr} ({tickerFr}) Price: {priceFr} ({exchangeFr})</p></span>
-        <span style={styles.trendsRow}><label style={styles.trendsLabel}>Least Frequently Traded: </label><p>{companyNameLFr} ({tickerLFr}) Price: {priceLFr} ({exchangeLFr})</p></span>
+
+        { mostFreq &&
+          (<span style={styles.trendsRow}>
+            <label style={styles.trendsLabel}>Most Frequently Traded: </label><p>{mostFreq.companyName} ({mostFreq.ticker}) Price: {mostFreq.price} ({mostFreq.exchange})</p>
+          </span>)
+        }
+
+        { leastFreq &&
+          (<span style={styles.trendsRow}>
+            <label style={styles.trendsLabel}>Least Frequently Traded: </label><p>{leastFreq.companyName} ({leastFreq.ticker}) Price: {leastFreq.price} ({leastFreq.exchange})</p>
+          </span>)
+        }
       </ViewCol>
     )
   }
