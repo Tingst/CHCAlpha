@@ -17,7 +17,8 @@ CREATE TABLE Account (
 	username CHAR(50) PRIMARY KEY,
 	first_name CHAR(20),
 	last_name CHAR(20),
-	password CHAR(20)
+	password CHAR(20),
+	funds_available FLOAT NOT NULL
 );
 
 /* We will do the portfolio purchased price on the fly by joining the Portfolio table with the ClosedOrder table*/
