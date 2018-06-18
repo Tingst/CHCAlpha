@@ -71,7 +71,7 @@ export const handleLogin = (payload) => {
           dispatch({ type: HANDLE_LOGIN_SUCCESS, payload });
           history.push('/dashboard');
         } else {
-          dispatch({ type: HANDLE_LOGIN_FAILURE, text: res.text });
+          dispatch({ type: HANDLE_LOGIN_FAILURE, text: res.body.text });
         }
       })
       .catch(err => {
@@ -108,7 +108,7 @@ export const handleCreateNewAccount = (payload) => {
           dispatch({ type: HANDLE_CREATE_ACCOUNT_SUCCESS, payload });
           history.push('/dashboard');
         } else {
-          dispatch({ type: HANDLE_CREATE_ACCOUNT_FAILURE, text: res.text });
+          dispatch({ type: HANDLE_CREATE_ACCOUNT_FAILURE, text: res.body.text });
         }
       })
       .catch(err => {
@@ -140,7 +140,7 @@ export const handleCreateNewPortfolio = (payload) => {
           payload = { name };
           dispatch({ type: HANDLE_CREATE_PORTFOLIO_SUCCESS, payload });
         } else {
-          dispatch({ type: HANDLE_CREATE_PORTFOLIO_FAILURE, text: res.text });
+          dispatch({ type: HANDLE_CREATE_PORTFOLIO_FAILURE, text: res.body.text });
         }
       })
       .catch(err => {
@@ -360,7 +360,7 @@ export const handleGetAllStocks = () => {
       .then(res => {
         console.log(res);
         if (res.code === 200) {
-          payload = { ...payload, ...res };
+          // payload = { ...payload, ...res };
           dispatch({ type: HANDLE_GET_ALL_STOCKS_SUCCESS, payload });
         } else {
           dispatch({ type: HANDLE_GET_ALL_STOCKS_FAILURE });

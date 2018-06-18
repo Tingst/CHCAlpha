@@ -89,12 +89,11 @@ public class API {
             JSONObject json = parseBody(t);
 
             try {
-                DBCmd.deletePortfolio(
+                result = DBCmd.deletePortfolio(
                         (String) json.get("username"),
                         (String) json.get("name"),
                         conn
                 );
-                result.put("code", 200);
             } catch(Exception e) {
                 e.printStackTrace(System.out);
                 return null;

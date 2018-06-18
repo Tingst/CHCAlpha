@@ -4,6 +4,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
@@ -21,9 +22,11 @@ public class DBCmd {
 
     // Build a JSON with "body" Success
     public static JSONObject login(String username, String password, Connection con) throws Exception {
-        Statement loginCmd = con.createStatement();
-
-        ResultSet resultsSet = loginCmd.executeQuery("SELECT username, password, first_name, last_name FROM " + ACCOUNTS_TABLE + " WHERE username='" + username + "'");
+        String sql = "SELECT username, password, first_name, last_name FROM " + ACCOUNTS_TABLE + " WHERE username=?";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setString(1, username);
+        System.out.println("[SQL]: " + ps);
+        ResultSet resultsSet = ps.executeQuery();
 
         JSONObject obj = new JSONObject();
         JSONObject body = new JSONObject();
@@ -46,13 +49,15 @@ public class DBCmd {
     }
 
     public static JSONObject createAccount(String username, String password, String firstName, String lastName, Connection con) throws Exception {
-        Statement checkExisting = con.createStatement();
-        Statement createUsrAcc = con.createStatement();
-
         JSONObject obj = new JSONObject();
         JSONObject body = new JSONObject();
 
-        ResultSet resultsSet = checkExisting.executeQuery("SELECT username, first_name, last_name FROM " + ACCOUNTS_TABLE + " WHERE username='" + username + "'");
+        // check if username already exists
+        String sql1 = "SELECT username, first_name, last_name FROM " + ACCOUNTS_TABLE + " WHERE username=?";
+        PreparedStatement checkExisting = con.prepareStatement(sql1);
+        checkExisting.setString(1, username);
+        System.out.println("[SQL]: " + checkExisting);
+        ResultSet resultsSet = checkExisting.executeQuery();
 
         if(resultsSet.next()) {
             body.put("text", "Username " + username + " already exists");
@@ -61,15 +66,20 @@ public class DBCmd {
             return obj;
         }
 
-        createUsrAcc.executeUpdate("INSERT INTO " + ACCOUNTS_TABLE + " (username, password, first_name, last_name, funds_available)" +
-                " VALUES('" + username + "','" + password + "','" + firstName + "','" + lastName + "',"+ 0 + ")");
-
-        String fn = resultsSet.getString("first_name");
-        String ln = resultsSet.getString("last_name");
+        // create account operation
+        String sql2 = "INSERT INTO " + ACCOUNTS_TABLE + " (username, password, first_name, last_name, funds_available) VALUES (?, ?, ?, ?, ?);";
+        PreparedStatement createUsrAcc = con.prepareStatement(sql2);
+        createUsrAcc.setString(1, username);
+        createUsrAcc.setString(2, password);
+        createUsrAcc.setString(3, firstName);
+        createUsrAcc.setString(4, lastName);
+        createUsrAcc.setFloat(5, 0);
+        System.out.println("[SQL]: " + createUsrAcc);
+        createUsrAcc.executeUpdate();
 
         body.put("body", "User " + username + " created successfully");
-        body.put("fname", fn);
-        body.put("lname", ln);
+        body.put("fname", firstName);
+        body.put("lname", lastName);
         obj.put("code", 200);
         obj.put("body", body);
         return obj;
@@ -94,9 +104,11 @@ public class DBCmd {
         JSONObject obj = new JSONObject();
         JSONObject body = new JSONObject();
 
-        String checkCompanyQuery = "SELECT * FROM " + COMPANY_TABLE + " WHERE username='" + username + "'";
-        Statement checkCompany = con.createStatement();
-        ResultSet companyRecord = checkCompany.executeQuery(checkCompanyQuery);
+        // check if portfolio reserved for IPO
+        String sql1 = "SELECT * FROM " + COMPANY_TABLE + " WHERE username=?";
+        PreparedStatement checkCompany = con.prepareStatement(sql1);
+        checkCompany.setString(1, username);
+        ResultSet companyRecord = checkCompany.executeQuery();
 
         if(portName.toLowerCase().equals("ipo") && !companyRecord.next()) {
             body.put("text", "Portfolio of name " + portName + " reserved for IPO");
@@ -106,8 +118,11 @@ public class DBCmd {
         }
 
         // Check if the user already have a portfolio with this name
-        Statement checkUsrPortfolio = con.createStatement();
-        ResultSet usrPortInfo = checkUsrPortfolio.executeQuery("SELECT p_name FROM " + PORTFOLIO_TABLE + " WHERE username='" + username + "'AND p_name='" + portName + "'");
+        String sql2 = "SELECT p_name FROM " + PORTFOLIO_TABLE + " WHERE username=? AND p_name=?";
+        PreparedStatement checkUsrPortfolio = con.prepareStatement(sql2);
+        checkUsrPortfolio.setString(1, username);
+        checkUsrPortfolio.setString(2, portName);
+        ResultSet usrPortInfo = checkUsrPortfolio.executeQuery();
 
         if(usrPortInfo.next()){
             body.put("text", "Portfolio of name " + portName + " already exists");
@@ -116,9 +131,12 @@ public class DBCmd {
             return obj;
         }
 
-        Statement addUsrPortfolio = con.createStatement();
-
-        addUsrPortfolio.executeUpdate("INSERT INTO " + PORTFOLIO_TABLE + " (username,p_name)" + " VALUES('" + username + "','" + portName + "')");
+        // insert new portfolio
+        String sql3 = "INSERT INTO " + PORTFOLIO_TABLE + " (username, p_name)" + " VALUES(?, ?)";
+        PreparedStatement addUsrPortfolio = con.prepareStatement(sql3);
+        addUsrPortfolio.setString(1, username);
+        addUsrPortfolio.setString(2, portName);
+        addUsrPortfolio.executeUpdate();
 
         body.put("text", "Portfolio of name " + portName + " created successfully");
         obj.put("body", body);
@@ -127,11 +145,21 @@ public class DBCmd {
         return obj;
     }
 
-    public static void deletePortfolio(String username, String portName, Connection con) throws Exception {
-        String query = "DELETE FROM " + PORTFOLIO_TABLE + " WHERE username='" + username + "' AND p_name='" + portName + "'";
-        Statement deletePortfolio = con.createStatement();
+    public static JSONObject deletePortfolio(String username, String portName, Connection con) throws Exception {
+        JSONObject obj = new JSONObject();
+        JSONObject body = new JSONObject();
 
-        deletePortfolio.executeUpdate(query);
+        String sql = "DELETE FROM " + PORTFOLIO_TABLE + " WHERE username=? AND p_name=?";
+        PreparedStatement deletePortfolio = con.prepareStatement(sql);
+        deletePortfolio.setString(1, username);
+        deletePortfolio.setString(2, portName);
+        deletePortfolio.executeUpdate();
+
+        body.put("text", "Portfolio " + portName + " successfully deleted");
+        obj.put("body", body);
+        obj.put("code", 200);
+
+        return obj;
     }
 
     public static JSONArray getTradesByPortfolio(String username, String portName, Connection con) throws Exception {
