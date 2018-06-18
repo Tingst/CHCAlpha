@@ -134,13 +134,12 @@ public class API {
 
             try {
                 // Grab args from json body
-                int type = ((Integer) json.get("type")).intValue();
+                int type = ((Long) json.get("type")).intValue();
                 String username = (String) json.get("username");
                 String ticker = (String) json.get("ticker");
-                int numShares= ((Long) json.get("numShares")).intValue();
+                int numShares = ((Long) json.get("number")).intValue();
                 String p_name = (String) json.get("portfolio");
-                System.out.println("herereere");
-                System.out.println(type);
+
                 if (type == 0) {
                     result = DBCmd.executeBuy(username, ticker, numShares, p_name, conn);
                 } else {
