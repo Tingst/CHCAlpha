@@ -11,7 +11,7 @@ import java.sql.Connection;
 public class API {
 
     public static JSONObject login(HttpExchange t, Connection conn) {
-        JSONObject result = new JSONObject();
+        JSONObject result;
 
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
@@ -23,13 +23,14 @@ public class API {
                         conn
                  );
             } catch(Exception e) {
-                System.out.println(e.getMessage());
+                e.printStackTrace(System.out);
                 return null;
-
             }
+        } else {
+            result = new JSONObject();
+            result.put("code", 400);
         }
 
-        result.put("code", 200);
         return result;
     }
 
@@ -48,7 +49,7 @@ public class API {
                         conn
                 );
             } catch(Exception e) {
-                System.out.println(e.getMessage());
+                e.printStackTrace(System.out);
                 return null;
             }
 
@@ -63,6 +64,8 @@ public class API {
 
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
+            System.out.println("HERE");
+            System.out.println(json);
 
             try {
                 result = DBCmd.createPortfolio(
@@ -71,7 +74,7 @@ public class API {
                         conn
                 );
             } catch(Exception e) {
-                System.out.println(e.getMessage());
+                e.printStackTrace(System.out);
                 return null;
             }
         }
@@ -271,7 +274,7 @@ public class API {
             isr.close();
         }
         catch(Exception e) {
-            System.out.println(e.toString());
+            e.printStackTrace(System.out);
         }
 
         return buf.toString();
@@ -288,7 +291,7 @@ public class API {
             return result;
         }
         catch(Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace(System.out);
             return null;
         }
     }

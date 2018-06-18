@@ -132,18 +132,18 @@ class PortfolioPanelWrapper extends React.Component {
 
   handleCreateNewPortfolio() {
     if (this.state.newPortfolioName.length < 4) {
-      // names must be at least 4 characters long
+      window.alert("Portfolio names must be at least 4 characters long");
+      this.setState({ newPortfolioName: '' });
       return;
     }
+    console.log("my username is ", this.props.username);
     this.props.handleCreateNewPortfolio({
       name: this.state.newPortfolioName,
       username: this.props.username
     });
 
     // reset fields
-    this.setState({
-      newPortfolioName: ''
-    });
+    this.setState({ newPortfolioName: '' });
   }
 
   handleNewPortfolioBlur(e) {
