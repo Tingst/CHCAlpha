@@ -218,19 +218,35 @@ public class API {
 
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
+            long startPriceLong = (long)json.get("startingPrice");
+            float startPrice = (float) (long) startPriceLong;
+
+//            float startPrice = 3.6f;
+            long numSharesLong = (long) json.get("numShares");
+            Integer numShares = (int) (long) numSharesLong;
 
             // TODO: build response
-            //result = DBCmd.createIPO(
-            // json.get("username"),
-            // json.get("ticker"),
-            // json.get("companyName"),
-            // json.get("exchange"),
-            // json.get("startingPrice"),
-            // json.get("numShares")
-            // );
+            try {
+                DBCmd.createIPO(
+                        (String) json.get("username"),
+                        (String) json.get("ticker"),
+                        (String) json.get("industry"),
+                        (String) json.get("companyName"),
+                        (String) json.get("exchange"),
+                        startPrice,
+//                        (int) json.get("numShares"),
+                        numShares,
+                        conn
+
+                 );
+                result.put("code", 200);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
 
-        result.put("code", 200);
         return result;
     }
 
@@ -240,15 +256,20 @@ public class API {
         if (t.getRequestMethod().equalsIgnoreCase("UPDATE")) {
             JSONObject json = parseBody(t);
 
-            // TODO: build response
-            //result = DBCmd.changePassword(
-            // json.get("username"),
-            // json.get("oldPassword"),
-            // json.get("newPassword")
-            // );
+            try {
+                result = DBCmd.changePassword(
+                        (String) json.get("username"),
+                        (String) json.get("oldPassword"),
+                        (String) json.get("newPassword"),
+                        conn
+                 );
+                result.put("code", 200);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
-        result.put("code", 200);
+
         return result;
     }
 

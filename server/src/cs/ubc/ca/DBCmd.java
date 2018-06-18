@@ -205,6 +205,8 @@ public class DBCmd {
         String createCompanyQuery = "INSERT INTO " + COMPANY_TABLE + " (c_name, industry, ticker, price, username, abbre) VALUES " +
                 "('" + companyName + "','" + industry + "','" + ticker + "'," + startingPrice + ",'" + username + "','" + exchange + "')";
 
+        System.out.println(createCompanyQuery);
+
         Statement createCompany = con.createStatement();
         createCompany.executeUpdate(createCompanyQuery);
 
