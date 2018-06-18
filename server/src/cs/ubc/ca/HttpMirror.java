@@ -20,6 +20,7 @@ public class HttpMirror {
     }
 
     public void run() throws Exception {
+        System.out.println("Listening to port 9000...");
         HttpServer server = HttpServer.create(new InetSocketAddress(9000), 0);
 
         server.createContext("/login", new Handler("login", this.conn));

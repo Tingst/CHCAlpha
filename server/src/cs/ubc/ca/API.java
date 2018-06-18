@@ -39,13 +39,19 @@ public class API {
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
 
-            // TODO: build response
-            //result = DBCmd.createAccount(
-            // json.get("username"),
-            // json.get("password"),
-            // json.get("fname"),
-            // json.get("lname")
-            // );
+            try {
+                result = DBCmd.createAccount(
+                        (String) json.get("username"),
+                        (String) json.get("password"),
+                        (String) json.get("fname"),
+                        (String) json.get("lname"),
+                        conn
+                );
+            } catch(Exception e) {
+                System.out.println(e.getMessage());
+                return null;
+            }
+
         }
 
         result.put("code", 200);
@@ -58,11 +64,16 @@ public class API {
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
 
-            // TODO: build response
-            //result = DBCmd.createPortfolio(
-            // json.get("username"),
-            // json.get("name")
-            // );
+            try {
+                result = DBCmd.createPortfolio(
+                        (String) json.get("username"),
+                        (String) json.get("name"),
+                        conn
+                );
+            } catch(Exception e) {
+                System.out.println(e.getMessage());
+                return null;
+            }
         }
 
         result.put("code", 200);
@@ -76,10 +87,17 @@ public class API {
             JSONObject json = parseBody(t);
 
             // TODO: build response
-            //result = DBCmd.deletePortfolio(
-            // json.get("username"),
-            // json.get("name")
-            // );
+
+            //try {
+            //    result = DBCmd.deletePortfolio(
+            //            (String) json.get("username"),
+            //            (String) json.get("name"),
+            //            conn
+            //    );
+            //} catch(Exception e) {
+            //    System.out.println(e.getMessage());
+            // return null;
+            //}
         }
 
         result.put("code", 200);

@@ -52,9 +52,8 @@ public class DBCmd {
             return obj;
         }
 
-
         createUsrAcc.executeUpdate("INSERT INTO " + ACCOUNTS_TABLE + " (username, password, first_name, last_name, funds_available)" +
-                " VALUES('" + username + "','" + password + "','" + firstName + "','" + lastName + "'"+ 0 + ")");
+                " VALUES('" + username + "','" + password + "','" + firstName + "','" + lastName + "',"+ 0 + ")");
 
         obj.put("body", "User " + username + " created successfully");
         return obj;
