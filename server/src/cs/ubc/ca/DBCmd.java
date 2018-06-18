@@ -167,7 +167,9 @@ public class DBCmd {
         return DataProvider.getAllData(mp, pendingOrders);
     }
 
-    public static JSONArray getAllTradedStocks(Connection con) throws Exception {
+    public static JSONObject getAllTradedStocks(Connection con) throws Exception {
+        JSONObject allTradedStocksInfo = new JSONObject();
+
         String query = "SELECT ticker,abbre,price,industry,c_name FROM Company";
         Statement getAllTradedStocks = con.createStatement();
 
@@ -180,7 +182,30 @@ public class DBCmd {
         mp.put("industry", "industry");
         mp.put("companyName", "c_name");
 
-        return DataProvider.getAllData(mp, allTradedStocks);
+        //Get all exchanges
+        String allExchangesQuery = "SELECT abbreviation FROM " + EXCHANGE_TABLE;
+        Statement getAllExchanges = con.createStatement();
+        ResultSet allExchanges = getAllExchanges.executeQuery(allExchangesQuery);
+        JSONArray exchanges = new JSONArray();
+        while(allExchanges.next()) {
+            exchanges.add(allExchanges.getString("abbreviation"));
+        }
+
+        //Get all tickers
+        String allTickersQuery = "SELECT ticker FROM " + COMPANY_TABLE;
+        Statement getAllTickers = con.createStatement();
+        ResultSet allTickers = getAllTickers.executeQuery(allTickersQuery);
+        JSONArray tickers = new JSONArray();
+        while(allTickers.next()) {
+            tickers.add(allTickers.getString("ticker"));
+        }
+
+
+        allTradedStocksInfo.put("exchanges", exchanges);
+        allTradedStocksInfo.put("symbols", tickers);
+        allTradedStocksInfo.put("stocks", DataProvider.getAllData(mp, allTradedStocks));
+
+        return allTradedStocksInfo;
     }
 
     public static JSONObject changePassword(String username, String oldPassword, String newPassword, Connection con) throws Exception {
@@ -208,12 +233,73 @@ public class DBCmd {
         return obj;
     }
 
-    public static JSONArray findMarketTrend() {
-        // mostFrequenlyTraded
-        // leastFrequenlyTraded
+    public static JSONObject findMarketTrend(Connection con) throws Exception{
+        JSONObject trends = new JSONObject();
         // highest price
+        String highestPriceQuery = "SELECT ticker,c_name,industry,username,abbre,MAX(price) AS price FROM " + COMPANY_TABLE + " GROUP BY ticker";
+        Statement getHighestPriceTrade = con.createStatement();
+        ResultSet highestPriceTrade = getHighestPriceTrade.executeQuery(highestPriceQuery);
+        if(highestPriceTrade.next()) {
+            JSONObject highest = new JSONObject();
+            highest.put("ticker", highestPriceTrade.getString("ticker"));
+            highest.put("exchange", highestPriceTrade.getString("abbre"));
+            highest.put("price", highestPriceTrade.getFloat("price"));
+            highest.put("industry", highestPriceTrade.getString("industry"));
+            highest.put("companyName", highestPriceTrade.getString("c_name"));
+            trends.put("stockTrendHighest", highest);
+        }
+
         // lowest price
-        return new JSONArray();
+        String lowestPriceQuery = "SELECT ticker,c_name,industry,username,abbre,MIN(price) AS price FROM " + COMPANY_TABLE + " GROUP BY ticker";
+        Statement getLowestPriceTrade = con.createStatement();
+        ResultSet lowestPriceTrade = getLowestPriceTrade.executeQuery(lowestPriceQuery);
+        if(lowestPriceTrade.next()) {
+            JSONObject lowest = new JSONObject();
+            lowest.put("ticker", lowestPriceTrade.getString("ticker"));
+            lowest.put("exchange", lowestPriceTrade.getString("abbre"));
+            lowest.put("price", lowestPriceTrade.getFloat("price"));
+            lowest.put("industry", lowestPriceTrade.getString("industry"));
+            lowest.put("companyName", lowestPriceTrade.getString("c_name"));
+            trends.put("stockTrendLowest", lowest);
+        }
+
+        // mostFrequenlyTraded
+        String frequentQuery = "SELECT ticker, COUNT(ticker) AS ticker_occurrence FROM " + TRADED_ORDER_TABLE + " GROUP BY ticker ORDER BY ticker_occurrence DESC";
+        Statement getMostFrequentTrade = con.createStatement();
+        ResultSet mostFrequentTrade = getMostFrequentTrade.executeQuery(frequentQuery);
+        if(mostFrequentTrade.first()) {
+            String mostFrequenQuery = "SELECT * FROM " + COMPANY_TABLE + " WHERE ticker='" + mostFrequentTrade.getString("ticker") + "'";
+            Statement getMostFrequent = con.createStatement();
+            ResultSet res = getMostFrequent.executeQuery(mostFrequenQuery);
+            if(res.first()) {
+                JSONObject mostFrequent = new JSONObject();
+                mostFrequent.put("ticker", res.getString("ticker"));
+                mostFrequent.put("exchange", res.getString("abbre"));
+                mostFrequent.put("price", res.getFloat("price"));
+                mostFrequent.put("industry", res.getString("industry"));
+                mostFrequent.put("companyName", res.getString("c_name"));
+                trends.put("stockTrendMostFrequent", mostFrequent);
+            }
+        }
+
+        // leastFrequenlyTraded
+        if(mostFrequentTrade.last()) {
+            String mostFrequenQuery = "SELECT * FROM " + COMPANY_TABLE + " WHERE ticker='" + mostFrequentTrade.getString("ticker") + "'";
+            Statement getMostFrequent = con.createStatement();
+            ResultSet res = getMostFrequent.executeQuery(mostFrequenQuery);
+
+            if(res.first()) {
+                JSONObject leastFrequent = new JSONObject();
+                leastFrequent.put("ticker", res.getString("ticker"));
+                leastFrequent.put("exchange", res.getString("abbre"));
+                leastFrequent.put("price", res.getFloat("price"));
+                leastFrequent.put("industry", res.getString("industry"));
+                leastFrequent.put("companyName", res.getString("c_name"));
+                trends.put("stockTrendLeastFrequent", leastFrequent);
+            }
+        }
+
+        return trends;
     }
 
     public static void createIPO(String username, String ticker, String industry, String companyName, String exchange, Float startingPrice, int numShares, Connection con) throws Exception {
@@ -368,6 +454,22 @@ public class DBCmd {
         Statement deletePendingOrder = con.createStatement();
 
         deletePendingOrder.executeUpdate(query);
+    }
+
+    public static JSONObject getCompanyTrends(String ticker, Connection con) throws Exception {
+        JSONObject companyDetails = new JSONObject();
+        String companyDetailsQuery = "SELECT * FROM " + COMPANY_TABLE + " WHERE ticker='" + ticker + "'";
+        Statement getCompanyDetails = con.createStatement();
+        ResultSet company = getCompanyDetails.executeQuery(companyDetailsQuery);
+        company.next();
+
+        companyDetails.put("ticker",company.getString("ticker"));
+        companyDetails.put("exchange",company.getString("abbre"));
+        companyDetails.put("price",company.getFloat("price"));
+        companyDetails.put("industry",company.getString("industry"));
+        companyDetails.put("companyName",company.getString("c_name"));
+
+        return companyDetails;
     }
 
     private static void closeOrder(Order order, Connection con) throws Exception{
