@@ -37,7 +37,6 @@ class SettingsWrapper extends React.Component {
     super(props);
     this.state = {
       // password state
-      password: '',
       oldpass: '',
       newpass: '',
       duppass: ''
@@ -53,6 +52,7 @@ class SettingsWrapper extends React.Component {
   }
 
   handleConfirmPassword(user) {
+    console.table(user);
     let alphaNumericCheck = RegExp('^[a-zA-Z0-9]*$');
 
     if (!alphaNumericCheck.test(user.oldpass) || !alphaNumericCheck.test(user.newpass) ||
@@ -75,11 +75,11 @@ class SettingsWrapper extends React.Component {
 
     // reset fields
     this.setState({
-      password: '',
       oldpass: '',
       newpass: '',
       duppass: ''
-    })
+    });
+    document.getElementById("password-change").reset();
   }
 
   render() {
@@ -93,24 +93,26 @@ class SettingsWrapper extends React.Component {
           <span style={{ ...styles.detailsRow, marginBottom: '1rem' }}><label style={styles.label}>Last Name: </label>{this.props.lname}</span>
 
           <h1 style={{ ...styles.title, marginTop: '2rem' }}>Change your Password</h1>
-          <input
-            type="password"
-            style={styles.inputStyle}
-            placeholder="Enter old password"
-            onBlur={e => this.handleInputBlur('oldpass', e)}
-          />
-          <input
-            type="password"
-            style={styles.inputStyle}
-            placeholder="Enter new password"
-            onBlur={e => this.handleInputBlur('newpass', e)}
-          />
-          <input
-            type="password"
-            style={styles.inputStyle}
-            placeholder={"Confirm new password"}
-            onBlur={e => this.handleInputBlur('duppass', e)}
-          />
+          <form id="password-change" style={{ display: 'flex', flexFlow: 'column' }}>
+            <input
+              type="password"
+              style={styles.inputStyle}
+              placeholder="Enter old password"
+              onBlur={e => this.handleInputBlur('oldpass', e)}
+            />
+            <input
+              type="password"
+              style={styles.inputStyle}
+              placeholder="Enter new password"
+              onBlur={e => this.handleInputBlur('newpass', e)}
+            />
+            <input
+              type="password"
+              style={styles.inputStyle}
+              placeholder="Confirm new password"
+              onBlur={e => this.handleInputBlur('duppass', e)}
+            />
+          </form>
 
           <ViewRow style={styles.buttonsRow}>
             <Button

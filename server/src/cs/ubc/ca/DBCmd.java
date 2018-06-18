@@ -30,10 +30,11 @@ public class DBCmd {
             String pw = resultsSet.getString("password");
             if(password.equals(pw)) {
                 obj.put("body", "Login successful");
+                obj.put("code", 200);
                 return obj;
             }
         }
-
+        obj.put("code", 400);
         obj.put("body", "Login failed");
         return obj;
     }
@@ -103,6 +104,13 @@ public class DBCmd {
         return obj;
     }
 
+    public static void deletePortfolio(String username, String portName, Connection con) throws Exception {
+        String query = "DELETE FROM " + PORTFOLIO_TABLE + " WHERE username='" + username + "' AND p_name='" + portName + "'";
+        Statement deletePortfolio = con.createStatement();
+
+        deletePortfolio.executeUpdate(query);
+    }
+
     public static JSONArray getTradesByPortfolio(String username, String portName, Connection con) throws Exception {
         String query = "SELECT C.ticker, abbre, num_shares, buy_price, price FROM Company C, ClosedOrder CO WHERE C.ticker=CO.ticker AND " +
                 "CO.username='" + username + "' AND p_name='" + portName + "'";
@@ -150,20 +158,6 @@ public class DBCmd {
         mp.put("companyName", "c_name");
 
         return DataProvider.getAllData(mp, allTradedStocks);
-    }
-
-    public static void deletePendingOrder(int orderID, Connection con) throws Exception {
-        String query = "DELETE FROM " + TRADED_ORDER_TABLE + " WHERE to_id=" + orderID;
-        Statement deletePendingOrder = con.createStatement();
-
-        deletePendingOrder.executeUpdate(query);
-    }
-
-    public static void deletePortfolio(String username, String portName, Connection con) throws Exception {
-        String query = "DELETE FROM " + PORTFOLIO_TABLE + " WHERE username='" + username + "' AND p_name='" + portName + "'";
-        Statement deletePortfolio = con.createStatement();
-
-        deletePortfolio.executeUpdate(query);
     }
 
     public static JSONObject changePassword(String username, String oldPassword, String newPassword, Connection con) throws Exception {
@@ -346,6 +340,13 @@ public class DBCmd {
     }
 
     //  order must have been inserted into the TradeOrder table
+    public static void deletePendingOrder(int orderID, Connection con) throws Exception {
+        String query = "DELETE FROM " + TRADED_ORDER_TABLE + " WHERE to_id=" + orderID;
+        Statement deletePendingOrder = con.createStatement();
+
+        deletePendingOrder.executeUpdate(query);
+    }
+
     private static void closeOrder(Order order, Connection con) throws Exception{
 
         // Select all opposite orders (i.e if order is buy, then we select all sell orders) and group by ascending order by order_time

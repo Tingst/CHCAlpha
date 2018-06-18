@@ -66,6 +66,7 @@ class OrderPanelWrapper extends React.Component {
   handlePlaceOrder() {
     // TODO: checks
     this.props.handlePlaceOrder({
+      username: this.props.username,
       portfolio: this.state.portfolio,
       type: this.state.type,
       ticker: this.state.ticker,
@@ -89,7 +90,9 @@ class OrderPanelWrapper extends React.Component {
         <h1>Buy & Sell</h1>
         <Form>
           <ViewRow style={{alignItems: 'center', marginTop: '1rem', marginBottom: '1rem'}}>
-            <Form.Field style={{ display: 'flex', width: 200 }}>
+
+            {/* Select Portfolio */}
+            <Form.Field style={{ width: 200 }}>
               <label style={{marginRight: '1rem'}}>Portfolio:</label>
               <select style={{ width: 100 }} onChange={this.handlePortChange}>
                 {this.props.portfolios.map((port, id) => (
@@ -98,6 +101,7 @@ class OrderPanelWrapper extends React.Component {
               </select>
             </Form.Field>
 
+            {/* Toggle Buy/Sell */}
             <Form.Field style={{ display: 'flex', width: 100 }}>
               <input
                 type="radio"
@@ -127,10 +131,9 @@ class OrderPanelWrapper extends React.Component {
                 Sell
               </label>
             </Form.Field>
-
           </ViewRow>
 
-          <ViewRow>
+          <ViewRow >
             <Form.Field>
               <label>Ticker Symbol</label>
               <Dropdown
@@ -167,10 +170,11 @@ class OrderPanelWrapper extends React.Component {
   }
 }
 
-const mapStateToProps = ({ Portfolio, Stocks }) => {
+const mapStateToProps = ({ Portfolio, Stocks, Login }) => {
   return {
     portfolios: Portfolio.portfolios,
-    symbols: Stocks.symbols
+    symbols: Stocks.symbols,
+    username: Login.username
   }
 };
 

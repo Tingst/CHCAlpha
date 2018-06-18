@@ -26,12 +26,20 @@ class HistoryPanelWrapper extends React.Component {
     this.handleCancelOrder = this.handleCancelOrder.bind(this);
   }
 
+  componentDidMount() {
+    // retrieve all current orders for this user
+    this.props.handleGetOrders({ username: this.props.username});
+  }
+
   handleFilterChange(e) {
     console.log(e.target.value);
   }
 
   handleCancelOrder(id) {
-    this.props.handleCancelOrder({ id });
+    this.props.handleCancelOrder({
+      username: this.props.username,
+      id
+    });
   }
 
   render() {
@@ -94,9 +102,10 @@ class HistoryPanelWrapper extends React.Component {
   }
 }
 
-const mapStateToProps = ({ Portfolio }) => {
+const mapStateToProps = ({ Portfolio, Login }) => {
   return {
-    orders: Portfolio.orders
+    orders: Portfolio.orders,
+    username: Login.username
   }
 };
 

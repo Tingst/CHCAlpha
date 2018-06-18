@@ -20,7 +20,7 @@ const styles = {
   }
 };
 
-
+// TODO: clear redux state on logout
 const NavBar = () => (
   <ViewRow style={styles.container}>
     <h3 style={styles.header}>CHC Alpha</h3>

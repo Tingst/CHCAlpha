@@ -1,7 +1,9 @@
 import {
   HANDLE_CREATE_PORTFOLIO_SUCCESS,
   HANDLE_DELETE_PORTFOLIO_SUCCESS,
-  HANDLE_ORDER_SUCCESS,
+  HANDLE_GET_ORDERS_SUCCESS,
+  HANDLE_PLACE_ORDER_FAILURE,
+  HANDLE_PLACE_ORDER_SUCCESS,
   HANDLE_CANCEL_ORDER_SUCCESS,
 
   // from IPO actions
@@ -30,11 +32,12 @@ const initialState = {
       ]
     }
   ],
-  orders: [
-    { id: 1332, type: 0, ticker: 'APPL', date: '08/06/18', number: 5, price: 100 },
-    { id: 2515, type: 1, ticker: 'GOOGL', date: '08/06/18', number: 10, price: 1340 },
-    { id: 5443, type: 1, ticker: 'AMZN', date: '08/06/18', number: 42, price: 1010 }
-  ]
+
+  // for portfolio page
+  orders: [],
+
+  // for stock trends page
+  allOrders: []
 };
 
 const Portfolio = (state = initialState, action) => {
@@ -63,7 +66,23 @@ const Portfolio = (state = initialState, action) => {
       };
     }
 
-    case HANDLE_ORDER_SUCCESS: {
+    case HANDLE_GET_ORDERS_SUCCESS: {
+      // update orders for the stock trends page
+      if (action.payload.username === "*") {
+        return {
+          ...state,
+          allOrders: action.payload.allOrders
+        };
+      }
+
+      // update orders for this user
+      return {
+        ...state,
+        orders: action.payload.orders
+      };
+    }
+
+    case HANDLE_PLACE_ORDER_SUCCESS: {
       return {
         ...state,
         orders: [...state.orders, action.payload]

@@ -5,7 +5,7 @@ import history from '../utils/history';
 const styles = {
   container: {
     height: '100%',
-    width: '3.5rem',
+    minWidth: '3.5rem',
     borderRight: '1px solid rgba(34, 36, 38, 0.1)'
   },
   button: {
