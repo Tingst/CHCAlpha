@@ -232,7 +232,7 @@ export const handlePlaceOrder = (payload) => {
   const { username, portfolio, type, ticker, number, price } = payload;
 
   payload.id = number + price; // TODO: get order ID number from request
-  payload.date = moment().format('DD/MM/YY');
+  payload.date = moment().format('YYYY/MM/DD HH:MM:SS');
 
   const options = {
     ...optionsBase,
