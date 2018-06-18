@@ -393,12 +393,11 @@ export const handleTrendsRefreshClick = () => {
     fetch(`${HOST}trends`, options)
       .then(res => res.json())
       .then(res => {
-        console.log(res);
+        payload = { ...payload, ...res };
         if (res.code === 200) {
-          payload = { ...payload, ...res };
           dispatch({ type: HANDLE_TRENDS_REFRESH_SUCCESS, payload });
         } else {
-          dispatch({ type: HANDLE_TRENDS_REFRESH_FAILURE });
+          dispatch({ type: HANDLE_TRENDS_REFRESH_FAILURE, text: res.body.text });
         }
       })
       .catch(err => {
@@ -425,10 +424,9 @@ export const handleTableRowClick = (payload) => {
       .then(res => {
         console.log(res);
         if (res.code === 200) {
-          payload = { ...payload, ...res };
-          dispatch({ type: HANDLE_GET_DETAILS_SUCCESS, payload });
+          dispatch({ type: HANDLE_GET_DETAILS_SUCCESS, payload: res });
         } else {
-          dispatch({ type: HANDLE_GET_DETAILS_FAILURE });
+          dispatch({ type: HANDLE_GET_DETAILS_FAILURE, text: res.body.text });
         }
       })
       .catch(err => {

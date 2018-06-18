@@ -171,13 +171,11 @@ public class API {
     }
 
     public static JSONObject getTrends(Connection conn) {
-        JSONObject result = new JSONObject();
+        JSONObject result;
         // There is no body to parse in this GET request
 
         try {
-            // TODO: build response
             result = DBCmd.findMarketTrend(conn);
-            result.put("code", 200);
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
@@ -216,7 +214,6 @@ public class API {
             }
         }
 
-        result.put("code", 200);
         return result;
     }
 
