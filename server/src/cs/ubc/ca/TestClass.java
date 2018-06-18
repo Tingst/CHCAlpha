@@ -28,18 +28,6 @@ public class TestClass {
             Statement myStatement = myConnection.createStatement();
 
 
-
-//                System.out.println(DBCmd.login("bggoodman", "133", myConnection));
-//            System.out.println(DBCmd.createAccount("bearb", "133", "Edwin", "Chen", myConnection));
-//            System.out.println(DBCmd.createPortfolio("bggoodman", "super performance tech equity", myConnection));
-
-
-//            System.out.println(DBCmd.buyShares("bggoodman", "MSFT", "NASDAQ", 100, "super performance equity", myConnection));
-
-//            Records records = DBCmd.getTradesByPortfolio("bggoodman", "super performance equity", myConnection);
-//            Records records = DBCmd.getTradesByPortfolio("bggoodman", "super performance equity", myConnection);
-//            Records records = DBCmd.getPendingOrders("bggoodman", myConnection);
-
 //            JSONArray jArr = DBCmd.getTradesByPortfolio("bggoodman", "super performance equity", myConnection);
 //            JSONArray jArr = DBCmd.getPendingOrders("bggoodman", myConnection);
 
@@ -52,8 +40,16 @@ public class TestClass {
 //            DBCmd.deleteCompany("bggoodman", "MSFT", myConnection);
 
 //            DBCmd.changePassword("bggoodman", "123", "234", myConnection);
+//            Order order = new Order(OrderTypes.BUY , "bggoodman", "GOOGL", "NASDAQ", "super performance equity", 3, 123f);
+//            DBCmd.mergeOrders(order, myConnection);
 
-            DBCmd.executeOrder(OrderTypes.BUY,"gHumpkins", "GOOGL", "NASDAQ", 1000, "tech sector", myConnection);
+//            DBCmd.addFunds("gHumpkins", 20000000f, myConnection);
+//            DBCmd.executeBuy("gHumpkins", "GOOGL", "NASDAQ", 1500, "tech sector", myConnection);
+
+//            DBCmd.executeSell("gHumpkins", "GOOGL", "NASDAQ", 1200, "tech sector", myConnection);
+
+            DBCmd.createIPO("gHumpkins", "AMZN", "Technology", "Amazon", "NASDAQ", 200f, 1000000, myConnection);
+
         }
         catch(Exception e)
         {
