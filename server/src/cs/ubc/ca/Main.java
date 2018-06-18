@@ -8,28 +8,40 @@ public class Main {
         // write your code here
         System.out.println("STARTING");
         try {
-                HttpMirror server = new HttpMirror();
-                server.run();
+            HttpMirror server = new HttpMirror();
+            server.run();
 
-                //Class.forName("com.mysql.jdbc.Driver");
-                String dbURL = "jdbc:mysql://localhost:3306/trading_system_DB?useSSL=false";
-                String dbUsername = "root";
-                String password = "123456";
-                // ?autoReconnect=true&useSSL=false
+            Class.forName("com.mysql.jdbc.Driver");
+            String dbURL = "jdbc:mysql://localhost:3306/stock?useSSL=false";
+            String dbUsername = "root";
+            String password = "123456";
+            // ?autoReconnect=true&useSSL=false
 
-                //1. Create connection
-                //Connection myConnection = DriverManager.getConnection(dbURL, dbUsername, password);
+            //1. Create connection
+            Connection myConnection = DriverManager.getConnection(dbURL, dbUsername, password);
 
-                //2. Create statement object
-                //Statement myStatement = myConnection.createStatement();
+            //2. Create statement/result object
+            Statement myStatement = myConnection.createStatement();
+            ResultSet rs;
 
+            // Test sql query
+            String sq1 = "SELECT * FROM Company";
+            rs = myStatement.executeQuery(sq1);
+            while (rs.next()) {
+                System.out.println(rs.getString(1));
+            }
 
-                //PriceGenerator pg = new PriceGenerator("Company");
-                //pg.updateStockPrices(myConnection);
-                //while (true) {
-                    //RequestManager req = new RequestManager(8001);
-                    //req.getClientCommand();
-                //}
+//            if (myStatement.execute("SELECT * FROM Company")) {
+//                rs = myStatement.getResultSet();
+//                System.out.println(rs.getString(1));
+//            }
+
+            //PriceGenerator pg = new PriceGenerator("Company");
+            //pg.updateStockPrices(myConnection);
+            //while (true) {
+            //RequestManager req = new RequestManager(8001);
+            //req.getClientCommand();
+            //}
         }
         catch(Exception e)
         {
