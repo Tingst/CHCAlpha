@@ -111,12 +111,15 @@ public class API {
 
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
-
-            // TODO: build function, build response
-            // TODO: username value of "*" means get ALL orders
-            //result = DBCmd.getOrder(
-            // json.get("username")
-            // );
+            try {
+                result = DBCmd.getPendingOrders(
+                        (String) json.get("username"),
+                        conn
+                );
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                return null;
+            }
         }
 
         result.put("code", 200);
@@ -129,26 +132,26 @@ public class API {
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
 
-            // TODO: build response
-            // TODO: can we do this without passing in argument exchange?
-            if ((int) json.get("type") == 0) {
-            //result = DBCmd.executeBuy(
-            // json.get("username"),
-            // json.get("ticker"),
-            // json.get("exchange"),
-            // json.get("numShares"),
-            // json.get("name")
-            // );
-            } else {
-            //result = DBCmd.executeBuy(
-            // json.get("username"),
-            // json.get("ticker"),
-            // json.get("exchange"),
-            // json.get("numShares"),
-            // json.get("name")
-            // );
-            }
+            try {
+                // Grab args from json body
+                int type = (int) json.get("type");
+                String username = (String) json.get("username");
+                String ticker = (String) json.get("ticker");
+//                long numSharesLong = (long) json.get("numShares");
+//                Integer numShares = (int) (long) numSharesLong;
 
+                Long numShares = (Long) json.get("numShares");
+                String p_name = (String) json.get("name");
+
+                if (type == 0) {
+                    result = DBCmd.executeBuy(username, ticker, numShares, p_name, conn);
+                } else {
+                    result = DBCmd.executeSell(username, ticker, numShares, p_name, conn);
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                return null;
+            }
         }
 
         result.put("code", 200);
@@ -161,13 +164,15 @@ public class API {
         if (t.getRequestMethod().equalsIgnoreCase("DELETE")) {
             JSONObject json = parseBody(t);
 
-            // TODO: build response
-            //result = DBCmd.deletePendingOrder(
-            // json.get("id")
-            // );
+            try {
+                result = DBCmd.deletePendingOrder(Integer.parseInt((String) json.get("id")), conn);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+                return null;
+            }
         }
 
-        result.put("code", 200);
         return result;
     }
 

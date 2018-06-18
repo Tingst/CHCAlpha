@@ -181,26 +181,6 @@ export const handleGetOrders = (payload) => {
   // A username of "*" will retrieve ALL pending orders
   const { username } = payload;
 
-  const mockOrders = [
-    { id: 1332, type: 0, ticker: 'APPL', date: '08/06/18', number: 5, price: 100 },
-    { id: 2515, type: 1, ticker: 'GOOGL', date: '08/06/18', number: 10, price: 1340 },
-    { id: 5443, type: 1, ticker: 'AMZN', date: '08/06/18', number: 42, price: 1010 }
-  ];
-  const mockAllOrders = [
-    { id: 1332, type: 0, ticker: 'APPL', date: '08/06/18', number: 7, price: 110 },
-    { id: 1333, type: 0, ticker: 'APPL', date: '08/06/18', number: 5, price: 105 },
-    { id: 132, type: 0, ticker: 'APPL', date: '08/06/18', number: 7, price: 100 },
-    { id: 2515, type: 1, ticker: 'GOOGL', date: '08/06/18', number: 10, price: 1340 },
-    { id: 5443, type: 1, ticker: 'AMZN', date: '08/06/18', number: 42, price: 1010 },
-    { id: 5643, type: 1, ticker: 'AMZN', date: '08/06/18', number: 30, price: 1015 },
-    { id: 5943, type: 1, ticker: 'AMZN', date: '08/06/18', number: 2, price: 1000 }
-  ];
-  if (username === "*") {
-    payload.allOrders = mockAllOrders;
-  } else {
-    payload.orders = mockOrders;
-  }
-
   const options = {
     ...optionsBase,
     method: 'POST',
@@ -215,8 +195,14 @@ export const handleGetOrders = (payload) => {
       .then(res => {
         console.log(res);
         if (res.code === 200) {
-          payload = { ...payload, ...res };
-          dispatch({ type: HANDLE_GET_ORDERS_SUCCESS, payload });
+          let newPayload = { username };
+
+          if (username === "*") {
+            newPayload.allOrders = res.key;
+          } else {
+            newPayload.orders = res.key;
+          }
+          dispatch({ type: HANDLE_GET_ORDERS_SUCCESS, payload: newPayload });
         } else {
           dispatch({ type: HANDLE_GET_ORDERS_FAILURE });
         }
@@ -268,14 +254,13 @@ export const handlePlaceOrder = (payload) => {
 };
 
 export const handleCancelOrder = (payload) => {
-  const { username, id } = payload;
+  const { id } = payload;
 
   const options = {
     ...optionsBase,
     method: 'DELETE',
     body: JSON.stringify({
-      username,
-      id,
+      id
     })
   };
 

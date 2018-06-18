@@ -6,7 +6,6 @@ import org.json.simple.JSONObject;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -150,10 +149,10 @@ public class DBCmd {
         return DataProvider.getAllData(mp, tradesByPort);
     }
 
-    public static JSONArray getPendingOrders(String username, Connection con) throws Exception{
+    public static JSONObject getPendingOrders(String username, Connection con) throws Exception{
         String query = "SELECT to_id,type,ticker,order_time,num_shares,price FROM TradeOrder WHERE username='" + username + "'";
         Statement getPendingOrders = con.createStatement();
-
+        JSONObject res = new JSONObject();
         ResultSet pendingOrders = getPendingOrders.executeQuery(query);
 
         Map<String, String> mp = new HashMap<>();
@@ -163,8 +162,8 @@ public class DBCmd {
         mp.put("date", "order_time");
         mp.put("number", "num_shares");
         mp.put("price", "price");
-
-        return DataProvider.getAllData(mp, pendingOrders);
+        res.put("key", DataProvider.getAllData(mp, pendingOrders));
+        return res;
     }
 
     public static JSONObject getAllTradedStocks(Connection con) throws Exception {
@@ -324,7 +323,7 @@ public class DBCmd {
         ipo.executeUpdate(addClosedTradeQuery);
 
         //Sell order creation
-        executeSell(username, ticker, exchange, numShares, ipoPortName, con);
+        executeSell(username, ticker, numShares, ipoPortName, con);
     }
 
     public static void deleteCompany(String username, String ticker, Connection con) throws Exception {
@@ -339,12 +338,12 @@ public class DBCmd {
         }
     }
 
-    public static JSONObject executeBuy(String username, String ticker, String exchange, int numShares, String portName, Connection con) throws Exception {
+    public static JSONObject executeBuy(String username, String ticker, int numShares, String portName, Connection con) throws Exception {
         JSONObject obj = new JSONObject();
 
         // Check if company is traded on the particular exchange in the company table if so pick out the record.
         Statement checkTradedStock = con.createStatement();
-        ResultSet tickerInfo = checkTradedStock.executeQuery("SELECT ticker, price, abbre FROM " + COMPANY_TABLE + " WHERE ticker='" + ticker + "' AND abbre='" + exchange + "'");
+        ResultSet tickerInfo = checkTradedStock.executeQuery("SELECT ticker, price, abbre FROM " + COMPANY_TABLE + " WHERE ticker='" + ticker + "'");
 
         if(!tickerInfo.next()) {
             obj.put("body", "Stock is not traded on the exchange");
@@ -371,6 +370,7 @@ public class DBCmd {
             return obj;
         }
 
+        String exchange = tickerInfo.getString("abbre");
         Order buyOrder = new Order(OrderTypes.BUY, username, ticker, exchange, portName, numShares, currentPrice);
 
         //Insert into database and select last_insert_id()
@@ -394,12 +394,12 @@ public class DBCmd {
         return obj;
     }
 
-    public static JSONObject executeSell(String username, String ticker, String exchange, int numShares, String portName, Connection con) throws Exception {
+    public static JSONObject executeSell(String username, String ticker, int numShares, String portName, Connection con) throws Exception {
         JSONObject obj = new JSONObject();
 
         // Check if company is traded on the particular exchange in the company table if so pick out the record.
         Statement checkTradedStock = con.createStatement();
-        ResultSet tickerInfo = checkTradedStock.executeQuery("SELECT ticker, price, abbre FROM " + COMPANY_TABLE + " WHERE ticker='" + ticker + "' AND abbre='" + exchange + "'");
+        ResultSet tickerInfo = checkTradedStock.executeQuery("SELECT ticker, price, abbre FROM " + COMPANY_TABLE + " WHERE ticker='" + ticker + "'");
 
         if(!tickerInfo.next()) {
             obj.put("body", "Stock is not traded on the exchange");
@@ -424,6 +424,7 @@ public class DBCmd {
         }
 
         Float currentPrice = tickerInfo.getFloat("price");
+        String exchange = tickerInfo.getString("abbrev");
 
         Order sellOrder = new Order(OrderTypes.SELL, username, ticker, exchange, portName, numShares, currentPrice);
 
@@ -449,11 +450,32 @@ public class DBCmd {
     }
 
     //  order must have been inserted into the TradeOrder table
-    public static void deletePendingOrder(int orderID, Connection con) throws Exception {
-        String query = "DELETE FROM " + TRADED_ORDER_TABLE + " WHERE to_id=" + orderID;
-        Statement deletePendingOrder = con.createStatement();
+    public static JSONObject deletePendingOrder(int orderID, Connection con) {
+        JSONObject obj = new JSONObject();
+        JSONObject body = new JSONObject();
 
-        deletePendingOrder.executeUpdate(query);
+        String query = "DELETE FROM " + TRADED_ORDER_TABLE + " WHERE to_id=" + orderID;
+
+        try {
+            Statement deletePendingOrder = con.createStatement();
+            int numDeleted = deletePendingOrder.executeUpdate(query);
+
+            if (numDeleted == 0) {
+                body.put("text", "nothing to delete");
+                obj.put("body", body);
+                obj.put("code", 400);
+            } else {
+                body.put("text", "orders deleted");
+                obj.put("body", body);
+                obj.put("code", 200);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+
+        return obj;
     }
 
     public static JSONObject getCompanyTrends(String ticker, Connection con) throws Exception {
