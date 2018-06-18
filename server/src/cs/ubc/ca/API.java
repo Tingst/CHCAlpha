@@ -6,27 +6,34 @@ import org.json.simple.parser.JSONParser;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.sql.Connection;
 
 public class API {
 
-    public static JSONObject login(HttpExchange t) {
+    public static JSONObject login(HttpExchange t, Connection conn) {
         JSONObject result = new JSONObject();
 
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
 
-            // TODO: build response
-            //result = DBCmd.login(
-            // json.get("username"),
-            // json.get("password"),
-            // );
+            try {
+                result = DBCmd.login(
+                        (String) json.get("username"),
+                        (String) json.get("password"),
+                        conn
+                 );
+            } catch(Exception e) {
+                System.out.println(e.getMessage());
+                return null;
+
+            }
         }
 
         result.put("code", 200);
         return result;
     }
 
-    public static JSONObject create(HttpExchange t) {
+    public static JSONObject create(HttpExchange t, Connection conn) {
         JSONObject result = new JSONObject();
 
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
@@ -45,7 +52,7 @@ public class API {
         return result;
     }
 
-    public static JSONObject createPortfolio(HttpExchange t) {
+    public static JSONObject createPortfolio(HttpExchange t, Connection conn) {
         JSONObject result = new JSONObject();
 
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
@@ -62,7 +69,7 @@ public class API {
         return result;
     }
 
-    public static JSONObject deletePortfolio(HttpExchange t) {
+    public static JSONObject deletePortfolio(HttpExchange t, Connection conn) {
         JSONObject result = new JSONObject();
 
         if (t.getRequestMethod().equalsIgnoreCase("DELETE")) {
@@ -79,7 +86,7 @@ public class API {
         return result;
     }
 
-    public static JSONObject getOrders(HttpExchange t) {
+    public static JSONObject getOrders(HttpExchange t, Connection conn) {
         JSONObject result = new JSONObject();
 
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
@@ -96,7 +103,7 @@ public class API {
         return result;
     }
 
-    public static JSONObject placeOrder(HttpExchange t) {
+    public static JSONObject placeOrder(HttpExchange t, Connection conn) {
         JSONObject result = new JSONObject();
 
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
@@ -128,7 +135,7 @@ public class API {
         return result;
     }
 
-    public static JSONObject cancelOrder(HttpExchange t) {
+    public static JSONObject cancelOrder(HttpExchange t, Connection conn) {
         JSONObject result = new JSONObject();
 
         if (t.getRequestMethod().equalsIgnoreCase("DELETE")) {
@@ -169,7 +176,7 @@ public class API {
         return result;
     }
 
-    public static JSONObject getCompanyDetails(HttpExchange t) {
+    public static JSONObject getCompanyDetails(HttpExchange t, Connection conn) {
         JSONObject result = new JSONObject();
 
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
@@ -185,7 +192,7 @@ public class API {
         return result;
     }
 
-    public static JSONObject createIPO(HttpExchange t) {
+    public static JSONObject createIPO(HttpExchange t, Connection conn) {
         JSONObject result = new JSONObject();
 
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
@@ -206,7 +213,7 @@ public class API {
         return result;
     }
 
-    public static JSONObject updatePassword(HttpExchange t) {
+    public static JSONObject updatePassword(HttpExchange t, Connection conn) {
         JSONObject result = new JSONObject();
 
         if (t.getRequestMethod().equalsIgnoreCase("UPDATE")) {
