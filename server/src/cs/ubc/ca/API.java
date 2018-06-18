@@ -172,28 +172,35 @@ public class API {
         return result;
     }
 
-    public static JSONObject getTrends() {
+    public static JSONObject getTrends(Connection conn) {
         JSONObject result = new JSONObject();
         // There is no body to parse in this GET request
 
-        // TODO: build response
-        //result = DBCmd.findMarketTrend(
-        // );
-
-        result.put("code", 200);
+        try {
+            // TODO: build response
+            result = DBCmd.findMarketTrend(conn);
+            result.put("code", 200);
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
         return result;
     }
 
-    public static JSONObject getAllStocks() {
-        JSONObject result = new JSONObject();
-        // There is no body to parse in this GET request
+    public static JSONObject getAllStocks(Connection conn) {
+        JSONObject result;
 
-        // TODO: build response
-        // TODO: this api call needs to return: { exchanges, stocks, symbols }
-        //result = DBCmd.getAllTradedStocks(
-        // );
+        try {
+            // There is no body to parse in this GET request
+            result = DBCmd.getAllTradedStocks(conn);
 
-        result.put("code", 200);
+            result.put("code", 200);
+        }
+        catch(Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
         return result;
     }
 
@@ -202,11 +209,13 @@ public class API {
 
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
-
-            // TODO: make function to get company trends
-            //result = DBCmd.getCompanyTrends(
-            // json.get("ticker")
-            // );
+            try {
+                result = DBCmd.getCompanyTrends((String) json.get("ticker"), conn);
+            }
+            catch(Exception e) {
+                System.out.println(e.getMessage());
+                return null;
+            }
         }
 
         result.put("code", 200);
