@@ -30,6 +30,10 @@ const base = {
           }
         ]
       },
+      // {
+      //   test: /\.svg$/,
+      //   use: ['babel!svg-react']
+      // },
       {
         test: /\.less$/,
         exclude: /node_modules/,
