@@ -1,9 +1,5 @@
 package cs.ubc.ca;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.Calendar;
-
 public class Order {
     private OrderTypes type;
     private String username;
@@ -24,6 +20,11 @@ public class Order {
         this.numShares = numShares;
         this.price = price;
         orderIDSet = false;
+    }
+
+    // Copy constructor
+    public Order(Order that) {
+        this(that.getType(), that.getUsername(), that.getTicker(), that.getExchange(), that.getPortName(), that.getNumShares(), that.getPrice());
     }
 
     public boolean addOrderID(int id) {
@@ -52,6 +53,8 @@ public class Order {
         return ticker;
     }
 
+    public Float getPrice() { return price;}
+
     public String getTradedOrder() {
         String tradedOrder = "(" + type + ",'" + ticker + "'," + numShares + "," + price + "," +
                 "NOW()" + ",'" + portName + "','" + username + "')";
@@ -63,11 +66,29 @@ public class Order {
         return numShares;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPortName() {return portName;}
+
+    public String getExchange() {
+        return exchange;
+    }
+
+    public void updateQty(int numShares) {
+        this.numShares = numShares;
+    }
+
+    public void updatePrice(Float price) {
+        this.price = price;
+    }
+
     public String getTradedOrderFields() {
         return "(type, ticker, num_shares, price, order_time, p_name, username)";
     }
 
-    public String getCloseOrder() {
+    public String getClosedOrder() {
         return "('" + ticker + "'," + numShares + "," + price + ",NOW(),'" + portName + "','" + username + "')";
     }
 

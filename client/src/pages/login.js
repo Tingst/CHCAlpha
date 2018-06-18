@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 import { Button, Form } from 'semantic-ui-react';
 import * as loginActions from '../actions/actioncreators';
 import { bindActionCreators } from 'redux';
+import Logo from 'babel-loader!svg-react-loader!../assets/chc-logo-white.svg';
 
 const styles = {
   container: {
@@ -219,7 +220,7 @@ class LoginWrapper extends React.Component {
 
         <ViewCol style={styles.innerContainer}>
 
-          <h1 style={styles.title}>CHC Alpha</h1>
+          <Logo style={{ width: 250, color: '#FFF' }} />
 
           <Button.Group style={styles.buttonsGroup}>
             <Button

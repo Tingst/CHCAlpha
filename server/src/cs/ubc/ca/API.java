@@ -18,7 +18,7 @@ public class API {
             // TODO: build response
             //result = DBCmd.login(
             // json.get("username"),
-            // json.get("password")
+            // json.get("password"),
             // );
         }
 
@@ -104,14 +104,24 @@ public class API {
 
             // TODO: build response
             // TODO: can we do this without passing in argument exchange?
-            //result = DBCmd.executeOrder(
-            // json.get("type"),
+            if ((int) json.get("type") == 0) {
+            //result = DBCmd.executeBuy(
             // json.get("username"),
             // json.get("ticker"),
             // json.get("exchange"),
             // json.get("numShares"),
             // json.get("name")
             // );
+            } else {
+            //result = DBCmd.executeBuy(
+            // json.get("username"),
+            // json.get("ticker"),
+            // json.get("exchange"),
+            // json.get("numShares"),
+            // json.get("name")
+            // );
+            }
+
         }
 
         result.put("code", 200);
