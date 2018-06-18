@@ -89,4 +89,22 @@ CREATE TABLE ClosedOrder(
 * Note: buy_price indicates the transaction value, per company share, at the time a Buy order and Sell order were respectively matched and processed.
 
 
+---
+Database Setup
+1. download MySQL Community Server 5.7
+2. download MySQL Connector/J 5.1.46 Platform Independent (Architecture Independent), ZIP Archive
+3. install MySql Community Server
+4. system preferences > MySQL > make sure it is running (green)
+5. cd to DB folder of cpsc_304, same directory as TradingSystemDB.sql
+
+6. `mysql` to log in (user/pass probably not needed?)
+7. `sudo mysql -u root -p --local-infile`: first, enter your sudo password, then when it asks for your password again just press enter without any password
+8. `show databases` to show databases
+
+9. `source TradingSystemDB.sql` a bunch of error messages will appear; this will create & populate the database
+10. `show databases`: TradingSystemDB should appear
+11. `use TradingSystemDB` use this database
+12. `show tables` to show current tables in the db
+
+
 
