@@ -163,7 +163,7 @@ class PortfolioPanelWrapper extends React.Component {
   }
 
   render() {
-    const panes = this.props.portfolios.map((port, id) => ({
+    const panes = this.props.portfolios.length > 0 ? this.props.portfolios.map((port, id) => ({
       menuItem: port.name,
       render: () => (
         <Tab.Pane id={id} style={styles.tabPane}>
@@ -173,14 +173,14 @@ class PortfolioPanelWrapper extends React.Component {
           />
         </Tab.Pane>
       )
-    }));
+    })) : [];
 
     panes.unshift({
       menuItem: 'Summary',
       render: () => (
         <Tab.Pane id='summary' style={styles.tabPane}>
           <SummaryTable
-            portfolios={this.props.portfolios}
+            portfolios={this.props.portfolios.length > 0 ? this.props.portfolios : []}
             onNewPortfolioBlur={this.handleNewPortfolioBlur}
             onCreateNew={this.handleCreateNewPortfolio}
           />

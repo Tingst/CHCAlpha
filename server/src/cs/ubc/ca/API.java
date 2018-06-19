@@ -101,7 +101,7 @@ public class API {
         } else {
             result.put("code", 404);
         }
-
+        result.put("code", 200);
         return result;
     }
 

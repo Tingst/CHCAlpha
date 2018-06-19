@@ -90,11 +90,11 @@ class OrderPanelWrapper extends React.Component {
   }
 
   render() {
-    const ports = this.props.portfolios.map((port, id) => ({
+    const ports = this.props.portfolios.length > 0 ? this.props.portfolios.map((port, id) => ({
       key: id,
       value: port.name,
       text: port.name
-    }));
+    })) : [];
 
     return (
       <ViewCol style={styles.container}>
