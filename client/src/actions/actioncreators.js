@@ -293,6 +293,7 @@ export const handlePlaceOrder = (payload) => {
         console.log(res);
         if (res.code === 200) {
           payload = { ...payload, ...res };
+          console.log("new order is ", payload);
           dispatch({ type: HANDLE_PLACE_ORDER_SUCCESS, payload });
         } else {
           dispatch({ type: HANDLE_PLACE_ORDER_FAILURE, text: res.body.text });

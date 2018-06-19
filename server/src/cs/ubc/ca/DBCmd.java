@@ -221,7 +221,8 @@ public class DBCmd {
         mp.put("number", "num_shares");
         mp.put("price", "price");
         JSONArray tree = DataProvider.getAllData(mp, pendingOrders);
-        res.put("key", DataProvider.getAllData(mp, pendingOrders));
+        res.put("key", tree);
+        System.out.println("TREE-----");
         System.out.println(tree);
 
         return res;
@@ -468,6 +469,7 @@ public class DBCmd {
         closeOrder(buyOrder, con);
         body.put("text", "Order placed successfully");
         obj.put("code", 200);
+        obj.put("id", orderId);
         obj.put("body", body);
         return obj;
     }
