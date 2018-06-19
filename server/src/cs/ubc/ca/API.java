@@ -249,7 +249,6 @@ public class API {
             long startPriceLong = (long)json.get("startingPrice");
             float startPrice = (float) (long) startPriceLong;
 
-//            float startPrice = 3.6f;
             long numSharesLong = (long) json.get("numShares");
             Integer numShares = (int) (long) numSharesLong;
 
@@ -261,8 +260,8 @@ public class API {
                         (String) json.get("industry"),
                         (String) json.get("companyName"),
                         (String) json.get("exchange"),
+                        (String) json.get("portfolio"),
                         startPrice,
-//                        (int) json.get("numShares"),
                         numShares,
                         conn
 

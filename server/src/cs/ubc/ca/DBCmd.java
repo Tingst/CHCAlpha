@@ -346,8 +346,7 @@ public class DBCmd {
         return trends;
     }
 
-    public static void createIPO(String username, String ticker, String industry, String companyName, String exchange, Float startingPrice, int numShares, Connection con) throws Exception {
-        String ipoPortName = "IPO";
+    public static void createIPO(String username, String ticker, String industry, String companyName, String exchange, String portName, Float startingPrice, int numShares, Connection con) throws Exception {
 
         //Company Creation
         String createCompanyQuery = "INSERT INTO " + COMPANY_TABLE + " (c_name, industry, ticker, price, username, abbre) VALUES " +
@@ -359,9 +358,9 @@ public class DBCmd {
         createCompany.executeUpdate(createCompanyQuery);
 
         //Create portfolio
-        createPortfolio(username, ipoPortName, con);
+        createPortfolio(username, portName, con);
 
-        Order sellOrder = new Order(OrderTypes.SELL, username, ticker, exchange, "IPO", numShares, startingPrice);
+        Order sellOrder = new Order(OrderTypes.SELL, username, ticker, exchange, portName, numShares, startingPrice);
 
         // Add stock to ClosedTrade
         String addClosedTradeQuery = "INSERT INTO " + CLOSED_ORDER_TABLE + " " +sellOrder.getClosedOrderFields() + " VALUES " +
@@ -370,7 +369,7 @@ public class DBCmd {
         ipo.executeUpdate(addClosedTradeQuery);
 
         //Sell order creation
-        executeSell(username, ticker, numShares, ipoPortName, con);
+        executeSell(username, ticker, numShares, portName, con);
     }
 
     public static void deleteCompany(String username, String ticker, Connection con) throws Exception {
