@@ -1,3 +1,4 @@
+DROP DATABASE TradingSystemDB;
 CREATE DATABASE   TradingSystemDB;
 USE               TradingSystemDB;
 
@@ -44,7 +45,7 @@ CREATE TABLE Company (
 /* 0 for buy 1 for sell (Order is a keyword so cannot be used as the table name)*/
 CREATE TABLE TradeOrder (
 	to_id INT AUTO_INCREMENT,
-	type BOOL NOT NULL,
+	type CHAR(1) NOT NULL,
 	ticker CHAR(20) NOT NULL,
 	num_shares INT NOT NULL,
 	price FLOAT NOT NULL,
