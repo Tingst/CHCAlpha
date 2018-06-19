@@ -8,10 +8,11 @@ public class Main {
         // write your code here
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            String dbURL = "jdbc:mysql://localhost:3306/stock?useSSL=false";
+//            String dbURL = "jdbc:mysql://localhost:3306/stock?useSSL=false";
+            String dbURL = "jdbc:mysql://localhost:3306/TradingSystemDB?useSSL=false";
             String dbUsername = "root";
             String password = "";     // General user
-            //String password = "123456";     // DB user
+//            String password = "123456";     // DB user
 
             //1. Create connection
             Connection myConnection = DriverManager.getConnection(dbURL, dbUsername, password);
