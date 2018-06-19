@@ -486,7 +486,7 @@ public class DBCmd {
         }
 
         Float currentPrice = tickerInfo.getFloat("price");
-        String exchange = tickerInfo.getString("abbrev");
+        String exchange = tickerInfo.getString("abbre");
 
         Order sellOrder = new Order(OrderTypes.SELL, username, ticker, exchange, portName, numShares, currentPrice);
 
