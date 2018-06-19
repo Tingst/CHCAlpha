@@ -132,6 +132,7 @@ class PortfolioPanelWrapper extends React.Component {
 
   componentDidMount() {
     this.props.handleGetAllStocks();
+    this.props.handleGetPortfolios({ username: this.props.username });
   }
 
   handleCreateNewPortfolio() {

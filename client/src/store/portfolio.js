@@ -1,5 +1,6 @@
 import {
   HANDLE_CREATE_PORTFOLIO_SUCCESS,
+  HANDLE_GET_PORTFOLIO_SUCCESS,
   HANDLE_DELETE_PORTFOLIO_SUCCESS,
   HANDLE_GET_ORDERS_SUCCESS,
   HANDLE_PLACE_ORDER_FAILURE,
@@ -11,26 +12,7 @@ import {
 } from '../actions/constants';
 
 const initialState = {
-  portfolios: [
-    {
-      name: 'Technology',
-      stocks: [
-        { ticker: 'APPL', exchange: 'NASDAQ', numShares: 10, purchasePrice: 1000, currentPrice: 1800 },
-        { ticker: 'GOOGL', exchange: 'NASDAQ', numShares: 15, purchasePrice: 20000, currentPrice: 24342 },
-        { ticker: 'TSLA', exchange: 'NASDAQ', numShares: 100, purchasePrice: 4000, currentPrice: 5646 },
-        { ticker: 'BABA', exchange: 'NYSE', numShares: 40, purchasePrice: 6556, currentPrice: 8394 },
-        { ticker: 'AMZN', exchange: 'NASDAQ', numShares: 13, purchasePrice: 44949, currentPrice: 90029 }
-      ]
-    },
-    {
-      name: 'Pharmaceutical',
-      stocks: [
-        { ticker: 'PFE', exchange: 'NYSE', numShares: 131, purchasePrice: 4893, currentPrice: 3870 },
-        { ticker: 'GLAXO', exchange: 'NSE', numShares: 40, purchasePrice: 2330, currentPrice: 1970 },
-        { ticker: 'BAYN', exchange: 'ETR', numShares: 5, purchasePrice: 365, currentPrice: 605 }
-      ]
-    }
-  ],
+  portfolios: [],
 
   // for portfolio page
   orders: [],
@@ -41,6 +23,13 @@ const initialState = {
 
 const Portfolio = (state = initialState, action) => {
   switch(action.type) {
+
+    case HANDLE_GET_PORTFOLIO_SUCCESS: {
+      return {
+        ...state,
+        portfolios: action.portfolios
+      };
+    }
 
     case HANDLE_CREATE_PORTFOLIO_SUCCESS: {
       const newPortfolio = {

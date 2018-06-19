@@ -26,6 +26,7 @@ public class HttpMirror {
         server.createContext("/login", new Handler("login", this.conn));
         server.createContext("/create", new Handler("create", this.conn));
         server.createContext("/createportfolio", new Handler("createportfolio", this.conn));
+        server.createContext("/getportfolio", new Handler("getportfolio", this.conn));
         server.createContext("/deleteportfolio", new Handler("deleteportfolio", this.conn));
         server.createContext("/orders", new Handler("orders", this.conn));
         server.createContext("/placeorder", new Handler("placeorder", this.conn));
@@ -93,6 +94,10 @@ public class HttpMirror {
                 }
                 case "createportfolio": {
                     jsonBuilder = API.createPortfolio(t, this.conn);
+                    break;
+                }
+                case "getportfolio": {
+                    jsonBuilder = API.getPortfolio(t, this.conn);
                     break;
                 }
                 case "deleteportfolio": {

@@ -72,7 +72,7 @@ public class DBCmd {
         createUsrAcc.setString(2, password);
         createUsrAcc.setString(3, firstName);
         createUsrAcc.setString(4, lastName);
-        createUsrAcc.setFloat(5, 0);
+        createUsrAcc.setFloat(5, 1000000);
         System.out.println("[EXECUTING SQL]: " + createUsrAcc);
         createUsrAcc.executeUpdate();
 
@@ -188,6 +188,7 @@ public class DBCmd {
         String query = "SELECT to_id,type,ticker,order_time,num_shares,price FROM TradeOrder WHERE username=?";
         PreparedStatement getPendingOrders = con.prepareStatement(query);
         getPendingOrders.setString(1, username);
+        System.out.println("[EXECUTING SQL]: " + getPendingOrders);
         ResultSet pendingOrders = getPendingOrders.executeQuery();
 
         Map<String, String> mp = new HashMap<>();
@@ -197,7 +198,10 @@ public class DBCmd {
         mp.put("date", "order_time");
         mp.put("number", "num_shares");
         mp.put("price", "price");
+        JSONArray tree = DataProvider.getAllData(mp, pendingOrders);
         res.put("key", DataProvider.getAllData(mp, pendingOrders));
+        System.out.println(tree);
+
         return res;
     }
 
@@ -383,13 +387,16 @@ public class DBCmd {
 
     public static JSONObject executeBuy(String username, String ticker, int numShares, String portName, Connection con) throws Exception {
         JSONObject obj = new JSONObject();
+        JSONObject body = new JSONObject();
 
         // Check if company is traded on the particular exchange in the company table if so pick out the record.
         Statement checkTradedStock = con.createStatement();
         ResultSet tickerInfo = checkTradedStock.executeQuery("SELECT ticker, price, abbre FROM " + COMPANY_TABLE + " WHERE ticker='" + ticker + "'");
 
         if(!tickerInfo.next()) {
-            obj.put("body", "Stock is not traded on the exchange");
+            body.put("text", "Stock is not traded on the exchange");
+            obj.put("code", 400);
+            obj.put("body", body);
             return obj;
         }
 
@@ -398,7 +405,9 @@ public class DBCmd {
         ResultSet usrPortInfo = checkUserPort.executeQuery("SELECT p_name, username FROM " + PORTFOLIO_TABLE + " WHERE username='" + username + "' AND p_name='" + portName + "'");
 
         if(!usrPortInfo.next()) {
-            obj.put("body", "Portfolio doesn't exist");
+            body.put("text", "Portfolio doesn't exist");
+            obj.put("code", 400);
+            obj.put("body", body);
             return obj;
         }
 
@@ -409,7 +418,9 @@ public class DBCmd {
         accountInfo.next();
         Float fundsAvailable  = accountInfo.getFloat("funds_available");
         if(fundsAvailable < currentPrice * numShares) {
-            obj.put("body", "Insufficient fund");
+            body.put("text", "Insufficient fund");
+            obj.put("code", 400);
+            obj.put("body", body);
             return obj;
         }
 
@@ -424,7 +435,9 @@ public class DBCmd {
         ResultSet insertID = lastInsertId.executeQuery("SELECT last_insert_id()");
 
         if(!insertID.next()) {
-            obj.put("body", "Order not placed successfully");
+            body.put("text", "Order not placed successfully");
+            obj.put("code", 400);
+            obj.put("body", body);
             return obj;
         }
 
@@ -432,20 +445,24 @@ public class DBCmd {
         buyOrder.addOrderID(orderId);
 
         closeOrder(buyOrder, con);
-
-        obj.put("body", "Order placed successfully");
+        body.put("text", "Order placed successfully");
+        obj.put("code", 200);
+        obj.put("body", body);
         return obj;
     }
 
     public static JSONObject executeSell(String username, String ticker, int numShares, String portName, Connection con) throws Exception {
         JSONObject obj = new JSONObject();
+        JSONObject body = new JSONObject();
 
         // Check if company is traded on the particular exchange in the company table if so pick out the record.
         Statement checkTradedStock = con.createStatement();
         ResultSet tickerInfo = checkTradedStock.executeQuery("SELECT ticker, price, abbre FROM " + COMPANY_TABLE + " WHERE ticker='" + ticker + "'");
 
         if(!tickerInfo.next()) {
-            obj.put("body", "Stock is not traded on the exchange");
+            body.put("text", "Stock is not traded on the exchange");
+            obj.put("code", 400);
+            obj.put("body", body);
             return obj;
         }
 
@@ -456,7 +473,9 @@ public class DBCmd {
         ResultSet ownedStock = checkOwnership.executeQuery(checkOwnershipQuery);
 
         if(!ownedStock.next()) {
-            obj.put("body", ticker + " does not exist in portfolio: " + portName);
+            body.put("text", ticker + " does not exist in portfolio: " + portName);
+            obj.put("code", 400);
+            obj.put("body", body);
             return obj;
         }
 
@@ -479,7 +498,9 @@ public class DBCmd {
         ResultSet insertID = lastInsertId.executeQuery("SELECT last_insert_id()");
 
         if(!insertID.next()) {
-            obj.put("body", "Order not placed successfully");
+            body.put("text", "Order not placed successfully");
+            obj.put("code", 400);
+            obj.put("body", body);
             return obj;
         }
 
@@ -488,7 +509,9 @@ public class DBCmd {
 
         closeOrder(sellOrder, con);
 
-        obj.put("body", "Order closed successfully");
+        body.put("text", "Order closed successfully");
+        obj.put("code", 200);
+        obj.put("body", body);
         return obj;
     }
 

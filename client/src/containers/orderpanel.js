@@ -37,8 +37,9 @@ class OrderPanelWrapper extends React.Component {
     this.handlePlaceOrder = this.handlePlaceOrder.bind(this);
   }
 
-  handlePortChange(e) {
-    this.setState({ portfolio: e.target.value });
+  handlePortChange(e, val) {
+    console.log("port", val.value);
+    this.setState({ portfolio: val.value });
   }
 
   handleRadioChange(e) {
@@ -81,10 +82,20 @@ class OrderPanelWrapper extends React.Component {
       ticker: '',
       number: 0,
       price: 0
-    })
+    });
+
+    // update orders
+    this.props.handleGetAllStocks();
+    this.props.handleGetOrders({ username : this.props.username });
   }
 
   render() {
+    const ports = this.props.portfolios.map((port, id) => ({
+      key: id,
+      value: port.name,
+      text: port.name
+    }));
+
     return (
       <ViewCol style={styles.container}>
         <h1>Buy & Sell</h1>
@@ -94,11 +105,17 @@ class OrderPanelWrapper extends React.Component {
             {/* Select Portfolio */}
             <Form.Field style={{ width: 200 }}>
               <label style={{marginRight: '1rem'}}>Portfolio:</label>
-              <select style={{ width: 100 }} onChange={this.handlePortChange}>
-                {this.props.portfolios.map((port, id) => (
-                  <option key={id} value={port.name}>{port.name}</option>
-                ))}
-              </select>
+              <Dropdown
+                button
+                className='icon'
+                floating
+                labeled
+                icon='world'
+                options={ports}
+                search
+                text={this.state.portfolio ? this.state.portfolio : 'Portfolios'}
+                onChange={this.handlePortChange}
+              />
             </Form.Field>
 
             {/* Toggle Buy/Sell */}

@@ -63,7 +63,6 @@ public class API {
 
         if (t.getRequestMethod().equalsIgnoreCase("POST")) {
             JSONObject json = parseBody(t);
-            System.out.println(json);
 
             try {
                 result = DBCmd.createPortfolio(
@@ -71,6 +70,30 @@ public class API {
                         (String) json.get("name"),
                         conn
                 );
+            } catch(Exception e) {
+                e.printStackTrace(System.out);
+                return null;
+            }
+        } else {
+            result.put("code", 404);
+        }
+
+        return result;
+    }
+
+    public static JSONObject getPortfolio(HttpExchange t, Connection conn) {
+        JSONObject result = new JSONObject();
+
+        if (t.getRequestMethod().equalsIgnoreCase("POST")) {
+            JSONObject json = parseBody(t);
+
+            try {
+                // TODO: do this one
+                //result = DBCmd.getPortfolio(
+                //        (String) json.get("username"),
+                //        (String) json.get("name"),
+                //        conn
+                //);
             } catch(Exception e) {
                 e.printStackTrace(System.out);
                 return null;
@@ -150,7 +173,6 @@ public class API {
             }
         }
 
-        result.put("code", 200);
         return result;
     }
 
