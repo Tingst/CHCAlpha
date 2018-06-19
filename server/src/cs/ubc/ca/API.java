@@ -89,11 +89,11 @@ public class API {
 
             try {
                 // TODO: do this one
-                //result = DBCmd.getPortfolio(
-                //        (String) json.get("username"),
-                //        (String) json.get("name"),
-                //        conn
-                //);
+                result = DBCmd.getTradesByPortfolio(
+                        (String) json.get("username"),
+                        (String) json.get("name"),
+                        conn
+                );
             } catch(Exception e) {
                 e.printStackTrace(System.out);
                 return null;

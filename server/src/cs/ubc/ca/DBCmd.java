@@ -165,20 +165,42 @@ public class DBCmd {
         return obj;
     }
 
-    public static JSONArray getTradesByPortfolio(String username, String portName, Connection con) throws Exception {
-        String query = "SELECT C.ticker, abbre, num_shares, buy_price, price FROM Company C, ClosedOrder CO WHERE C.ticker=CO.ticker AND " +
-                "CO.username='" + username + "' AND p_name='" + portName + "'";
-        Statement getTradesByPort = con.createStatement();
-        ResultSet tradesByPort = getTradesByPort.executeQuery(query);
+    public static JSONObject getTradesByPortfolio(String username, String portName, Connection con) throws Exception {
+        JSONArray portRes = new JSONArray();
+        JSONObject finalRes = new JSONObject();
 
-        Map<String, String> mp = new HashMap<>();
-        mp.put("ticker", "ticker");
-        mp.put("exchange", "abbre");
-        mp.put("numShares", "num_shares");
-        mp.put("purchasePrice", "buy_price");
-        mp.put("currentPrice", "price");
+        String getPortfoliosQuery = "SELECT DISTINCT p_name FROM " + CLOSED_ORDER_TABLE + " WHERE username='" + username + "'";
+        Statement getPortfolios = con.createStatement();
+        ResultSet ports = getPortfolios.executeQuery(getPortfoliosQuery);
 
-        return DataProvider.getAllData(mp, tradesByPort);
+        while(ports.next()) {
+            String thisPortName = ports.getString("p_name");
+            JSONObject singlePort = new JSONObject();
+            String query = "SELECT C.ticker, abbre, num_shares, buy_price, price FROM Company C, ClosedOrder CO WHERE C.ticker=CO.ticker AND " +
+                    "CO.username='" + username + "' AND p_name='" + thisPortName + "'";
+
+
+            Statement getTradesByPort = con.createStatement();
+            ResultSet tradesByPort = getTradesByPort.executeQuery(query);
+
+            Map<String, String> mp = new HashMap<>();
+            mp.put("ticker", "ticker");
+            mp.put("exchange", "abbre");
+            mp.put("numShares", "num_shares");
+            mp.put("purchasePrice", "buy_price");
+            mp.put("currentPrice", "price");
+
+            singlePort.put("stocks", DataProvider.getAllData(mp, tradesByPort));
+            singlePort.put("name", thisPortName);
+            portRes.add(singlePort);
+        }
+
+        finalRes.put("portfolios", portRes);
+
+        finalRes.put("code", 200);
+        System.out.print(finalRes);
+
+        return finalRes;
     }
 
 
