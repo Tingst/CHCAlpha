@@ -1,4 +1,5 @@
 import {
+  HANDLE_LOGOUT,
   HANDLE_CREATE_ACCOUNT_SUCCESS,
   HANDLE_LOGIN_SUCCESS,
 
@@ -11,10 +12,6 @@ const initialState = {
   password: '',
   fname: '',
   lname: ''
-  // username: '123',
-  // password: '123',
-  // fname: 'john',
-  // lname: 'lee'
 };
 
 const Login = (state = initialState, action) => {
@@ -36,6 +33,10 @@ const Login = (state = initialState, action) => {
         ...state,
         password: action.payload.newPassword
       };
+    }
+
+    case HANDLE_LOGOUT: {
+      return initialState;
     }
 
     default: {

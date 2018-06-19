@@ -5,7 +5,8 @@ import {
   HANDLE_GET_DETAILS_SUCCESS,
 
   // from IPO actions
-  HANDLE_NEW_IPO_SUCCESS
+  HANDLE_NEW_IPO_SUCCESS,
+  HANDLE_LOGOUT
 } from '../actions/constants';
 
 const initialState = {
@@ -78,6 +79,11 @@ const Stocks = (state = initialState, action) => {
         ...state,
         stocks: [ ...state.stocks, newStock ]
       };
+    }
+
+
+    case HANDLE_LOGOUT: {
+      return initialState;
     }
 
     default: {

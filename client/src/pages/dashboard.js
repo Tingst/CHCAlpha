@@ -3,6 +3,10 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import Portfolio from './portfolio';
 import Ipo from './ipo';
 import Settings from './settings';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import * as dashboardActions from '../actions/actioncreators';
+
 import Stocks from './stocks'
 import {
   NavBar,
@@ -11,7 +15,7 @@ import {
   ViewRow
 } from '../components';
 
-export default class DashBoard extends React.Component {
+class DashboardWrapper extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -21,7 +25,7 @@ export default class DashBoard extends React.Component {
 
     return (
       <ViewCol style={{ height: '100%', width: '100%', flex: 'none' }}>
-        <NavBar />
+        <NavBar onLogout={this.props.handleLogout} />
 
         <ViewRow style={{ height: '100%' }}>
           <SideBar match={this.props.match} />
@@ -61,3 +65,15 @@ export default class DashBoard extends React.Component {
     )
   }
 }
+
+const mapStateToProps = ({ }) => {
+  return { }
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({...dashboardActions}, dispatch);
+};
+
+const Dashboard = connect(mapStateToProps, mapDispatchToProps)(DashboardWrapper);
+
+export default Dashboard;

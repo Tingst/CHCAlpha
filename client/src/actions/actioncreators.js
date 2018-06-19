@@ -2,6 +2,8 @@ import history from '../utils/history';
 import fetch from 'isomorphic-fetch';
 import moment from 'moment';
 import {
+  // logout
+  HANDLE_LOGOUT,
   // Login Page Actions
   HANDLE_LOGIN_SUCCESS,
   HANDLE_LOGIN_FAILURE,
@@ -48,6 +50,14 @@ const optionsBase = {
 // -----------------------------------------------------------
 // Login Page Actions
 // -----------------------------------------------------------
+export const handleLogout = () => {
+
+  return dispatch => {
+    dispatch({ type: HANDLE_LOGOUT });
+  }
+};
+
+
 export const handleLogin = (payload) => {
   const { username, password } = payload;
 

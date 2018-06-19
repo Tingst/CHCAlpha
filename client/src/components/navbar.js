@@ -22,11 +22,11 @@ const styles = {
 };
 
 // TODO: clear redux state on logout
-const NavBar = () => (
+const NavBar = ({ onLogout }) => (
   <ViewRow style={styles.container}>
     {/*<h3 style={styles.header}>CHC Alpha</h3>*/}
     <Logo style={{ marginLeft: '0.5rem', width: 150 }}/>
-    <Link style={styles.logout} to="/login">Logout</Link>
+    <Link style={styles.logout} to="/login" onClick={onLogout}>Logout</Link>
   </ViewRow>
 );
 

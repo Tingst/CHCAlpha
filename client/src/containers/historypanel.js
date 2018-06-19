@@ -91,9 +91,14 @@ class HistoryPanelWrapper extends React.Component {
                 <Table.Cell>{order.price}</Table.Cell>
                 <Table.Cell>{order.number * order.price}</Table.Cell>
                 <Table.Cell>
+                  {/*<ViewCol>*/}
                     <i
                       className="times circle icon delete-button"
                       onClick={() => this.handleCancelOrder(order.id)}/>
+                    {/*<i*/}
+                      {/*className="times circle icon delete-button"*/}
+                      {/*onClick={() => this.handleCancelOrder(order.id)}/>*/}
+                  {/*</ViewCol>*/}
                 </Table.Cell>
               </Table.Row>
             ))}

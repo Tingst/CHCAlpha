@@ -1,4 +1,5 @@
 import {
+  HANDLE_LOGOUT,
   HANDLE_CREATE_PORTFOLIO_SUCCESS,
   HANDLE_GET_PORTFOLIO_SUCCESS,
   HANDLE_DELETE_PORTFOLIO_SUCCESS,
@@ -108,6 +109,10 @@ const Portfolio = (state = initialState, action) => {
           newPortfolio
         ]
       }
+    }
+
+    case HANDLE_LOGOUT: {
+      return initialState;
     }
 
     default: {
