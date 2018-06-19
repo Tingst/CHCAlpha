@@ -48,7 +48,7 @@ public class TestClass {
 
 //            DBCmd.executeSell("gHumpkins", "GOOGL", "NASDAQ", 1200, "tech sector", myConnection);
 
-            DBCmd.createIPO("gHumpkins", "AMZN", "Technology", "Amazon", "NASDAQ", 200f, 1000000, myConnection);
+//            DBCmd.createIPO("gHumpkins", "AMZN", "Technology", "Amazon", "NASDAQ", 200f, 1000000, myConnection);
 
         }
         catch(Exception e)
