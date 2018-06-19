@@ -27,7 +27,7 @@ const Portfolio = (state = initialState, action) => {
     case HANDLE_GET_PORTFOLIO_SUCCESS: {
       return {
         ...state,
-        portfolios: action.portfolios
+        portfolios: [...state.portfolios, ...action.portfolios]
       };
     }
 
