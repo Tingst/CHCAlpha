@@ -85,25 +85,22 @@ INSERT INTO Exchange (abbreviation, ex_name)
 VALUES ('NASDAQ', 'National Association of Securities Dealers Automated Quotations');
 
 INSERT INTO Company (c_name, industry, ticker, price, username, abbre)
-VALUES ('Microsoft', 'Technology', 'MSFT', 200, 'bggoodman', 'NASDAQ');
+VALUES ('Microsoft', 'Technology', 'MSFT', 100, 'bggoodman', 'NASDAQ');
 
 INSERT INTO Company (c_name, industry, ticker, price, username, abbre)
-VALUES ('Google', 'Technology', 'GOOGL', 100, 'gHumpkins', 'NASDAQ');
+VALUES ('Google', 'Technology', 'GOOGL', 200, 'gHumpkins', 'NASDAQ');
 
 INSERT INTO TradeOrder (type, ticker, num_shares, price, order_time, p_name, username)
-VALUES (1, 'GOOGL', 1200, 100, NOW(), 'super performance equity', 'bggoodman');
+VALUES (0, 'MSFT', 120, 100, NOW(), 'tech sector', 'gHumpkins');
 
 INSERT INTO TradeOrder (type, ticker, num_shares, price, order_time, p_name, username)
-VALUES (1, 'GOOGL', 300, 100, NOW(), 'super performance equity', 'bggoodman');
-
-INSERT INTO TradeOrder (type, ticker, num_shares, price, order_time, p_name, username)
-VALUES (0, 'GOOGL', 1200, 100, NOW(), 'super performance equity', 'bggoodman');
-
-INSERT INTO TradeOrder (type, ticker, num_shares, price, order_time, p_name, username)
-VALUES (0, 'MSFT', 120, 200, NOW(), 'tech sector', 'gHumpkins');
+VALUES (1, 'GOOGL', 1200, 200, NOW(), 'tech sector', 'gHumpkins');
 
 INSERT INTO ClosedOrder (ticker, num_shares, buy_price, closed_time, p_name, username)
 VALUES ('GOOGL', 1200, 80, NOW(), 'tech sector', 'gHumpkins');
+
+INSERT INTO ClosedOrder (ticker, num_shares, buy_price, closed_time, p_name, username)
+VALUES ('MSFT', 120, 80, NOW(), 'super performance equity', 'bggoodman');
 
 
 
