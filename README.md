@@ -1,4 +1,37 @@
-# CPSC 304 Project
+# CHC Alpha
+
+UBC CPSC 304: Stock market trading web application
+---
+
+![Alt text](./chcalphalogin.png?raw=true "Welcome to CHCAlpha")</br>
+
+## Requirements
+1. MySQL Community Server 5.7.22
+2. MySQL Connector/J 5.1.46 Platform Independent (Architecture Independent)
+
+## Starting front-end
+```bash
+cd client
+npm install
+npm start
+```
+In web browser of choice, connect to...
+```bash
+localhost:8080
+```
+
+## Starting server and database
+1. Configure IDE project structure: select the ~/server dir and source
+2. When starting MySQL, configure login for user 'root' and password '123456'
+
+```bash
+mysql -u root -p
+123456
+source TradingSystemDB.sql
+```
+
+3. Run Main.java to complete connection between front-end, back-end, and database
+
 
 ## **Relation Schema (Non-DDL)**
 
@@ -20,9 +53,9 @@
 
 ```
 CREATE TABLE Company(
-    c_id INT, c_name CHAR(255), price FLOAT, ticker CHAR(20), 
+    c_id INT, c_name CHAR(255), price FLOAT, ticker CHAR(20),
     abbreviation CHAR(20), username CHAR(20), PRIMARY KEY(c_id),
-    FOREIGN KEY(abbreviation) REFERENCES Exchange, 
+    FOREIGN KEY(abbreviation) REFERENCES Exchange,
     FOREIGN KEY(username) REFERENCES Account, ON DELETE CASCADE,
     ON UPDATE CASCADE)
 ```
@@ -33,7 +66,7 @@ CREATE TABLE Company(
 
 ```
 CREATE TABLE Exchange(
-    abbreviation CHAR(20), 
+    abbreviation CHAR(20),
     ex_name CHAR(255), PRIMARY KEY(abbreviation))
 ```
 
@@ -43,7 +76,7 @@ CREATE TABLE Exchange(
 
 ```
 CREATE TABLE Account(
-    username CHAR(20), first_name CHAR(20), last_name CHAR(20), 
+    username CHAR(20), first_name CHAR(20), last_name CHAR(20),
     password CHAR(20), PRIMARY KEY(username))
 ```
 
@@ -63,9 +96,9 @@ CREATE TABLE Portfolio(
 
 ```
 CREATE TABLE Order(
-    o_id INT, type NUMBER(1), ticker CHAR(20), share_num INT, 
+    o_id INT, type NUMBER(1), ticker CHAR(20), share_num INT,
     price FLOAT, exchange CHAR(20), username CHAR(20), PRIMARY KEY(o_id),
-    username NOT NULL, FOREIGN KEY(username) REFERENCES Account, 
+    username NOT NULL, FOREIGN KEY(username) REFERENCES Account,
     ON DELETE CASCADE, ON UPDATE CASCADE)
 ```
 
@@ -90,7 +123,7 @@ CREATE TABLE ClosedOrder(
 
 
 ---
-Database Setup
+### Troubleshooting
 1. download MySQL Community Server 5.7
 2. download MySQL Connector/J 5.1.46 Platform Independent (Architecture Independent), ZIP Archive
 3. install MySql Community Server
@@ -105,6 +138,3 @@ Database Setup
 10. `show databases`: TradingSystemDB should appear
 11. `use TradingSystemDB` use this database
 12. `show tables` to show current tables in the db
-
-
-
